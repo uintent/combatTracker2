@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import android.view.Window
 import com.example.combattracker.CombatTrackerApplication
 import com.example.combattracker.R
 import com.example.combattracker.databinding.ActivityMainBinding
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
     // ========== Lifecycle Methods ==========
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         super.onCreate(savedInstanceState)
 
         // Initialize view binding
@@ -112,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
+     /**
      * Setup the menu cards with click listeners
      */
     private fun setupMenuCards() {
@@ -142,6 +144,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Add ripple effect to cards
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
+
         listOf(
             binding.cardManageEncounters,
             binding.cardCreateEncounter,
@@ -151,10 +156,9 @@ class MainActivity : AppCompatActivity() {
         ).forEach { card ->
             card.isClickable = true
             card.isFocusable = true
-            card.foreground = ContextCompat.getDrawable(
-                this,
-                android.R.attr.selectableItemBackground
-            )
+            if (typedValue.resourceId != 0) {
+                card.foreground = ContextCompat.getDrawable(this, typedValue.resourceId)
+            }
         }
     }
 

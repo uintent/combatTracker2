@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: item_encounter_actor.xml -->
+<!-- Location: app/src/main/res/layout/item_encounter_actor.xml -->
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Actor Portrait -->
+        <ImageView
+            android:id="@+id/imagePortrait"
+            android:layout_width="48dp"
+            android:layout_height="72dp"
+            android:contentDescription="@string/actor_portrait"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/placeholder_monster" />
+
+        <!-- Actor Info -->
+        <TextView
+            android:id="@+id/textActorName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/layoutQuantity"
+            app:layout_constraintStart_toEndOf="@+id/imagePortrait"
+            app:layout_constraintTop_toTopOf="@+id/imagePortrait"
+            tools:text="Goblin Warrior" />
+
+        <TextView
+            android:id="@+id/textCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintEnd_toEndOf="@+id/textActorName"
+            app:layout_constraintStart_toStartOf="@+id/textActorName"
+            app:layout_constraintTop_toBottomOf="@+id/textActorName"
+            tools:text="Monster" />
+
+        <TextView
+            android:id="@+id/textInitiative"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintEnd_toEndOf="@+id/textActorName"
+            app:layout_constraintStart_toStartOf="@+id/textActorName"
+            app:layout_constraintTop_toBottomOf="@+id/textCategory"
+            tools:text="Initiative: +2" />
+
+        <!-- Quantity Section -->
+        <LinearLayout
+            android:id="@+id/layoutQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonRemove"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:minWidth="32dp"
+                android:gravity="center"
+                tools:text="×3" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_edit"
+                android:tint="?attr/colorControlNormal" />
+
+        </LinearLayout>
+
+        <!-- Remove Button -->
+        <ImageButton
+            android:id="@+id/buttonRemove"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Remove actor"
+            android:src="@drawable/ic_close"
+            android:tint="?attr/colorError"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

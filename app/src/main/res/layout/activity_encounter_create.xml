@@ -70,104 +70,156 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Selected Actors Summary -->
+            <!-- Selected Actors Section -->
             <TextView
                 android:id="@+id/textSelectedCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/no_actors_selected"
                 android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayoutName" />
 
-            <!-- Actor Selection Container -->
-            <FrameLayout
-                android:id="@+id/frameLayout"
+            <!-- Add Actor Button -->
+            <Button
+                android:id="@+id/buttonAddActor"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="48dp"
+                android:text="Add Actor"
+                android:drawableStart="@drawable/ic_add"
+                android:drawablePadding="8dp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textSelectedCount"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Selected Actors List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSelectedActors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="48dp"
-                android:layout_marginBottom="16dp"
-                android:minHeight="300dp"
-                app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
+                android:minHeight="200dp"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textSelectedCount">
+                app:layout_constraintTop_toBottomOf="@+id/textSelectedCount"
+                tools:listitem="@layout/item_encounter_actor" />
 
-                <!-- Actor RecyclerView -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewActors"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:padding="8dp"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="2"
-                    tools:listitem="@layout/item_actor_selection" />
-
-                <!-- Empty State -->
-                <LinearLayout
-                    android:id="@+id/emptyStateLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/textEmptyMessage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/no_actors_to_select"
-                        android:textAppearance="?attr/textAppearanceHeadline6" />
-
-                    <TextView
-                        android:id="@+id/textEmptySubMessage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/create_actors_first"
-                        android:textAppearance="?attr/textAppearanceBody2" />
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-            <!-- Action Buttons -->
+            <!-- Empty State for Selected Actors -->
             <LinearLayout
-                android:id="@+id/buttonContainer"
+                android:id="@+id/emptyStateLayout"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/recyclerViewSelectedActors"
+                app:layout_constraintStart_toStartOf="@+id/recyclerViewSelectedActors"
+                app:layout_constraintTop_toTopOf="@+id/recyclerViewSelectedActors">
+
+                <TextView
+                    android:id="@+id/textEmptyMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No actors added yet"
+                    android:textAppearance="?attr/textAppearanceBody1" />
+
+                <TextView
+                    android:id="@+id/textEmptySubMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Tap 'Add Actor' to add actors to this encounter"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="48dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerViewSelectedActors" />
+
+            <!-- Available Actors Section (Initially Hidden) -->
+            <TextView
+                android:id="@+id/textAvailableActors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:orientation="horizontal"
+                android:text="Select actors to add:"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+            <!-- Actor Selection RecyclerView (Initially Hidden) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewActors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="48dp"
+                android:layout_marginBottom="100dp"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-                app:layout_constraintVertical_bias="1.0">
-
-                <Button
-                    android:id="@+id/buttonSave"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/save_encounter" />
-
-                <Button
-                    android:id="@+id/buttonSaveAndStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/save_and_start" />
-
-            </LinearLayout>
+                app:layout_constraintTop_toBottomOf="@+id/textAvailableActors"
+                tools:listitem="@layout/item_actor_selection" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <!-- Action Buttons (Floating at Bottom) -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/buttonSave"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/save_encounter" />
+
+        <Button
+            android:id="@+id/buttonSaveAndStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_and_start" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
