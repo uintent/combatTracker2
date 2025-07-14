@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Internal storage paths -->
+    <files-path name="internal_files" path="." />
+    <files-path name="images" path="images/" />
+    <files-path name="portraits" path="portraits/" />
+    <files-path name="backgrounds" path="backgrounds/" />
+
+    <!-- Cache paths for temporary files -->
+    <cache-path name="temp_images" path="temp/" />
+
+    <!-- External storage paths (if needed) -->
+    <external-files-path name="external_files" path="." />
+</paths>

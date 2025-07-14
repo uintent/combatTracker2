@@ -1,6 +1,7 @@
 // File: CombatTrackerDatabase.kt
 package com.example.combattracker.data.database
 
+import android.content.Context
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.combattracker.data.database.converters.Converters
@@ -83,7 +84,7 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
          * @return The database instance
          */
         fun getInstance(
-            context: android.content.Context,
+            context: Context,
             scope: CoroutineScope
         ): CombatTrackerDatabase {
             // If instance exists, return it
@@ -118,27 +119,39 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
          * @param conditionDao The condition DAO
          */
         private suspend fun populateConditions(conditionDao: ConditionDao) {
-            // Create all 15 D&D conditions from the enum
-            val conditions = ConditionType.values().map { type ->
-                Condition(
-                    id = type.id,
-                    name = type.displayName,
-                    description = type.description,
-                    iconResource = type.iconResource,
-                    displayOrder = type.ordinal + 1,
-                    isEnabled = true
-                )
-            }
+            try {
+                // Check if conditions already exist
+                val existingCount = conditionDao.getConditionCount()
+                if (existingCount > 0) {
+                    Timber.d("Conditions already populated: $existingCount found")
+                    return
+                }
 
-            // Insert all conditions
-            conditionDao.insertAllConditions(conditions)
+                // Create all 15 D&D conditions from the enum
+                val conditions = ConditionType.values().map { type ->
+                    Condition(
+                        id = type.id,
+                        name = type.displayName,
+                        description = type.description,
+                        iconResource = type.iconResource,
+                        displayOrder = type.ordinal + 1,
+                        isEnabled = true
+                    )
+                }
 
-            Timber.d("Inserted ${conditions.size} conditions into database")
+                // Insert all conditions
+                conditionDao.insertAllConditions(conditions)
 
-            // Verify insertion
-            val count = conditionDao.getConditionCount()
-            if (count != conditions.size) {
-                Timber.w("Expected ${conditions.size} conditions, but found $count")
+                Timber.d("Inserted ${conditions.size} conditions into database")
+
+                // Verify insertion
+                val count = conditionDao.getConditionCount()
+                if (count != conditions.size) {
+                    Timber.w("Expected ${conditions.size} conditions, but found $count")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error populating conditions")
+                throw e
             }
         }
 
@@ -163,10 +176,37 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
                 INSTANCE?.let { database ->
                     scope.launch(Dispatchers.IO) {
                         try {
-                            populateConditions(database.conditionDao())
+                            // Call the companion object's function correctly
+                            Companion.populateConditions(database.conditionDao())
                             Timber.d("Successfully pre-populated conditions")
                         } catch (e: Exception) {
                             Timber.e(e, "Failed to pre-populate conditions")
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Called when database has been opened
+             *
+             * @param db The database
+             */
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                Timber.d("Database opened")
+
+                // Optionally verify integrity on open
+                INSTANCE?.let { database ->
+                    scope.launch(Dispatchers.IO) {
+                        try {
+                            // Ensure conditions are populated (in case of corruption)
+                            val conditionCount = database.conditionDao().getConditionCount()
+                            if (conditionCount == 0) {
+                                Timber.w("No conditions found on open, re-populating")
+                                Companion.populateConditions(database.conditionDao())
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e, "Error checking conditions on open")
                         }
                     }
                 }
@@ -193,7 +233,7 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
          * Only for development - remove for production
          */
         fun getDestructiveDatabaseBuilder(
-            context: android.content.Context,
+            context: Context,
             scope: CoroutineScope
         ): CombatTrackerDatabase {
             return Room.databaseBuilder(
@@ -230,10 +270,16 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
         suspend fun verifyDatabaseIntegrity(database: CombatTrackerDatabase): Boolean {
             return try {
                 // Check if conditions are populated
-                val hasConditions = database.conditionDao().hasAllStandardConditions()
-                if (!hasConditions) {
-                    Timber.w("Database missing standard conditions")
+                val conditionCount = database.conditionDao().getConditionCount()
+                if (conditionCount == 0) {
+                    Timber.w("Database missing conditions")
                     return false
+                }
+
+                // Check for the expected number of standard conditions
+                if (conditionCount != ConditionType.values().size) {
+                    Timber.w("Expected ${ConditionType.values().size} conditions, found $conditionCount")
+                    // Don't fail, just warn - user might have added custom conditions in future
                 }
 
                 // Could add more integrity checks here
@@ -257,19 +303,27 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
         suspend fun getDatabaseStats(database: CombatTrackerDatabase): String {
             return try {
                 val actorCount = database.actorDao().getActorCount()
-                val encounterCount = database.encounterDao().getActiveEncounterCount()
+                val activeEncounterCount = database.encounterDao().getActiveEncounterCount()
                 val conditionCount = database.conditionDao().getConditionCount()
 
                 """
                     Database Statistics:
                     - Actors: $actorCount
-                    - Active Encounters: $encounterCount
+                    - Active Encounters: $activeEncounterCount
                     - Conditions: $conditionCount
                     - Schema Version: ${database.openHelper.readableDatabase.version}
                 """.trimIndent()
             } catch (e: Exception) {
                 "Failed to get database statistics: ${e.message}"
             }
+        }
+
+        /**
+         * Force database initialization (for testing)
+         * This ensures the database is created and callbacks are executed
+         */
+        fun forceInitialization(database: CombatTrackerDatabase) {
+            database.openHelper.writableDatabase
         }
     }
 }
