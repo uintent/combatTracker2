@@ -1,4 +1,6 @@
 // File: ActorSelectionAdapter.kt
+// Location: app/src/main/java/com/example/combattracker/ui/encounter/ActorSelectionAdapter.kt
+
 package com.example.combattracker.ui.encounter
 
 import android.view.LayoutInflater
@@ -43,6 +45,9 @@ class ActorSelectionAdapter(
             binding.textActorName.text = actor.name
             binding.textCategory.text = actor.getActorCategory().displayName
 
+            // Set initiative modifier display
+            binding.textInitiative.text = "Initiative: ${actor.getInitiativeModifierDisplay()}"
+
             // Set checkbox state
             binding.checkboxSelect.setOnCheckedChangeListener(null) // Remove listener to avoid loops
             binding.checkboxSelect.isChecked = state.isSelected
@@ -50,17 +55,16 @@ class ActorSelectionAdapter(
                 onActorChecked(state, isChecked)
             }
 
-            // Set quantity display
-            if (state.isSelected && state.quantity > 1) {
-                binding.textQuantity.visible()
+            // Set quantity display - using layoutQuantity instead of separate button
+            if (state.isSelected) {
+                binding.layoutQuantity.visible()
                 binding.textQuantity.text = "×${state.quantity}"
             } else {
-                binding.textQuantity.gone()
+                binding.layoutQuantity.gone()
             }
 
-            // Quantity button
-            binding.buttonQuantity.visibleIf(state.isSelected)
-            binding.buttonQuantity.setOnClickListener {
+            // Set click listener on the quantity layout
+            binding.layoutQuantity.setOnClickListener {
                 onQuantityClick(state)
             }
 

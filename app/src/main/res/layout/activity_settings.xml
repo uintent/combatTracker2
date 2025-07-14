@@ -160,7 +160,7 @@
 
             <Button
                 android:id="@+id/buttonRefreshStorage"
-                style="?attr/materialButtonTextStyle"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -261,7 +261,7 @@
 
             <Button
                 android:id="@+id/buttonLicenses"
-                style="?attr/materialButtonTextStyle"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

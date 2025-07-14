@@ -353,7 +353,7 @@ enum class TieBreakDirection {
  * @return Formatted string
  */
 fun formatInitiative(initiative: Double, showDecimals: Boolean = false): String {
-    return if (showDecimals || !isPlayerInitiative(initiative)) {
+    return if (showDecimals || !InitiativeCalculator.isPlayerInitiative(initiative)) {
         String.format("%.2f", initiative)
     } else {
         initiative.toInt().toString()
