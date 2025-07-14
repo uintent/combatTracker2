@@ -1,0 +1,59 @@
+<!-- _includes/directory_tree.html -->
+<style>
+.directory-tree {
+    font-family: 'Courier New', monospace;
+    line-height: 1.8;
+}
+.directory-tree ul {
+    list-style: none;
+    padding-left: 20px;
+}
+.directory-tree > ul {
+    padding-left: 0;
+}
+.directory-tree a {
+    color: #0366d6;
+    text-decoration: none;
+}
+.directory-tree a:hover {
+    text-decoration: underline;
+}
+.directory {
+    font-weight: bold;
+}
+</style>
+
+<div class="directory-tree">
+    <ul>
+        {% assign paths = "" | split: "" %}
+        {% for page in site.pages %}
+            {% assign paths = paths | push: page.path %}
+        {% endfor %}
+        {% for file in site.static_files %}
+            {% assign paths = paths | push: file.path %}
+        {% endfor %}
+        
+        {% assign sorted_paths = paths | sort %}
+        {% for path in sorted_paths %}
+            {% unless path contains 'vendor' or path contains 'node_modules' or path contains '.git' %}
+            <li>
+                {% assign path_parts = path | split: '/' %}
+                {% assign indent = path_parts.size | minus: 1 %}
+                {% for i in (1..indent) %}
+                    &nbsp;&nbsp;
+                {% endfor %}
+                
+                {% if path contains '.html' or path contains '.md' %}
+                    📄 <a href="{{ path | relative_url }}">{{ path_parts.last }}</a>
+                {% elsif path contains '.jpg' or path contains '.png' %}
+                    🖼️ <a href="{{ path | relative_url }}">{{ path_parts.last }}</a>
+                {% elsif path contains '.' %}
+                    📎 <a href="{{ path | relative_url }}">{{ path_parts.last }}</a>
+                {% else %}
+                    📁 <span class="directory">{{ path_parts.last }}/</span>
+                {% endif %}
+            </li>
+            {% endunless %}
+        {% endfor %}
+    </ul>
+</div>
