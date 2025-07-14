@@ -27,6 +27,7 @@
 
     <!-- Actor Library Screen -->
     <string name="actor_library">Actor Library</string>
+    <string name="actor_library_title">Actor Library</string>
     <string name="search_actors">Search actors</string>
     <string name="filter_by_category">Filter by category</string>
     <string name="sort_by">Sort by</string>
@@ -59,10 +60,18 @@
     <string name="category_monster">Monster</string>
     <string name="category_other">Other</string>
 
+    <!-- Category Colors (better as color resources but listed here for reference) -->
+    <string name="category_player_color">Blue</string>
+    <string name="category_npc_color">Green</string>
+    <string name="category_monster_color">Red</string>
+    <string name="category_other_color">Purple</string>
+
     <!-- Encounter Creation Screen -->
     <string name="encounter_name">Encounter Name</string>
     <string name="encounter_name_hint">Leave empty for auto-generated name</string>
+    <string name="encounter_create_title">Create Encounter</string>
     <string name="select_actors">Select Actors</string>
+    <string name="select_actors_title">Select Actors</string>
     <string name="no_actors_selected">No actors selected</string>
     <string name="one_actor_selected">1 actor selected</string>
     <string name="x_actors_selected">%d actors selected</string>
@@ -72,6 +81,7 @@
     <string name="how_many_x">How many %s?</string>
     <string name="at_least_one_actor_required">Please select at least one actor</string>
     <string name="no_actors_to_select">No actors in library</string>
+    <string name="no_actors_available">No actors available to add</string>
     <string name="create_actors_first">Create actors first before making an encounter</string>
 
     <!-- Encounter Management Screen -->
@@ -91,6 +101,7 @@
     <!-- Combat Tracker Screen -->
     <string name="combat_tracker">Combat Tracker</string>
     <string name="round">Round</string>
+    <string name="round_number">Round %d</string>
     <string name="previous_turn">Previous Turn</string>
     <string name="next_turn">Next Turn</string>
     <string name="previous_round">Previous Round</string>
@@ -101,9 +112,11 @@
     <string name="add_actor">Add Actor</string>
     <string name="missing_initiative_message">Roll initiative for all actors to begin</string>
     <string name="no_initiative">—</string>
+    <string name="initiative">Initiative</string>
     <string name="initiative_x">Initiative: %s</string>
     <string name="current_x">Current: %s</string>
     <string name="initiative_not_set">Not set</string>
+    <string name="initiative_not_rolled">Not rolled</string>
     <string name="set_initiative">Set Initiative</string>
     <string name="move_left">Move Left</string>
     <string name="move_right">Move Right</string>
@@ -111,6 +124,16 @@
     <string name="save_encounter_menu">Save Encounter</string>
     <string name="load_encounter">Load Encounter</string>
     <string name="end_encounter">End Encounter</string>
+
+    <!-- Turn Management -->
+    <string name="skip_turn">Skip Turn</string>
+    <string name="end_turn">End Turn</string>
+    <string name="actor_turn_skipped">%s\'s turn was skipped</string>
+    <string name="actor_turn_ended">%s\'s turn has ended</string>
+    <string name="actor_turn_skipped_message">%s\'s turn was skipped</string>
+    <string name="actor_turn_ended_message">%s\'s turn has ended</string>
+    <string name="no_active_actor">No active actor</string>
+    <string name="all_actors_have_acted">All actors have acted this round</string>
 
     <!-- Conditions -->
     <string name="conditions">Conditions</string>
@@ -121,6 +144,17 @@
     <string name="x_turns">%d turns</string>
     <string name="apply">Apply</string>
     <string name="invalid_duration">Please enter a duration or select Permanent</string>
+    <string name="condition_icon">Condition icon</string>
+    <string name="no_conditions_applied">No conditions applied</string>
+    <string name="tap_to_add_condition">Tap a condition to apply it</string>
+    <string name="condition_expires_in_x_turns">Expires in %d turns</string>
+    <string name="condition_expires_in">Expires in %d turns</string>
+    <string name="condition_permanent">Permanent condition</string>
+    <string name="condition_is_permanent">Permanent condition</string>
+    <string name="multiple_conditions">%d conditions</string>
+    <string name="duration_turns">%d turns</string>
+    <string name="duration_permanent">Permanent</string>
+    <string name="duration_this_turn">This turn</string>
 
     <!-- D&D Conditions -->
     <string name="condition_blinded">Blinded</string>
@@ -152,6 +186,13 @@
     <string name="total_storage_used">Total storage used: %s</string>
     <string name="portrait_storage_used">Portraits: %s</string>
     <string name="background_storage_used">Backgrounds: %s</string>
+    <string name="calculating_storage">Calculating storage…</string>
+
+    <!-- Preferences -->
+    <string name="preferences">Preferences</string>
+    <string name="default_initiative_modifier">Default Initiative Modifier</string>
+    <string name="auto_roll_initiative">Auto-roll Initiative</string>
+    <string name="confirm_deletions">Confirm Deletions</string>
 
     <!-- Dialogs -->
     <string name="ok">OK</string>
@@ -162,6 +203,15 @@
     <string name="warning">Warning</string>
     <string name="error">Error</string>
     <string name="success">Success</string>
+    <string name="set">Set</string>
+    <string name="done">Done</string>
+    <string name="retry">Retry</string>
+    <string name="skip">Skip</string>
+    <string name="close">Close</string>
+    <string name="remove">Remove</string>
+    <string name="continue_text">Continue</string>
+    <string name="ignore">Ignore</string>
+    <string name="roll">Roll</string>
 
     <!-- Delete Confirmations -->
     <string name="delete_actor_title">Delete Actor?</string>
@@ -189,25 +239,27 @@
     <string name="roll_initiative_title">Roll Initiative</string>
     <string name="roll_all_message">Roll initiative for all actors? This will overwrite existing values.</string>
     <string name="roll_npcs_message">Roll initiative for NPCs only? This will overwrite their existing values.</string>
-    <string name="roll">Roll</string>
+    <string name="confirm_overwrite_initiative">Overwrite Initiative?</string>
+    <string name="confirm_overwrite_initiative_message">This will replace existing initiative values. Continue?</string>
 
     <!-- Other Dialogs -->
     <string name="close_app_title">Close App?</string>
     <string name="close_app_message">Are you sure you want to exit?</string>
-    <string name="close">Close</string>
     <string name="unsaved_changes">Unsaved Changes</string>
     <string name="unsaved_changes_message">You have unsaved changes. Do you want to save before leaving?</string>
     <string name="discard_encounter_title">Discard Encounter?</string>
     <string name="discard_encounter_message">You have selected actors. Are you sure you want to discard this encounter?</string>
     <string name="remove_actor_title">Remove Actor?</string>
     <string name="remove_actor_message">Remove %s from the encounter?</string>
-    <string name="remove">Remove</string>
     <string name="no_actors_title">No Actors</string>
     <string name="no_actors_message">You need at least one actor to create an encounter. Would you like to create one now?</string>
     <string name="active_encounter_title">Active Encounter</string>
     <string name="active_encounter_message">You have an active encounter: %s. Would you like to continue?</string>
-    <string name="continue_text">Continue</string>
-    <string name="ignore">Ignore</string>
+
+    <!-- Quantity Dialog -->
+    <string name="quantity_dialog_title">Set Quantity</string>
+    <string name="quantity_dialog_message">How many %s do you want to add?</string>
+    <string name="quantity_must_be_positive">Quantity must be at least 1</string>
 
     <!-- Error Messages -->
     <string name="generic_error">An unexpected error occurred</string>
@@ -220,14 +272,20 @@
     <string name="failed_to_delete_encounter">Failed to delete encounter</string>
     <string name="encounter_not_found">Encounter not found</string>
     <string name="encounter_corrupted">Failed to load encounter. It may have been deleted or corrupted.</string>
+    <string name="encounter_already_exists">An encounter with this name already exists</string>
     <string name="actor_not_found">Actor not found</string>
     <string name="invalid_initiative">Invalid initiative value</string>
+    <string name="invalid_initiative_value">Invalid initiative value</string>
     <string name="permission_required">Permission required to select images</string>
     <string name="image_too_large">Image file is too large (max 10MB)</string>
     <string name="failed_to_load_image">Failed to load image</string>
+    <string name="error_loading_image">Error loading image</string>
     <string name="cannot_delete_actor_in_use">Cannot delete actor that is used in encounters</string>
+    <string name="cannot_remove_last_actor">Cannot remove the last actor from encounter</string>
     <string name="must_be_number">Must be a number</string>
     <string name="must_be_between_x_and_y">Must be between %1$d and %2$d</string>
+    <string name="invalid_number_format">Invalid number format</string>
+    <string name="value_out_of_range">Value must be between %1$d and %2$d</string>
 
     <!-- Success Messages -->
     <string name="actor_created">Actor created successfully</string>
@@ -238,6 +296,67 @@
     <string name="initiative_set">Initiative set to %s</string>
     <string name="condition_applied">Condition applied</string>
     <string name="condition_removed">Condition removed</string>
+    <string name="changes_saved">Changes saved</string>
+    <string name="changes_discarded">Changes discarded</string>
+    <string name="operation_cancelled">Operation cancelled</string>
+    <string name="portrait_removed">Portrait removed</string>
+
+    <!-- Validation Messages -->
+    <string name="initiative_modifier_range">Initiative modifier must be between -20 and 20</string>
+    <string name="encounter_name_too_long">Encounter name is too long (max 50 characters)</string>
+    <string name="actor_name_too_long">Actor name is too long (max 30 characters)</string>
+    <string name="name_too_short">Name must be at least 2 characters</string>
+
+    <!-- Image Selection -->
+    <string name="select_image_source">Select Image Source</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="portrait_source_camera">Camera</string>
+    <string name="portrait_source_gallery">Gallery</string>
+    <string name="image_selection_cancelled">Image selection cancelled</string>
+    <string name="loading_image">Loading image…</string>
+
+    <!-- Combat State Messages -->
+    <string name="combat_not_started">Combat has not started</string>
+    <string name="all_actors_acted">All actors have acted this round</string>
+    <string name="ready_for_next_round">Ready for next round</string>
+    <string name="encounter_in_progress">Encounter in progress</string>
+    <string name="encounter_paused">Encounter paused</string>
+    <string name="encounter_ended">Encounter ended</string>
+
+    <!-- File Size Messages -->
+    <string name="size_bytes">%d B</string>
+    <string name="size_kb">%.1f KB</string>
+    <string name="size_mb">%.1f MB</string>
+    <string name="size_gb">%.1f GB</string>
+
+    <!-- Loading/Processing Messages -->
+    <string name="loading">Loading…</string>
+    <string name="saving">Saving…</string>
+    <string name="deleting">Deleting…</string>
+    <string name="processing">Processing…</string>
+    <string name="please_wait">Please wait…</string>
+
+    <!-- Sort Options -->
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_category">Category</string>
+    <string name="sort_by_initiative">Initiative Modifier</string>
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
+
+    <!-- Filter Options -->
+    <string name="filter_all">All</string>
+    <string name="filter_players">Players</string>
+    <string name="filter_npcs">NPCs</string>
+    <string name="filter_monsters">Monsters</string>
+    <string name="filter_others">Others</string>
+
+    <!-- Time Formats -->
+    <string name="time_just_now">Just now</string>
+    <string name="time_minutes_ago">%d minutes ago</string>
+    <string name="time_hours_ago">%d hours ago</string>
+    <string name="time_days_ago">%d days ago</string>
+    <string name="time_date_format">MMM d, yyyy</string>
 
     <!-- Accessibility -->
     <string name="actor_portrait">Actor portrait</string>
@@ -245,11 +364,22 @@
     <string name="x_taking_turn">%s is currently taking their turn</string>
     <string name="x_completed_turn">%s has completed their turn</string>
     <string name="x_no_initiative">%s has not rolled initiative</string>
-    <string name="x_has_condition_y">%s has condition: %s</string>
+    <string name="x_has_condition_y">%1$s has condition: %2$s</string>
     <string name="advance_to_next_turn">Advance to next turn</string>
     <string name="go_back_to_previous_turn">Go back to previous turn</string>
     <string name="advance_to_next_round">Advance to next round</string>
     <string name="go_back_to_previous_round">Go back to previous round</string>
+    <string name="add_new_actor">Add new actor</string>
+    <string name="edit_actor_x">Edit %s</string>
+    <string name="delete_actor_x">Delete %s</string>
+    <string name="select_actor_x">Select %s</string>
+    <string name="deselect_actor_x">Deselect %s</string>
+    <string name="set_quantity_for_x">Set quantity for %s</string>
+    <string name="load_encounter_x">Load encounter %s</string>
+    <string name="delete_encounter_x">Delete encounter %s</string>
+    <string name="expand_condition_options">Expand condition options</string>
+    <string name="collapse_condition_options">Collapse condition options</string>
+    <string name="actor_tile_content_description">%1$s, %2$s, Initiative %3$s</string>
 
     <!-- Feature Not Implemented -->
     <string name="feature_coming_soon">%s feature coming soon</string>
@@ -257,6 +387,41 @@
     <string name="add_actor_feature">Add actor</string>
     <string name="move_left_feature">Move left</string>
     <string name="move_right_feature">Move right</string>
+
+    <!-- Actor Context Menu -->
+    <string name="actor_actions">Actor Actions</string>
+    <string name="encounter_management">Encounter Management</string>
+
+    <!-- Navigation -->
+    <string name="back_to_main">Back to Main Menu</string>
+    <string name="back_to_library">Back to Actor Library</string>
+    <string name="back_to_encounters">Back to Encounters</string>
+
+    <!-- Batch Operations -->
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
+    <string name="selected_count">%d selected</string>
+
+    <!-- Help/Info -->
+    <string name="help">Help</string>
+    <string name="about">About</string>
+    <string name="version">Version %s</string>
+
+    <!-- Network/Sync (future use) -->
+    <string name="offline_mode">Offline Mode</string>
+    <string name="sync_disabled">Sync Disabled</string>
+
+    <!-- Tooltips -->
+    <string name="tooltip_initiative_modifier">Modifier added to d20 roll</string>
+    <string name="tooltip_permanent_condition">Condition lasts until manually removed</string>
+    <string name="tooltip_condition_duration">Number of actor turns</string>
+
+    <!-- Format Strings -->
+    <string name="initiative_modifier_display">%+d</string>
+    <string name="initiative_decimal_format">%.1f</string>
+    <string name="format_actor_count">%d actor(s)</string>
+    <string name="format_round_count">Round %d</string>
+    <string name="format_turn_count">Turn %d</string>
 
     <!-- Auto-generated Names -->
     <string name="enc_save_prefix">ENCsave_</string>
@@ -270,4 +435,7 @@
     <string name="action_add_actor">Add Actor</string>
     <string name="action_save_encounter">Save Encounter</string>
     <string name="action_create_new">Create New</string>
+
+    <!-- Special System String -->
+    <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
 </resources>

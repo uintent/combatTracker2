@@ -5,7 +5,6 @@ package com.example.combattracker.ui.combat
 
 import androidx.appcompat.app.AlertDialog
 import com.example.combattracker.utils.toast
-saveEncounter()
 import com.example.combattracker.utils.navigateToEncounterList
 import com.example.combattracker.utils.showEndEncounterDialog
 

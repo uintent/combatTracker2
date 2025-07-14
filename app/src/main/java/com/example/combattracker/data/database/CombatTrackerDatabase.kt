@@ -113,6 +113,36 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
         }
 
         /**
+         * Pre-populate the conditions table with D&D conditions
+         *
+         * @param conditionDao The condition DAO
+         */
+        private suspend fun populateConditions(conditionDao: ConditionDao) {
+            // Create all 15 D&D conditions from the enum
+            val conditions = ConditionType.values().map { type ->
+                Condition(
+                    id = type.id,
+                    name = type.displayName,
+                    description = type.description,
+                    iconResource = type.iconResource,
+                    displayOrder = type.ordinal + 1,
+                    isEnabled = true
+                )
+            }
+
+            // Insert all conditions
+            conditionDao.insertAllConditions(conditions)
+
+            Timber.d("Inserted ${conditions.size} conditions into database")
+
+            // Verify insertion
+            val count = conditionDao.getConditionCount()
+            if (count != conditions.size) {
+                Timber.w("Expected ${conditions.size} conditions, but found $count")
+            }
+        }
+
+        /**
          * Database callback for initialization
          * Pre-populates conditions on first creation
          */
@@ -139,36 +169,6 @@ abstract class CombatTrackerDatabase : RoomDatabase() {
                             Timber.e(e, "Failed to pre-populate conditions")
                         }
                     }
-                }
-            }
-
-            /**
-             * Pre-populate the conditions table with D&D conditions
-             *
-             * @param conditionDao The condition DAO
-             */
-            private suspend fun populateConditions(conditionDao: ConditionDao) {
-                // Create all 15 D&D conditions from the enum
-                val conditions = ConditionType.values().map { type ->
-                    Condition(
-                        id = type.id,
-                        name = type.displayName,
-                        description = type.description,
-                        iconResource = type.iconResource,
-                        displayOrder = type.ordinal + 1,
-                        isEnabled = true
-                    )
-                }
-
-                // Insert all conditions
-                conditionDao.insertAllConditions(conditions)
-
-                Timber.d("Inserted ${conditions.size} conditions into database")
-
-                // Verify insertion
-                val count = conditionDao.getConditionCount()
-                if (count != conditions.size) {
-                    Timber.w("Expected ${conditions.size} conditions, but found $count")
                 }
             }
         }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Roll Initiative submenu -->
+    <item
+        android:id="@+id/action_roll_initiative"
+        android:title="@string/roll_initiative"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/action_roll_all"
+                android:title="@string/action_roll_all" />
+            <item
+                android:id="@+id/action_roll_npcs"
+                android:title="@string/action_roll_npcs" />
+        </menu>
+    </item>
+
+    <!-- Add Actor -->
+    <item
+        android:id="@+id/action_add_actor"
+        android:title="@string/action_add_actor"
+        app:showAsAction="never" />
+
+    <!-- Save Encounter -->
+    <item
+        android:id="@+id/action_save_encounter"
+        android:title="@string/action_save_encounter"
+        app:showAsAction="never" />
+
+</menu>

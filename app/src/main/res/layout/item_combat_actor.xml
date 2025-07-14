@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <!-- Portrait container with 1:1.5 aspect ratio -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/portraitCard"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <!-- Actor portrait with 1:1.5 aspect ratio -->
+            <ImageView
+                android:id="@+id/imagePortrait"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1.5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:contentDescription="@string/actor_portrait_of_x"
+                tools:src="@drawable/placeholder_monster" />
+
+            <!-- Overlay for completed turn (grey) -->
+            <View
+                android:id="@+id/completedOverlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#80000000"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Overlay for missing initiative (red) -->
+            <View
+                android:id="@+id/missingInitiativeOverlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#80FF0000"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Overlay for context menu open (green) -->
+            <View
+                android:id="@+id/contextMenuOverlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#8000FF00"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Conditions container -->
+            <LinearLayout
+                android:id="@+id/conditionsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <!-- Conditions will be added dynamically here -->
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Actor name below portrait -->
+    <TextView
+        android:id="@+id/textActorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/name_background"
+        android:maxWidth="120dp"
+        android:padding="4dp"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?attr/colorOnPrimary"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="Goblin Warrior 1" />
+
+</FrameLayout>

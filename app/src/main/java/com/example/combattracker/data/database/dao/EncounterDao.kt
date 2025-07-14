@@ -115,7 +115,7 @@ interface EncounterDao {
      *
      * @return Flow of all encounters
      */
-    @Query("SELECT * FROM encounters ORDER BY modifiedDate DESC")
+    @Query("SELECT * FROM encounters ORDER BY lastModifiedDate DESC")
     fun getAllEncounters(): Flow<List<Encounter>>
 
     /**
@@ -124,14 +124,16 @@ interface EncounterDao {
      *
      * @return Flow of encounters with additional metadata
      */
-    @Query("""
+    @Query(
+        """
         SELECT e.*, 
                COUNT(DISTINCT ea.id) as actorCount
         FROM encounters e
         LEFT JOIN encounter_actors ea ON e.id = ea.encounterId
         GROUP BY e.id
-        ORDER BY e.modifiedDate DESC
-    """)
+        ORDER BY lastModifiedDate DESC
+    """
+    )
     fun getAllEncountersWithActorCount(): Flow<List<EncounterWithCount>>
 
     /**
@@ -150,7 +152,9 @@ interface EncounterDao {
      * @param encounterId The encounter ID
      * @return List of actors in the encounter with base actor details
      */
-    @Query("""
+    @Transaction
+    @Query(
+        """
         SELECT ea.*, a.* 
         FROM encounter_actors ea
         INNER JOIN actors a ON ea.baseActorId = a.id
@@ -160,7 +164,9 @@ interface EncounterDao {
             ea.initiative DESC,
             ea.tieBreakOrder ASC,
             ea.addedOrder ASC
-    """)
+    """
+    )
+    @RewriteQueriesToDropUnusedColumns
     suspend fun getEncounterActorsWithDetails(encounterId: Long): List<EncounterActorWithActor>
 
     /**
@@ -181,14 +187,18 @@ interface EncounterDao {
      * @param encounterId The encounter ID
      * @return Map of actor ID to their conditions
      */
-    @Query("""
+    @Transaction
+    @Query(
+        """
         SELECT ac.*, c.*
         FROM actor_conditions ac
         INNER JOIN conditions c ON ac.conditionId = c.id
         INNER JOIN encounter_actors ea ON ac.encounterActorId = ea.id
         WHERE ea.encounterId = :encounterId
         ORDER BY ac.appliedAt DESC
-    """)
+    """
+    )
+    @RewriteQueriesToDropUnusedColumns
     suspend fun getEncounterConditions(encounterId: Long): List<ActorConditionWithDetails>
 
     // ========== Actor Condition Operations ==========
@@ -233,14 +243,16 @@ interface EncounterDao {
      * @param encounterId The encounter to clean
      * @return Number of conditions removed
      */
-    @Query("""
+    @Query(
+        """
         DELETE FROM actor_conditions
         WHERE encounterActorId IN (
             SELECT id FROM encounter_actors WHERE encounterId = :encounterId
         )
         AND isPermanent = 0 
         AND remainingDuration <= 0
-    """)
+    """
+    )
     suspend fun deleteExpiredConditions(encounterId: Long): Int
 
     /**
@@ -249,13 +261,17 @@ interface EncounterDao {
      * @param encounterActorId The actor to check
      * @return List of active conditions with details
      */
-    @Query("""
+    @Transaction
+    @Query(
+        """
         SELECT ac.*, c.*
         FROM actor_conditions ac
         INNER JOIN conditions c ON ac.conditionId = c.id
         WHERE ac.encounterActorId = :encounterActorId
         ORDER BY ac.appliedAt DESC
-    """)
+    """
+    )
+    @RewriteQueriesToDropUnusedColumns
     suspend fun getActorConditions(encounterActorId: Long): List<ActorConditionWithDetails>
 
     // ========== Utility Queries ==========
@@ -267,10 +283,12 @@ interface EncounterDao {
      * @param excludeId Encounter ID to exclude (for editing)
      * @return True if name is taken
      */
-    @Query("""
+    @Query(
+        """
         SELECT COUNT(*) > 0 FROM encounters 
         WHERE name = :name AND id != :excludeId
-    """)
+    """
+    )
     suspend fun isEncounterNameTaken(name: String, excludeId: Long = -1): Boolean
 
     /**
@@ -281,12 +299,14 @@ interface EncounterDao {
      * @param baseActorId The base actor being added
      * @return Highest instance number or 0 if none exist
      */
-    @Query("""
+    @Query(
+        """
         SELECT MAX(instanceNumber) 
         FROM encounter_actors 
         WHERE encounterId = :encounterId 
         AND baseActorId = :baseActorId
-    """)
+    """
+    )
     suspend fun getHighestInstanceNumber(encounterId: Long, baseActorId: Long): Int?
 
     /**
@@ -294,8 +314,9 @@ interface EncounterDao {
      *
      * @return Number of active encounters
      */
-    @Query("SELECT COUNT(*) FROM encounters WHERE isStarted = 1 AND isCompleted = 0")
+    @Query("SELECT COUNT(*) FROM encounters WHERE currentRound > 0 AND isActive = 1")
     suspend fun getActiveEncounterCount(): Int
+
 }
 
 // ========== Data Classes for Complex Queries ==========
@@ -343,4 +364,3 @@ data class EncounterWithFullDetails(
     )
     val conditions: List<ActorConditionWithDetails>
 )
-

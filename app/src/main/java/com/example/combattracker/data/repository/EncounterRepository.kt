@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import com.example.combattracker.data.database.dao.EncounterWithCount
+import com.example.combattracker.data.database.dao.EncounterActorWithActor
 
 /**
  * EncounterRepository - Business logic layer for encounter management
@@ -259,8 +261,8 @@ class EncounterRepository(
             // Update encounter state
             val updatedEncounter = encounter.copy(
                 currentRound = currentRound,
-                activeActorId = activeActorId,
-                isStarted = true
+                currentActorId = currentActorId,
+                isActive = true,
             ).withUpdatedTimestamp()
 
             encounterDao.updateEncounter(updatedEncounter)

@@ -502,3 +502,44 @@ fun Int.clamp(min: Int, max: Int): Int {
 fun Float.clamp(min: Float, max: Float): Float {
     return coerceIn(min, max)
 }
+
+// Add these extension functions to your Extensions.kt file in the Activity Extensions section
+
+/**
+ * Navigate to encounter list activity
+ */
+fun Activity.navigateToEncounterList() {
+    val intent = Intent(this, com.example.combattracker.ui.encounter.EncounterManageActivity::class.java)
+    startActivity(intent)
+}
+
+/**
+ * Show end encounter dialog
+ */
+fun Activity.showEndEncounterDialog() {
+    androidx.appcompat.app.AlertDialog.Builder(this)
+        .setTitle(Constants.Dialogs.END_ENCOUNTER_TITLE)
+        .setMessage(Constants.Dialogs.END_ENCOUNTER_MESSAGE)
+        .setPositiveButton(Constants.Dialogs.END_ENCOUNTER_SAVE) { _, _ ->
+            // This should be handled by the activity
+            if (this is com.example.combattracker.ui.combat.CombatTrackerActivity) {
+                saveEncounter()
+                finish()
+            }
+        }
+        .setNegativeButton(Constants.Dialogs.END_ENCOUNTER_DISCARD) { _, _ ->
+            finish()
+        }
+        .setNeutralButton(Constants.Dialogs.BUTTON_CANCEL, null)
+        .show()
+}
+
+/**
+ * Show save encounter dialog
+ */
+fun Activity.showSaveEncounterDialog() {
+    // This should be implemented in the specific activity since it needs access to viewModel
+    if (this is com.example.combattracker.ui.combat.CombatTrackerActivity) {
+        saveEncounter()
+    }
+}

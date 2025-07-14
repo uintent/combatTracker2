@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: view_condition_icon.xml -->
+<!-- Location: app/src/main/res/layout/view_condition_icon.xml -->
+<!-- Purpose: Small condition icon displayed on actor portraits -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_margin="2dp">
+
+    <!-- Background circle -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/condition_icon_background" />
+
+    <!-- Condition icon -->
+    <ImageView
+        android:id="@+id/imageCondition"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/condition_icon"
+        android:scaleType="fitCenter"
+        android:tint="?attr/colorOnSurface"
+        tools:src="@drawable/ic_condition_poisoned" />
+
+</FrameLayout>

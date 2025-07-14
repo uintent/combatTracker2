@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: condition_icon_background.xml -->
+<!-- Location: app/src/main/res/drawable/condition_icon_background.xml -->
+<!-- Purpose: Circular background for condition icons on actor portraits -->
+
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- White background -->
+    <solid android:color="@color/white" />
+
+    <!-- Subtle border -->
+    <stroke
+        android:width="0.5dp"
+        android:color="#20000000" />
+
+</shape>

@@ -30,6 +30,7 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.example.combattracker.utils.visibleIf
+import android.provider.MediaStore
 
 /**
  * ActorEditActivity - Create or edit an actor
@@ -56,6 +57,15 @@ class ActorEditActivity : AppCompatActivity() {
             (application as CombatTrackerApplication).actorRepository,
             intent.getLongExtra(Constants.Extras.ACTOR_ID, -1L)
         )
+    }
+
+    private fun getPlaceholderForCategory(category: ActorCategory?): Int {
+        return when (category ?: ActorCategory.OTHER) {
+            ActorCategory.PLAYER -> R.drawable.placeholder_player
+            ActorCategory.NPC -> R.drawable.placeholder_npc
+            ActorCategory.MONSTER -> R.drawable.placeholder_monster
+            ActorCategory.OTHER -> R.drawable.placeholder_other
+        }
     }
 
     /**
@@ -416,4 +426,36 @@ class ActorEditActivity : AppCompatActivity() {
             .setPositiveButton(Constants.Dialogs.BUTTON_OK, null)
             .show()
     }
+
+    private fun setupPortraitPicker() {
+        binding.buttonSelectPortrait.setOnClickListener {
+            // Launch image picker
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, Constants.RequestCodes.PICK_IMAGE)
+        }
+
+        binding.buttonRemovePortrait.setOnClickListener {
+            // Remove portrait
+            viewModel.removePortrait()
+            // Get current category from the spinner
+            val selectedPosition = binding.spinnerCategory.selectedItemPosition
+            val category = if (selectedPosition >= 0) {
+                ActorCategory.values()[selectedPosition]
+            } else {
+                ActorCategory.OTHER
+            }
+            binding.imagePortrait.setImageResource(getPlaceholderForCategory(category))
+            binding.buttonRemovePortrait.gone()
+        }
+    }
+
+    private fun getPlaceholderForCategory(category: ActorCategory?): Int {
+        return when (category ?: ActorCategory.OTHER) {
+            ActorCategory.PLAYER -> R.drawable.placeholder_player
+            ActorCategory.NPC -> R.drawable.placeholder_npc
+            ActorCategory.MONSTER -> R.drawable.placeholder_monster
+            ActorCategory.OTHER -> R.drawable.placeholder_other
+        }
+    }
+
 }

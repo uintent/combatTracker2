@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.combat.CombatTrackerActivity">
+
+    <!-- Background image -->
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <!-- Main content -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/combatContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Round counter -->
+        <TextView
+            android:id="@+id/textRound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_background"
+            android:padding="12dp"
+            android:text="@string/round_x"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textColor="?attr/colorOnPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tools:text="Round 1" />
+
+        <!-- Missing initiative warning -->
+        <TextView
+            android:id="@+id/textMissingInitiative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/error_background"
+            android:padding="8dp"
+            android:text="@string/missing_initiative_message"
+            android:textColor="@color/error_text"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textRound"
+            tools:visibility="visible" />
+
+        <!-- Actor RecyclerView container -->
+        <FrameLayout
+            android:id="@+id/actorContainer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/turnControlsContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textMissingInitiative">
+
+            <!-- Horizontal RecyclerView for actors -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewActors"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_combat_actor" />
+
+        </FrameLayout>
+
+        <!-- Turn controls container -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/turnControlsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Previous controls -->
+            <LinearLayout
+                android:id="@+id/previousControls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonPreviousTurn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/go_back_to_previous_turn"
+                    android:text="@string/previous_turn"
+                    app:icon="@drawable/ic_arrow_left" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonPreviousRound"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/go_back_to_previous_round"
+                    android:text="@string/previous_round"
+                    app:icon="@drawable/ic_skip_previous" />
+
+            </LinearLayout>
+
+            <!-- Next controls -->
+            <LinearLayout
+                android:id="@+id/nextControls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonNextTurn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/advance_to_next_turn"
+                    android:text="@string/next_turn"
+                    app:icon="@drawable/ic_arrow_right"
+                    app:iconGravity="end" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonNextRound"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/advance_to_next_round"
+                    android:text="@string/next_round"
+                    app:icon="@drawable/ic_skip_next"
+                    app:iconGravity="end" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Loading indicator -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Bottom sheet container for actor context menu -->
+    <FrameLayout
+        android:id="@+id/bottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:elevation="8dp"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

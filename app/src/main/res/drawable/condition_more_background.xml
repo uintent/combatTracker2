@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: condition_more_background.xml -->
+<!-- Location: app/src/main/res/drawable/condition_more_background.xml -->
+<!-- Purpose: Circular background for "+X" more conditions indicator -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Light gray background -->
+    <solid android:color="#E0E0E0" />
+
+    <!-- Subtle border -->
+    <stroke
+        android:width="0.5dp"
+        android:color="#40000000" />
+
+</shape>

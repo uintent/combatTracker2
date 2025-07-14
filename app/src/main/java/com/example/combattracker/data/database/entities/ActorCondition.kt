@@ -257,26 +257,3 @@ data class ActorConditionWithDetails(
     )
     val condition: Condition
 )
-
-// Add to ActorCondition.kt or create a separate file
-data class ActorConditionWithDetails(
-    @Embedded val actorCondition: ActorCondition,
-    @Relation(
-        parentColumn = "conditionId",
-        entityColumn = "id"
-    )
-    val condition: Condition
-)
-
-/**
- * Data class for condition with full details
- * Used in UI to avoid multiple database queries
- */
-data class ActorConditionWithDetails(
-    @Embedded val actorCondition: ActorCondition,
-    @Relation(
-        parentColumn = "conditionId",
-        entityColumn = "id"
-    )
-    val condition: Condition
-)

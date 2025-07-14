@@ -358,6 +358,9 @@ dependencies {
      */
     implementation("androidx.preference:preference-ktx:1.2.1")
 
+    // Gson for JSON serialization (used by Room converters)
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // ========== Testing Dependencies ==========
 
     /**
@@ -384,10 +387,4 @@ dependencies {
      */
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
-    // Glide for image loading
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    kapt 'com.github.bumptech.glide:compiler:4.12.0'
-
-    // Material Components
-    implementation 'com.google.android.material:material:1.9.0'
 }
