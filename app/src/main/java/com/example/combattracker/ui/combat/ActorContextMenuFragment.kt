@@ -10,8 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -19,7 +18,14 @@ import com.example.combattracker.R
 import com.example.combattracker.data.model.ConditionType
 import com.example.combattracker.databinding.BottomSheetActorContextBinding
 import com.example.combattracker.databinding.ItemConditionBinding
-import com.example.combattracker.utils.*
+import com.example.combattracker.utils.Constants
+import com.example.combattracker.utils.InitiativeCalculator
+import com.example.combattracker.utils.formatInitiative
+import com.example.combattracker.utils.isPlayerInitiative
+import com.example.combattracker.utils.gone
+import com.example.combattracker.utils.toast
+import com.example.combattracker.utils.visible
+import com.example.combattracker.utils.visibleIf
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
 
@@ -138,12 +144,12 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Move buttons (only for tied players)
         binding.buttonMoveLeft.setOnClickListener {
             // TODO: Implement tie-breaking movement
-            toast("Move left not yet implemented")
+            requireContext().toast("Move left not yet implemented")
         }
 
         binding.buttonMoveRight.setOnClickListener {
             // TODO: Implement tie-breaking movement
-            toast("Move right not yet implemented")
+            requireContext().toast("Move right not yet implemented")
         }
     }
 
@@ -218,20 +224,20 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
      */
     private fun setupEncounterActions() {
         binding.buttonSaveEncounter.setOnClickListener {
-            // This would trigger save in the parent activity
-            requireActivity().showSaveEncounterDialog()
+            // Notify parent activity to show save dialog
+            setFragmentResult(RESULT_SAVE_ENCOUNTER, bundleOf())
             dismiss()
         }
 
         binding.buttonLoadEncounter.setOnClickListener {
-            // This would navigate to encounter list
-            requireActivity().navigateToEncounterList()
+            // Notify parent activity to navigate to encounter list
+            setFragmentResult(RESULT_ADD_ACTOR, bundleOf())
             dismiss()
         }
 
         binding.buttonEndEncounter.setOnClickListener {
-            // This would show end encounter dialog
-            requireActivity().showEndEncounterDialog()
+            // Notify parent activity to show end encounter dialog
+            setFragmentResult(RESULT_END_ENCOUNTER, bundleOf())
             dismiss()
         }
     }
@@ -244,14 +250,14 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
         // Update initiative
         binding.textCurrentInitiative.text = if (actor.initiative != null) {
-            "Current: ${InitiativeCalculator.formatInitiative(actor.initiative, showDecimals = true)}"
+            "Current: ${formatInitiative(actor.initiative, showDecimals = true)}"
         } else {
             getString(R.string.current_x, getString(R.string.initiative_not_set))
         }
 
         // Show/hide move buttons based on tie status
         val canReorder = actor.initiative != null &&
-                InitiativeCalculator.isPlayerInitiative(actor.initiative) &&
+                isPlayerInitiative(actor.initiative) &&
                 checkIfTied(actor)
 
         binding.buttonMoveLeft.visibleIf(canReorder)
@@ -293,7 +299,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             "initiative" to initiative
         ))
 
-        toast("Initiative set to $initiative")
+        requireContext().toast("Initiative set to $initiative")
         binding.editTextInitiative.setText("")
     }
 
@@ -301,7 +307,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         val duration = if (isPermanent) null else durationText.toIntOrNull()
 
         if (!isPermanent && duration == null) {
-            toast("Please enter a duration or select Permanent")
+            requireContext().toast("Please enter a duration or select Permanent")
             return
         }
 
@@ -330,7 +336,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         AlertDialog.Builder(requireContext())
             .setTitle("Remove Actor?")
             .setMessage("Remove ${currentActor?.displayName} from the encounter?")
-            .setPositiveButton("Remove") { _, _ ->
+            .setPositiveButton("Remove") { dialog, which ->
                 combatViewModel.removeActor(actorId)
                 setFragmentResult(RESULT_ACTOR_REMOVED, bundleOf("actor_id" to actorId))
                 dismiss()
@@ -370,12 +376,13 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
     private fun getConditionIconResource(conditionType: ConditionType): Int {
         // Map condition types to drawable resources
+        // Note: Some resource names have typos in them
         return when (conditionType) {
             ConditionType.BLINDED -> R.drawable.ic_condition_blinded
             ConditionType.CHARMED -> R.drawable.ic_condition_charmed
             ConditionType.DEAFENED -> R.drawable.ic_condition_deafened
             ConditionType.EXHAUSTION -> R.drawable.ic_condition_exhaustion
-            ConditionType.FRIGHTENED -> R.drawable.ic_condition_frightened
+            ConditionType.FRIGHTENED -> R.drawable.ic_condition_freightened  // Note the typo in resource name
             ConditionType.GRAPPLED -> R.drawable.ic_condition_grappled
             ConditionType.INCAPACITATED -> R.drawable.ic_condition_incapacitated
             ConditionType.INVISIBLE -> R.drawable.ic_condition_invisible

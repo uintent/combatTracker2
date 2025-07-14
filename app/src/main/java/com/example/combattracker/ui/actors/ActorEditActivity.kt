@@ -449,13 +449,4 @@ class ActorEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun getPlaceholderForCategory(category: ActorCategory?): Int {
-        return when (category ?: ActorCategory.OTHER) {
-            ActorCategory.PLAYER -> R.drawable.placeholder_player
-            ActorCategory.NPC -> R.drawable.placeholder_npc
-            ActorCategory.MONSTER -> R.drawable.placeholder_monster
-            ActorCategory.OTHER -> R.drawable.placeholder_other
-        }
-    }
-
 }

@@ -96,10 +96,13 @@ class ActorLibraryViewModel(
                         .map { actors -> sortActors(actors, sort) }
                 } else {
                     // Multiple categories - combine flows
-                    combine(categories.map { category ->
+                    val categoryFlows = categories.map { category ->
                         actorRepository.getActorsByCategory(category)
-                    }) { actorLists ->
-                        actorLists.flatten()
+                    }
+
+                    combine(categoryFlows) { actorArrays ->
+                        // Flatten the array of lists into a single list
+                        actorArrays.flatMap { it }.distinctBy { it.id }
                     }.map { actors -> sortActors(actors, sort) }
                 }
             }
