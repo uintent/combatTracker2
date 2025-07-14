@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.combattracker.R
+import com.example.combattracker.data.model.ActorCategory
 import com.example.combattracker.databinding.ItemActorSelectionBinding
 import com.example.combattracker.utils.*
 
