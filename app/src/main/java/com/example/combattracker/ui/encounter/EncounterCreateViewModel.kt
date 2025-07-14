@@ -129,6 +129,54 @@ class EncounterCreateViewModel(
     }
 
     /**
+     * Get the total count of actors (including quantities)
+     */
+    fun getTotalActorCount(): Int {
+        return _selectedActors.value?.values?.sum() ?: 0
+    }
+
+    /**
+     * Get selected actors as a list with quantities
+     */
+    fun getSelectedActorsList(): List<ActorWithQuantity> {
+        val selected = _selectedActors.value ?: return emptyList()
+        val actorsList = mutableListOf<ActorWithQuantity>()
+
+        // We need to get the actual actor objects
+        // This is a workaround - ideally we'd have a better way to access actors
+        viewModelScope.launch {
+            actorRepository.getAllActors().collect { allActors ->
+                selected.forEach { (actorId, quantity) ->
+                    allActors.find { it.id == actorId }?.let { actor ->
+                        actorsList.add(ActorWithQuantity(actor, quantity))
+                    }
+                }
+            }
+        }
+
+        // For now, return empty list and use a different approach
+        // We'll need to modify this to work with the current actors flow
+        return emptyList()
+    }
+
+    /**
+     * Get selected actors as a list with quantities (synchronous version)
+     * This requires having access to the current actors list
+     */
+    fun getSelectedActorsListSync(currentActors: List<ActorSelectionState>): List<ActorWithQuantity> {
+        val selected = _selectedActors.value ?: return emptyList()
+        val actorsList = mutableListOf<ActorWithQuantity>()
+
+        selected.forEach { (actorId, quantity) ->
+            currentActors.find { it.actor.id == actorId }?.let { state ->
+                actorsList.add(ActorWithQuantity(state.actor, quantity))
+            }
+        }
+
+        return actorsList
+    }
+
+    /**
      * Save the encounter
      *
      * @param startImmediately Whether to start combat immediately after saving
@@ -200,5 +248,13 @@ class EncounterCreateViewModel(
 data class ActorSelectionState(
     val actor: Actor,
     val isSelected: Boolean,
+    val quantity: Int
+)
+
+/**
+ * Data class to hold actor with its quantity (for selected actors display)
+ */
+data class ActorWithQuantity(
+    val actor: Actor,
     val quantity: Int
 )

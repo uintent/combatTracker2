@@ -48,7 +48,8 @@
             android:name=".ui.encounter.EncounterCreateActivity"
             android:label="Create Encounter"
             android:parentActivityName=".ui.main.MainActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateVisible" />
 
         <activity
             android:name=".ui.encounter.EncounterManageActivity"

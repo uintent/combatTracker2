@@ -16,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.combattracker.CombatTrackerApplication
 import com.example.combattracker.R
@@ -23,7 +24,6 @@ import com.example.combattracker.data.database.entities.Actor
 import com.example.combattracker.databinding.ActivityEncounterCreateBinding
 import com.example.combattracker.databinding.DialogActorQuantityBinding
 import com.example.combattracker.ui.combat.CombatTrackerActivity
-import com.example.combattracker.ui.encounter.ActorSelectionAdapter
 import com.example.combattracker.utils.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -59,6 +59,8 @@ class EncounterCreateActivity : AppCompatActivity() {
     }
 
     private lateinit var actorSelectionAdapter: ActorSelectionAdapter
+    private lateinit var selectedActorsAdapter: SelectedActorsAdapter
+    private var isAddingActors = false
 
     // ========== Lifecycle Methods ==========
 
@@ -99,6 +101,13 @@ class EncounterCreateActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        // If adding actors, hide the selection first
+        if (isAddingActors) {
+            hideActorSelection()
+            return
+        }
+
+        // Otherwise check if we should discard
         if (viewModel.hasSelectedActors()) {
             showDiscardDialog()
         } else {
@@ -124,7 +133,9 @@ class EncounterCreateActivity : AppCompatActivity() {
      */
     private fun setupViews() {
         setupNameInput()
-        setupActorList()
+        setupAddActorButton()
+        setupSelectedActorsList()
+        setupActorSelectionList()
         setupButtons()
     }
 
@@ -145,26 +156,61 @@ class EncounterCreateActivity : AppCompatActivity() {
     }
 
     /**
-     * Setup actor selection list
+     * Setup add actor button
      */
-    private fun setupActorList() {
-        actorSelectionAdapter = ActorSelectionAdapter(
-            onActorChecked = { state, isChecked ->
-                if (isChecked) {
-                    showQuantityDialog(state.actor)
-                } else {
-                    viewModel.removeActor(state.actor.id)
-                }
+    private fun setupAddActorButton() {
+        binding.buttonAddActor.setOnClickListener {
+            if (isAddingActors) {
+                hideActorSelection()
+            } else {
+                showActorSelection()
+            }
+        }
+
+        // Set initial text
+        updateAddActorButtonText()
+    }
+    /**
+     * Setup selected actors list (the ones already added to encounter)
+     */
+    private fun setupSelectedActorsList() {
+        selectedActorsAdapter = SelectedActorsAdapter(
+            onQuantityClick = { actor ->
+                showQuantityDialog(actor)
             },
-            onQuantityClick = { state ->
-                showQuantityDialog(state.actor)
+            onRemoveClick = { actor ->
+                viewModel.removeActor(actor.id)
             }
         )
 
+        binding.recyclerViewSelectedActors.apply {
+            adapter = selectedActorsAdapter
+            layoutManager = LinearLayoutManager(this@EncounterCreateActivity)
+            setHasFixedSize(false)
+        }
+    }
+
+    /**
+     * Setup actor selection list (available actors from library)
+     */
+    private fun setupActorSelectionList() {
+        actorSelectionAdapter = ActorSelectionAdapter(
+            onActorChecked = { state, isChecked ->
+                // When an actor is selected from the library, add it with quantity dialog
+                if (isChecked) {
+                    showQuantityDialog(state.actor)
+                    // Uncheck after adding
+                    actorSelectionAdapter.uncheckActor(state.actor.id)
+                }
+            },
+            onQuantityClick = { state ->
+                // This shouldn't be used in selection mode
+            }
+        )
 
         binding.recyclerViewActors.apply {
             adapter = actorSelectionAdapter
-            layoutManager = LinearLayoutManager(this@EncounterCreateActivity)
+            layoutManager = GridLayoutManager(this@EncounterCreateActivity, 3)
             setHasFixedSize(true)
         }
     }
@@ -182,22 +228,68 @@ class EncounterCreateActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Show actor selection UI
+     */
+    private fun showActorSelection() {
+        isAddingActors = true
+        binding.textAvailableActors.visible()
+        binding.recyclerViewActors.visible()
+        binding.divider.visible()
+        binding.buttonAddActor.text = "Done"
+
+        // Scroll to show the actor selection
+        binding.scrollView.post {
+            binding.scrollView.smoothScrollTo(0, binding.divider.top)
+        }
+    }
+
+    private fun updateAddActorButtonText() {
+        val hasActors = viewModel.hasSelectedActors()
+        binding.buttonAddActor.text = when {
+            isAddingActors -> "Done"
+            hasActors -> "Add / Remove Actors"
+            else -> "Add Actors"
+        }
+    }
+
+    /**
+     * Hide actor selection UI
+     */
+    private fun hideActorSelection() {
+        isAddingActors = false
+        binding.textAvailableActors.gone()
+        binding.recyclerViewActors.gone()
+        updateAddActorButtonText()
+    }
+
     // ========== ViewModel Observation ==========
 
     /**
      * Observe ViewModel state
      */
     private fun observeViewModel() {
-        // Observe actors list
+        // Observe all actors from library
         lifecycleScope.launch {
             viewModel.actors.collectLatest { actors ->
                 actorSelectionAdapter.submitList(actors)
-                updateEmptyState(actors.isEmpty())
+
+                // If no actors in library, show empty state
+                if (actors.isEmpty() && !viewModel.hasSelectedActors()) {
+                    binding.emptyStateLayout.visible()
+                    binding.recyclerViewSelectedActors.gone()
+                    binding.textEmptyMessage.text = "No actors in library"
+                    binding.textEmptySubMessage.text = "Create actors first before making an encounter"
+                    binding.buttonAddActor.isEnabled = false
+                } else {
+                    binding.buttonAddActor.isEnabled = true
+                }
             }
         }
 
-        // Observe selected actors
+        // Observe selected actors for this encounter
         viewModel.selectedActors.observe(this) { selected ->
+            updateSelectedActorsList(selected)
             updateSelectedCount(selected.size)
             invalidateOptionsMenu()
         }
@@ -230,26 +322,37 @@ class EncounterCreateActivity : AppCompatActivity() {
     }
 
     /**
-     * Update empty state
+     * Update the selected actors list
      */
-    private fun updateEmptyState(isEmpty: Boolean) {
-        binding.emptyStateLayout.visibleIf(isEmpty)
-        binding.recyclerViewActors.visibleIf(!isEmpty)
+    private fun updateSelectedActorsList(selectedActors: Map<Long, Int>) {
+        if (selectedActors.isEmpty()) {
+            binding.emptyStateLayout.visible()
+            binding.recyclerViewSelectedActors.gone()
+            binding.textEmptyMessage.text = "No actors added yet"
+            binding.textEmptySubMessage.text = "Tap 'Add Actors' to add actors to this encounter"
+        } else {
+            binding.emptyStateLayout.gone()
+            binding.recyclerViewSelectedActors.visible()
 
-        if (isEmpty) {
-            binding.textEmptyMessage.text = "No actors in library"
-            binding.textEmptySubMessage.text = "Create actors first before making an encounter"
+            // Convert selected actors map to list for adapter
+            val currentActors = actorSelectionAdapter.currentList
+            val selectedActorsList = viewModel.getSelectedActorsListSync(currentActors)
+            selectedActorsAdapter.submitList(selectedActorsList)
         }
+
+        // Update button text based on state
+        updateAddActorButtonText()
     }
 
     /**
      * Update selected actor count
      */
     private fun updateSelectedCount(count: Int) {
-        binding.textSelectedCount.text = when (count) {
-            0 -> "No actors selected"
-            1 -> "1 actor selected"
-            else -> "$count actors selected"
+        val totalActors = viewModel.getTotalActorCount()
+        binding.textSelectedCount.text = when {
+            count == 0 -> "No actors selected"
+            totalActors == 1 -> "1 actor selected"
+            else -> "$totalActors actors selected ($count unique)"
         }
 
         // Enable/disable buttons
@@ -281,6 +384,11 @@ class EncounterCreateActivity : AppCompatActivity() {
             .setPositiveButton("OK") { _, _ ->
                 val quantity = dialogBinding.numberPicker.value
                 viewModel.setActorQuantity(actor, quantity)
+
+                // Hide actor selection if we were adding
+                if (isAddingActors) {
+                    hideActorSelection()
+                }
             }
             .setNegativeButton("Remove") { _, _ ->
                 viewModel.removeActor(actor.id)

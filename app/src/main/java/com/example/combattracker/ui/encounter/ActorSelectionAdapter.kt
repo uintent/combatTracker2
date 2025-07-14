@@ -32,6 +32,18 @@ class ActorSelectionAdapter(
         holder.bind(getItem(position))
     }
 
+    /**
+     * Uncheck a specific actor (used after adding to encounter)
+     */
+    fun uncheckActor(actorId: Long) {
+        val currentList = currentList.toMutableList()
+        val index = currentList.indexOfFirst { it.actor.id == actorId }
+        if (index != -1) {
+            currentList[index] = currentList[index].copy(isSelected = false)
+            submitList(currentList)
+        }
+    }
+
     class ViewHolder(
         private val binding: ItemActorSelectionBinding,
         private val onActorChecked: (ActorSelectionState, Boolean) -> Unit,
