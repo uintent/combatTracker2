@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.combattracker.data.database.dao.EncounterWithCount
 import com.example.combattracker.databinding.ItemEncounterBinding
-import com.example.combattracker.utils.*
+import com.example.combattracker.utils.gone
+import com.example.combattracker.utils.visible
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,34 +61,38 @@ class EncounterListAdapter(
             // Set encounter name
             binding.textEncounterName.text = encounter.name
 
-            // Format and set date
+            // Format date and combine with actor count for subtitle
             val dateFormat = SimpleDateFormat("MMM d, yyyy h:mm a", Locale.US)
             val dateText = dateFormat.format(Date(encounter.createdDate))
-            binding.textDate.text = dateText
 
-            // Set actor count
             val actorCount = encounterWithCount.actorCount
-            binding.textActorCount.text = when (actorCount) {
+            val actorText = when (actorCount) {
                 0 -> "No actors"
                 1 -> "1 actor"
                 else -> "$actorCount actors"
             }
 
-            // Set round info if encounter is in progress
-            if (encounter.currentRound > 1) {
-                binding.textRoundInfo.visible()
-                binding.textRoundInfo.text = "Round ${encounter.currentRound}"
-            } else {
-                binding.textRoundInfo.gone()
+            // Set subtitle with date and actor count
+            binding.textEncounterSubtitle.text = "$dateText • $actorText"
+
+            // Show round info if available (as additional info)
+            val additionalInfo = buildString {
+                if (encounter.currentRound > 1) {
+                    append("Round ${encounter.currentRound}")
+                }
+
+                // Add modified date if significantly different
+                if (encounter.lastModifiedDate > encounter.createdDate + 60000) {
+                    if (isNotEmpty()) append(" • ")
+                    append("Modified: ${dateFormat.format(Date(encounter.lastModifiedDate))}")
+                }
             }
 
-            // Set last modified if different from created
-            if (encounter.lastModifiedDate > encounter.createdDate + 60000) { // More than 1 minute difference
-                binding.textLastModified.visible()
-                val modifiedText = "Modified: ${dateFormat.format(Date(encounter.lastModifiedDate))}"
-                binding.textLastModified.text = modifiedText
+            if (additionalInfo.isNotEmpty()) {
+                binding.textEncounterInfo.visible()
+                binding.textEncounterInfo.text = additionalInfo
             } else {
-                binding.textLastModified.gone()
+                binding.textEncounterInfo.gone()
             }
 
             // Set content description for accessibility
@@ -96,7 +101,7 @@ class EncounterListAdapter(
                 append(", created ")
                 append(dateText)
                 append(", ")
-                append("$actorCount actors")
+                append(actorText)
                 if (encounter.currentRound > 1) {
                     append(", currently on round ${encounter.currentRound}")
                 }
