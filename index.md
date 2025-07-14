@@ -40,10 +40,13 @@ Welcome to the project! Below you'll find all available files and directories.
 {% endfor %}
 </ul>
 
+## Directory Tree
+{% include directory_tree.html %}
+
 ## 🔗 Quick Links
 
-- [View on GitHub](https://github.com/YOUR_USERNAME/YOUR_REPO)
-- [Download Repository](https://github.com/YOUR_USERNAME/YOUR_REPO/archive/refs/heads/main.zip)
+- [View on GitHub](https://github.com/uintent/combatTracker2)
+- [Download Repository](https://github.com/uintent/combatTracker2/archive/refs/heads/main.zip)
 
 ---
 
