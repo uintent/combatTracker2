@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: menu_encounter_create.xml -->
+<!-- Location: app/src/main/res/menu/menu_encounter_create.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_save"
+        android:title="Save"
+        android:icon="@drawable/ic_save"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_save_and_start"
+        android:title="Save &amp; Start"
+        app:showAsAction="never" />
+
+</menu>
