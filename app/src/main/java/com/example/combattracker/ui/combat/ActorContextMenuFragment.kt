@@ -21,7 +21,6 @@ import com.example.combattracker.databinding.ItemConditionBinding
 import com.example.combattracker.utils.Constants
 import com.example.combattracker.utils.InitiativeCalculator
 import com.example.combattracker.utils.formatInitiative
-import com.example.combattracker.utils.isPlayerInitiative
 import com.example.combattracker.utils.gone
 import com.example.combattracker.utils.toast
 import com.example.combattracker.utils.visible
@@ -257,7 +256,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
         // Show/hide move buttons based on tie status
         val canReorder = actor.initiative != null &&
-                isPlayerInitiative(actor.initiative) &&
+                InitiativeCalculator.isPlayerInitiative(actor.initiative) &&
                 checkIfTied(actor)
 
         binding.buttonMoveLeft.visibleIf(canReorder)
@@ -388,7 +387,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             ConditionType.INVISIBLE -> R.drawable.ic_condition_invisible
             ConditionType.PARALYZED -> R.drawable.ic_condition_paralyzed
             ConditionType.PETRIFIED -> R.drawable.ic_condition_petrified
-            ConditionType.POISONED -> R.drawable.ic_condition_poisoned
+            ConditionType.POISONED -> R.drawable.ic_condition_poisoned  // Note the typo in resource name
             ConditionType.PRONE -> R.drawable.ic_condition_prone
             ConditionType.RESTRAINED -> R.drawable.ic_condition_restrained
             ConditionType.STUNNED -> R.drawable.ic_condition_stunned
