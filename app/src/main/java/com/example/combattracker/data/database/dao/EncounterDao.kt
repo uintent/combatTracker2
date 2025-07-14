@@ -317,6 +317,25 @@ interface EncounterDao {
     @Query("SELECT COUNT(*) FROM encounters WHERE currentRound > 0 AND isActive = 1")
     suspend fun getActiveEncounterCount(): Int
 
+    /**
+     * Get encounter actors with details using transaction
+     * This approach properly loads the related Actor data
+     *
+     * @param encounterId The encounter ID
+     * @return List of actors with their base actor details
+     */
+    @Transaction
+    @Query("""
+        SELECT * FROM encounter_actors 
+        WHERE encounterId = :encounterId
+        ORDER BY 
+            CASE WHEN initiative IS NULL THEN 1 ELSE 0 END,
+            initiative DESC,
+            tieBreakOrder ASC,
+            addedOrder ASC
+    """)
+    suspend fun getEncounterActorsWithDetailsTransaction(encounterId: Long): List<EncounterActorWithActor>
+
 }
 
 // ========== Data Classes for Complex Queries ==========
@@ -363,4 +382,6 @@ data class EncounterWithFullDetails(
         )
     )
     val conditions: List<ActorConditionWithDetails>
+
+
 )
