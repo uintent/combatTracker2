@@ -15,7 +15,7 @@
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceHeadline6"
         android:layout_marginBottom="16dp"
-        tools:text="Goblin Warrior" />
+        tools:text="Actor Name" />
 
     <NumberPicker
         android:id="@+id/numberPicker"
