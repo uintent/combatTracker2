@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- File: item_encounter.xml -->
 <!-- Location: app/src/main/res/layout/item_encounter.xml -->
+
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -26,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceHeadline6"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="?android:attr/textColorPrimary"
             android:ellipsize="end"
             android:maxLines="1"
             tools:text="Goblin Ambush" />
@@ -38,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="?android:attr/textColorSecondary"
             tools:text="Jul 14, 2025 2:30 PM • 5 actors" />
 
         <!-- Additional Info: Round and Modified Date -->
@@ -48,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textAppearance="?attr/textAppearanceCaption"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="?android:attr/textColorTertiary"
             android:visibility="gone"
             tools:text="Round 3 • Modified: Jul 14, 2025 3:45 PM"
             tools:visibility="visible" />
