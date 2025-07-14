@@ -261,7 +261,7 @@ class EncounterRepository(
             // Update encounter state
             val updatedEncounter = encounter.copy(
                 currentRound = currentRound,
-                currentActorId = currentActorId,
+                currentActorId = activeActorId,
                 isActive = true,
             ).withUpdatedTimestamp()
 
@@ -309,8 +309,7 @@ class EncounterRepository(
             // Create new encounter
             val newEncounter = Encounter.create(customName).copy(
                 currentRound = currentRound,
-                activeActorId = activeActorId,
-                isStarted = true
+                currentActorId = activeActorId,
             )
 
             val newEncounterId = encounterDao.insertEncounter(newEncounter)
