@@ -149,6 +149,9 @@ interface EncounterDao {
      * Get encounter actors for a specific encounter
      * Includes base actor information for portraits, etc.
      *
+     * FIXED: Changed from INNER JOIN to LEFT JOIN to handle missing actors
+     * The previous query was also causing ID collision between ea.id and a.id
+     *
      * @param encounterId The encounter ID
      * @return List of actors in the encounter with base actor details
      */
@@ -157,7 +160,7 @@ interface EncounterDao {
         """
         SELECT ea.*, a.* 
         FROM encounter_actors ea
-        INNER JOIN actors a ON ea.baseActorId = a.id
+        LEFT JOIN actors a ON ea.baseActorId = a.id
         WHERE ea.encounterId = :encounterId
         ORDER BY 
             CASE WHEN ea.initiative IS NULL THEN 1 ELSE 0 END,
@@ -168,6 +171,41 @@ interface EncounterDao {
     )
     @RewriteQueriesToDropUnusedColumns
     suspend fun getEncounterActorsWithDetails(encounterId: Long): List<EncounterActorWithActor>
+
+    /**
+     * Alternative query to get encounter actors without ID collision
+     * This manually constructs the objects to avoid Room's automatic mapping issues
+     */
+    @Query("""
+        SELECT 
+            ea.id AS ea_id,
+            ea.encounterId AS ea_encounterId,
+            ea.baseActorId AS ea_baseActorId,
+            ea.displayName AS ea_displayName,
+            ea.instanceNumber AS ea_instanceNumber,
+            ea.initiative AS ea_initiative,
+            ea.initiativeModifier AS ea_initiativeModifier,
+            ea.tieBreakOrder AS ea_tieBreakOrder,
+            ea.hasTakenTurn AS ea_hasTakenTurn,
+            ea.addedOrder AS ea_addedOrder,
+            ea.isHidden AS ea_isHidden,
+            a.id AS a_id,
+            a.name AS a_name,
+            a.portraitPath AS a_portraitPath,
+            a.initiativeModifier AS a_initiativeModifier,
+            a.category AS a_category,
+            a.createdDate AS a_createdDate,
+            a.modifiedDate AS a_modifiedDate
+        FROM encounter_actors ea
+        LEFT JOIN actors a ON ea.baseActorId = a.id
+        WHERE ea.encounterId = :encounterId
+        ORDER BY 
+            CASE WHEN ea.initiative IS NULL THEN 1 ELSE 0 END,
+            ea.initiative DESC,
+            ea.tieBreakOrder ASC,
+            ea.addedOrder ASC
+    """)
+    suspend fun getEncounterActorsFixed(encounterId: Long): List<EncounterActorFixed>
 
     /**
      * Load complete encounter state
@@ -318,23 +356,10 @@ interface EncounterDao {
     suspend fun getActiveEncounterCount(): Int
 
     /**
-     * Get encounter actors with details using transaction
-     * This approach properly loads the related Actor data
-     *
-     * @param encounterId The encounter ID
-     * @return List of actors with their base actor details
+     * Debug query to get raw encounter actors data
      */
-    @Transaction
-    @Query("""
-        SELECT * FROM encounter_actors 
-        WHERE encounterId = :encounterId
-        ORDER BY 
-            CASE WHEN initiative IS NULL THEN 1 ELSE 0 END,
-            initiative DESC,
-            tieBreakOrder ASC,
-            addedOrder ASC
-    """)
-    suspend fun getEncounterActorsWithDetailsTransaction(encounterId: Long): List<EncounterActorWithActor>
+    @Query("SELECT * FROM encounter_actors WHERE encounterId = :encounterId ORDER BY id")
+    suspend fun getEncounterActorsRaw(encounterId: Long): List<EncounterActor>
 
 }
 
@@ -350,6 +375,13 @@ data class EncounterWithCount(
 
 /**
  * Encounter actor with base actor details
+ *
+ * IMPORTANT: Room's @Embedded and @Relation can cause ID collision when both
+ * tables have an 'id' column. The query returns the correct data but Room's
+ * object mapping can pick the wrong ID field.
+ *
+ * As a workaround, we use @RewriteQueriesToDropUnusedColumns on the query
+ * and make sure the actor is nullable to handle missing base actors.
  */
 data class EncounterActorWithActor(
     @Embedded val encounterActor: EncounterActor,
@@ -357,8 +389,63 @@ data class EncounterActorWithActor(
         parentColumn = "baseActorId",
         entityColumn = "id"
     )
-    val actor: Actor
+    val actor: Actor?  // Changed to nullable
 )
+
+/**
+ * Fixed mapping to avoid ID collision
+ */
+data class EncounterActorFixed(
+    @ColumnInfo(name = "ea_id") val encounterActorId: Long,
+    @ColumnInfo(name = "ea_encounterId") val encounterId: Long,
+    @ColumnInfo(name = "ea_baseActorId") val baseActorId: Long,
+    @ColumnInfo(name = "ea_displayName") val displayName: String,
+    @ColumnInfo(name = "ea_instanceNumber") val instanceNumber: Int,
+    @ColumnInfo(name = "ea_initiative") val initiative: Double?,
+    @ColumnInfo(name = "ea_initiativeModifier") val initiativeModifier: Int,
+    @ColumnInfo(name = "ea_tieBreakOrder") val tieBreakOrder: Int,
+    @ColumnInfo(name = "ea_hasTakenTurn") val hasTakenTurn: Boolean,
+    @ColumnInfo(name = "ea_addedOrder") val addedOrder: Int,
+    @ColumnInfo(name = "ea_isHidden") val isHidden: Boolean,
+    // Actor fields (nullable if actor was deleted)
+    @ColumnInfo(name = "a_id") val actorId: Long?,
+    @ColumnInfo(name = "a_name") val actorName: String?,
+    @ColumnInfo(name = "a_portraitPath") val actorPortraitPath: String?,
+    @ColumnInfo(name = "a_initiativeModifier") val actorInitiativeModifier: Int?,
+    @ColumnInfo(name = "a_category") val actorCategory: String?,
+    @ColumnInfo(name = "a_createdDate") val actorCreatedDate: Long?,
+    @ColumnInfo(name = "a_modifiedDate") val actorModifiedDate: Long?
+) {
+    fun toEncounterActorWithActor(): EncounterActorWithActor {
+        val encounterActor = EncounterActor(
+            id = encounterActorId,
+            encounterId = encounterId,
+            baseActorId = baseActorId,
+            displayName = displayName,
+            instanceNumber = instanceNumber,
+            initiative = initiative,
+            initiativeModifier = initiativeModifier,
+            tieBreakOrder = tieBreakOrder,
+            hasTakenTurn = hasTakenTurn,
+            addedOrder = addedOrder,
+            isHidden = isHidden
+        )
+
+        val actor = if (actorId != null && actorName != null) {
+            Actor(
+                id = actorId,
+                name = actorName,
+                portraitPath = actorPortraitPath,
+                initiativeModifier = actorInitiativeModifier ?: 0,
+                category = actorCategory ?: "OTHER",
+                createdDate = actorCreatedDate ?: System.currentTimeMillis(),
+                modifiedDate = actorModifiedDate ?: System.currentTimeMillis()
+            )
+        } else null
+
+        return EncounterActorWithActor(encounterActor, actor)
+    }
+}
 
 /**
  * Complete encounter data for loading
@@ -382,6 +469,4 @@ data class EncounterWithFullDetails(
         )
     )
     val conditions: List<ActorConditionWithDetails>
-
-
 )

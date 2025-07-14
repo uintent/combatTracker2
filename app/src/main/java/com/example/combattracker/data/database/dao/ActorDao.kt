@@ -273,4 +273,11 @@ interface ActorDao {
      */
     @Query("SELECT * FROM actors ORDER BY createdDate DESC LIMIT :limit")
     suspend fun getRecentActors(limit: Int = 10): List<Actor>
+
+    /**
+     * Get all actors (not as Flow, for debugging)
+     */
+    @Query("SELECT * FROM actors ORDER BY name")
+    suspend fun getAllActorsOnce(): List<Actor>
+
 }

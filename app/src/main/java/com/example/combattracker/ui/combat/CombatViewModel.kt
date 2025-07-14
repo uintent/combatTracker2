@@ -57,8 +57,8 @@ class CombatViewModel(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _encounterLoaded = MutableLiveData(false)
-    val encounterLoaded: LiveData<Boolean> = _encounterLoaded
+    private val _encounterLoaded = MutableLiveData<Boolean?>()  // Make it nullable
+    val encounterLoaded: LiveData<Boolean?> = _encounterLoaded
 
     private val _selectedActorId = MutableLiveData<Long?>()
     val selectedActorId: LiveData<Long?> = _selectedActorId
@@ -68,8 +68,9 @@ class CombatViewModel(
     init {
         if (encounterId == -1L) {
             _errorMessage.value = "Invalid encounter ID"
-            _encounterLoaded.value = false
+            _encounterLoaded.value = false  // Explicitly set to false only on error
         }
+        // Don't set any value otherwise - leave it null until load attempt
     }
 
     // ========== Public Methods - Loading ==========
@@ -80,15 +81,18 @@ class CombatViewModel(
     suspend fun loadEncounter() {
         _isLoading.value = true
 
+        // Add debug call
+        encounterRepository.debugLoadEncounter(encounterId)
+
         encounterRepository.loadEncounter(encounterId).fold(
             onSuccess = { data ->
                 initializeCombat(data)
-                _encounterLoaded.value = true
+                _encounterLoaded.value = true  // Explicitly set to true on success
             },
             onFailure = { error ->
                 Timber.e(error, "Failed to load encounter")
                 _errorMessage.value = "Failed to load encounter: ${error.message}"
-                _encounterLoaded.value = false
+                _encounterLoaded.value = false  // Only set to false on actual failure
             }
         )
 
@@ -101,19 +105,23 @@ class CombatViewModel(
     private fun initializeCombat(data: EncounterCombatData) {
         currentEncounter = data.encounter
         encounterActors.clear()
-        encounterActors.addAll(data.actors)
+
+        // Filter out any actors where the base actor is missing
+        val validActors = data.actors.filter { it.actor != null }
+        if (validActors.size < data.actors.size) {
+            Timber.w("${data.actors.size - validActors.size} actors were filtered out due to missing base actors")
+        }
+
+        encounterActors.addAll(validActors)
         actorConditions.clear()
         actorConditions.putAll(data.conditions)
 
         // If no active actor set, find first with initiative
         if (data.encounter.currentActorId == null) {
             val firstActor = encounterActors
-                .filter { actorWithActor -> actorWithActor.encounterActor.hasInitiative() }
-                .sortedWith(compareByDescending<EncounterActorWithActor> { actorWithActor ->
-                    actorWithActor.encounterActor.initiative
-                }.thenBy { actorWithActor ->
-                    actorWithActor.encounterActor.tieBreakOrder
-                })
+                .filter { it.encounterActor.hasInitiative() }
+                .sortedWith(compareByDescending<EncounterActorWithActor> { it.encounterActor.initiative }
+                    .thenBy { it.encounterActor.tieBreakOrder })
                 .firstOrNull()
 
             currentEncounter = currentEncounter?.copy(currentActorId = firstActor?.encounterActor?.id)
@@ -131,7 +139,7 @@ class CombatViewModel(
         viewModelScope.launch {
             try {
                 val actorCategories = encounterActors.associate { actorWithActor ->
-                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.getActorCategory()
+                    actorWithActor.encounterActor.baseActorId to (actorWithActor.actor?.getActorCategory() ?: ActorCategory.OTHER)
                 }
 
                 val results = InitiativeCalculator.rollInitiativeForActors(
@@ -174,7 +182,7 @@ class CombatViewModel(
         viewModelScope.launch {
             try {
                 val actorCategories = encounterActors.associate { actorWithActor ->
-                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.getActorCategory()
+                    actorWithActor.encounterActor.baseActorId to (actorWithActor.actor?.getActorCategory() ?: ActorCategory.OTHER)
                 }
 
                 val results = InitiativeCalculator.rollInitiativeForActors(
@@ -555,8 +563,8 @@ class CombatViewModel(
             EncounterActorState(
                 id = actor.id,
                 displayName = actor.displayName,
-                portraitPath = baseActor.portraitPath,
-                category = baseActor.getActorCategory(),
+                portraitPath = baseActor?.portraitPath,
+                category = baseActor?.getActorCategory() ?: ActorCategory.OTHER,
                 initiative = actor.initiative,
                 conditions = conditions.map { conditionWithDetails -> conditionWithDetails.condition },
                 isActive = actor.id == encounter.currentActorId,

@@ -142,6 +142,7 @@ class CombatTrackerActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("MissingSuperCall")
     override fun onBackPressed() {
         // Check if bottom sheet is expanded
         if (::bottomSheetBehavior.isInitialized &&
@@ -285,7 +286,8 @@ class CombatTrackerActivity : AppCompatActivity() {
 
         // Observe encounter loaded
         viewModel.encounterLoaded.observe(this) { loaded ->
-            if (!loaded) {
+            // Only react to explicit false, not null
+            if (loaded == false) {
                 showEncounterLoadError()
             }
         }
@@ -432,9 +434,11 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Show encounter load error
      */
     private fun showEncounterLoadError() {
+        val errorMsg = viewModel.errorMessage.value ?: "Unknown error"
+
         AlertDialog.Builder(this)
-            .setTitle("Error")
-            .setMessage("Failed to load encounter. It may have been deleted or corrupted.")
+            .setTitle("Failed to Load Encounter")
+            .setMessage("The encounter could not be loaded.\n\nError: $errorMsg\n\nThis usually happens when actors in the encounter have been deleted from the actor library.")
             .setPositiveButton(Constants.Dialogs.BUTTON_OK) { _, _ ->
                 finish()
             }

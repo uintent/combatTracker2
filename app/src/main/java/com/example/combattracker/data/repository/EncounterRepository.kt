@@ -191,17 +191,32 @@ class EncounterRepository(
      */
     suspend fun loadEncounter(encounterId: Long): Result<EncounterCombatData> = withContext(Dispatchers.IO) {
         try {
+            Timber.d("=== LOADING ENCOUNTER $encounterId ===")
+
             // Load the encounter
             val encounter = encounterDao.getEncounterById(encounterId)
-                ?: return@withContext Result.failure(
+            if (encounter == null) {
+                Timber.e("Encounter not found with ID: $encounterId")
+                return@withContext Result.failure(
                     IllegalArgumentException("Encounter not found")
                 )
+            }
+            Timber.d("Loaded encounter: ${encounter.name}, created: ${encounter.createdDate}, modified: ${encounter.lastModifiedDate}")
 
             // Load actors with base actor details
-            val actorsWithDetails = encounterDao.getEncounterActorsWithDetails(encounterId)
+            val actorsFixed = encounterDao.getEncounterActorsFixed(encounterId)
+            val actorsWithDetails = actorsFixed.map { it.toEncounterActorWithActor() }
+            Timber.d("Loaded ${actorsWithDetails.size} actors for encounter")
+
+            // Log each actor
+            actorsWithDetails.forEach { actorWithDetails ->
+                Timber.d("  Actor: ${actorWithDetails.encounterActor.displayName} " +
+                        "(baseActorId: ${actorWithDetails.encounterActor.baseActorId})")
+            }
 
             // Validate all actors still exist
             if (actorsWithDetails.isEmpty()) {
+                Timber.e("No actors found for encounter $encounterId")
                 return@withContext Result.failure(
                     IllegalStateException("Encounter has no valid actors")
                 )
@@ -210,6 +225,7 @@ class EncounterRepository(
             // Load conditions for all actors
             val conditions = encounterDao.getEncounterConditions(encounterId)
                 .groupBy { it.actorCondition.encounterActorId }
+            Timber.d("Loaded conditions for ${conditions.size} actors")
 
             // Create combat data
             val combatData = EncounterCombatData(
@@ -218,11 +234,12 @@ class EncounterRepository(
                 conditions = conditions
             )
 
-            Timber.d("Loaded encounter: ${encounter.name} with ${actorsWithDetails.size} actors")
+            Timber.d("=== ENCOUNTER LOADED SUCCESSFULLY ===")
             Result.success(combatData)
 
         } catch (e: Exception) {
-            Timber.e(e, "Failed to load encounter")
+            Timber.e(e, "Failed to load encounter: ${e.message}")
+            Timber.e("Stack trace: ${e.stackTraceToString()}")
             Result.failure(e)
         }
     }
@@ -522,6 +539,84 @@ class EncounterRepository(
             Result.failure(e)
         }
     }
+
+    /**
+     * Debug method to investigate encounter loading issues
+     */
+    suspend fun debugLoadEncounter(encounterId: Long) = withContext(Dispatchers.IO) {
+        try {
+            Timber.d("=== DEBUG LOAD ENCOUNTER $encounterId ===")
+
+            // Check if encounter exists
+            val encounter = encounterDao.getEncounterById(encounterId)
+            Timber.d("Encounter exists: ${encounter != null}")
+            if (encounter != null) {
+                Timber.d("Encounter name: ${encounter.name}")
+                Timber.d("Encounter ID: ${encounter.id}")
+            }
+
+            // ADD THIS NEW SECTION HERE - Get raw data without joins
+            val rawActors = encounterDao.getEncounterActorsRaw(encounterId)
+            Timber.d("=== RAW ENCOUNTER ACTORS (No Joins) ===")
+            rawActors.forEach { ea ->
+                Timber.d("Raw EncounterActor - ID: ${ea.id}, DisplayName: ${ea.displayName}, BaseActorId: ${ea.baseActorId}")
+            }
+
+            // Get raw encounter actors data
+            Timber.d("=== RAW ENCOUNTER ACTORS ===")
+            val actorsFixed = encounterDao.getEncounterActorsFixed(encounterId)
+            val encounterActors = actorsFixed.map { it.toEncounterActorWithActor() }
+            encounterActors.forEach { actorWithDetails ->
+                val ea = actorWithDetails.encounterActor
+                Timber.d("EncounterActor:")
+                Timber.d("  EncounterActor ID: ${ea.id} (should be unique)")
+                Timber.d("  Base Actor ID: ${ea.baseActorId} (can be same for multiple instances)")
+                Timber.d("  Display Name: ${ea.displayName}")
+                Timber.d("  Base Actor ID: ${ea.baseActorId}")
+                Timber.d("  Instance Number: ${ea.instanceNumber}")
+                Timber.d("  Base Actor Found: ${actorWithDetails.actor != null}")
+                if (actorWithDetails.actor != null) {
+                    Timber.d("  Linked to: ${actorWithDetails.actor.name} (ID: ${actorWithDetails.actor.id})")
+                }
+            }
+
+            // Group by base actor ID to see duplicates
+            val groupedByBaseActor = encounterActors.groupBy { it.encounterActor.baseActorId }
+            Timber.d("=== GROUPED BY BASE ACTOR ID ===")
+            groupedByBaseActor.forEach { (baseActorId, actors) ->
+                Timber.d("Base Actor ID $baseActorId has ${actors.size} instances:")
+                actors.forEach {
+                    Timber.d("  - ${it.encounterActor.displayName} (instance: ${it.encounterActor.instanceNumber})")
+                }
+            }
+
+            // Check which base actor IDs exist in the actor library
+            val uniqueBaseActorIds = encounterActors.map { it.encounterActor.baseActorId }.distinct()
+            Timber.d("=== CHECKING BASE ACTORS ===")
+            Timber.d("Unique base actor IDs needed: $uniqueBaseActorIds")
+
+            val existingActors = if (uniqueBaseActorIds.isNotEmpty()) {
+                actorDao.getActorsByIds(uniqueBaseActorIds)
+            } else {
+                emptyList()
+            }
+
+            Timber.d("Found ${existingActors.size} of ${uniqueBaseActorIds.size} base actors")
+            existingActors.forEach { actor ->
+                Timber.d("  Found: ${actor.name} (ID: ${actor.id})")
+            }
+
+            val foundIds = existingActors.map { it.id }.toSet()
+            val missingIds = uniqueBaseActorIds.filter { it !in foundIds }
+            if (missingIds.isNotEmpty()) {
+                Timber.e("MISSING BASE ACTOR IDs: $missingIds")
+            }
+
+        } catch (e: Exception) {
+            Timber.e(e, "Debug load failed: ${e.message}")
+        }
+    }
+
 }
 
 // ========== Data Classes ==========
