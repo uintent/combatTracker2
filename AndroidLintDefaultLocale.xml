@@ -1,0 +1,30 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/InitiativeState.kt</file>
+  <line>84</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/InitiativeState.kt" />
+  <problem_class id="AndroidLintDefaultLocale" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Implied default locale in case conversion</problem_class>
+  <hints />
+  <description>&lt;html&gt;Implicitly using the default locale is a common source of bugs: Use &lt;code&gt;String.format(Locale, ...)&lt;/code&gt; instead&lt;/html&gt;</description>
+  <highlighted_element>String.format(&quot;%.2f&quot;, initiative)</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>33</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/InitiativeCalculator.kt</file>
+  <line>286</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/InitiativeCalculator.kt" />
+  <problem_class id="AndroidLintDefaultLocale" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Implied default locale in case conversion</problem_class>
+  <hints />
+  <description>&lt;html&gt;Implicitly using the default locale is a common source of bugs: Use &lt;code&gt;String.format(Locale, ...)&lt;/code&gt; instead&lt;/html&gt;</description>
+  <highlighted_element>String.format(&quot;%.4f&quot;, decimal)</highlighted_element>
+  <language>kotlin</language>
+  <offset>58</offset>
+  <length>30</length>
+</problem>
+</problems>

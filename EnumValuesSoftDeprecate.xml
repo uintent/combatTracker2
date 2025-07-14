@@ -1,0 +1,171 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/database/CombatTrackerDatabase.kt</file>
+  <line>152</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.database</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.database.CombatTrackerDatabase.Companion.DatabaseCallback java.lang.Object populateConditions(com.example.combattracker.data.database.dao.ConditionDao conditionDao, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>47</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/database/entities/Condition.kt</file>
+  <line>114</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.database.entities</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.database.entities.Condition.Companion java.util.List&lt;com.example.combattracker.data.database.entities.Condition&gt; getAllPrebuiltConditions()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/ActorCategory.kt</file>
+  <line>91</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.model.ActorCategory.Companion java.util.List&lt;com.example.combattracker.data.model.ActorCategory&gt; getAllCategories()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>54</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/ActorCategory.kt</file>
+  <line>101</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.model.ActorCategory.Companion com.example.combattracker.data.model.ActorCategory fromDisplayName(java.lang.String displayName)" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/ConditionType.kt</file>
+  <line>215</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.model.ConditionType.Companion java.util.List&lt;com.example.combattracker.data.model.ConditionType&gt; getAllConditions()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>54</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/ConditionType.kt</file>
+  <line>225</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.model.ConditionType.Companion com.example.combattracker.data.model.ConditionType fromId(long id)" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/ConditionType.kt</file>
+  <line>236</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.model.ConditionType.Companion com.example.combattracker.data.model.ConditionType fromDisplayName(java.lang.String displayName)" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ActorRepository.kt</file>
+  <line>328</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.repository.ActorRepository java.lang.Object getActorCountsByCategory(kotlin.coroutines.Continuation&lt;? super java.util.Map&lt;com.example.combattracker.data.model.ActorCategory,? extends java.lang.Integer&gt;&gt; $completion)" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>22</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorEditActivity.kt</file>
+  <line>167</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorEditActivity void setupCategorySpinner()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>39</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorEditActivity.kt</file>
+  <line>212</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorEditActivity void observeViewModel()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>41</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorLibraryActivity.kt</file>
+  <line>181</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorLibraryActivity void setupFilters()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>22</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/ActorContextMenuFragment.kt</file>
+  <line>150</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.ActorContextMenuFragment void setupConditionsSection()" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>22</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/ActorContextMenuFragment.kt</file>
+  <line>266</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.ActorContextMenuFragment void updateConditionsUI(com.example.combattracker.ui.combat.EncounterActorState actor)" />
+  <problem_class id="EnumValuesSoftDeprecate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</problem_class>
+  <description>'Enum.values()' is recommended to be replaced by 'Enum.entries' since 1.9</description>
+  <highlighted_element>values()</highlighted_element>
+  <language>kotlin</language>
+  <offset>46</offset>
+  <length>8</length>
+</problem>
+</problems>

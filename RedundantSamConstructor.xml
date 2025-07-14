@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/Extensions.kt</file>
+  <line>343</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.ExtensionsKt void observeNonNull(androidx.lifecycle.LiveData&lt;T&gt; $this$observeNonNull, androidx.lifecycle.LifecycleOwner owner, kotlin.jvm.functions.Function1&lt;? super T,kotlin.Unit&gt; observer)" />
+  <problem_class id="RedundantSamConstructor" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant SAM constructor</problem_class>
+  <description>Redundant SAM constructor</description>
+  <highlighted_element>Observer</highlighted_element>
+  <language>kotlin</language>
+  <offset>24</offset>
+  <length>8</length>
+</problem>
+</problems>

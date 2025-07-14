@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/Extensions.kt</file>
+  <line>313</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/Extensions.kt" />
+  <problem_class id="AndroidLintCheckResult" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Ignoring results</problem_class>
+  <hints />
+  <description>&lt;html&gt;The result of &lt;code&gt;error&lt;/code&gt; is not used&lt;/html&gt;</description>
+  <highlighted_element>error(it)</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>9</length>
+</problem>
+</problems>

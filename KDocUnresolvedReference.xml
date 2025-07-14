@@ -1,0 +1,41 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/database/converters/Converters.kt</file>
+  <line>243</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.database.converters</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.database.converters.Converters.Companion T safeEnumValueOf(java.lang.String value, T default)" />
+  <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="INFO_ATTRIBUTES">Unresolved reference in KDoc</problem_class>
+  <description>Cannot resolve symbol 'enumClass'</description>
+  <highlighted_element>enumClass</highlighted_element>
+  <language>kotlin</language>
+  <offset>18</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>136</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.String generatePortraitFilename(java.lang.String actorName)" />
+  <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="INFO_ATTRIBUTES">Unresolved reference in KDoc</problem_class>
+  <description>Cannot resolve symbol 'timestamp'</description>
+  <highlighted_element>timestamp</highlighted_element>
+  <language>kotlin</language>
+  <offset>37</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>151</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.String generateBackgroundFilename()" />
+  <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="INFO_ATTRIBUTES">Unresolved reference in KDoc</problem_class>
+  <description>Cannot resolve symbol 'timestamp'</description>
+  <highlighted_element>timestamp</highlighted_element>
+  <language>kotlin</language>
+  <offset>27</offset>
+  <length>9</length>
+</problem>
+</problems>

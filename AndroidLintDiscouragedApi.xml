@@ -1,0 +1,93 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>25</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>37</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>43</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>51</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>57</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>63</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml</file>
+  <line>72</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+  <problem_class id="AndroidLintDiscouragedApi" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Using discouraged APIs</problem_class>
+  <hints />
+  <description>&lt;html&gt;Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.&lt;/html&gt;</description>
+  <highlighted_element>android:screenOrientation=&quot;landscape&quot;</highlighted_element>
+  <language>XML</language>
+  <offset>12</offset>
+  <length>37</length>
+</problem>
+</problems>

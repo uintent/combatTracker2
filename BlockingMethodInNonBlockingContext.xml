@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>205</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.Object copyUriToFile(android.net.Uri sourceUri, java.io.File destinationFile, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="BlockingMethodInNonBlockingContext" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Possibly blocking call in non-blocking context</problem_class>
+  <description>Possibly blocking call in non-blocking context could lead to thread starvation</description>
+  <highlighted_element>FileOutputStream</highlighted_element>
+  <language>kotlin</language>
+  <offset>27</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>212</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.Object copyUriToFile(android.net.Uri sourceUri, java.io.File destinationFile, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="BlockingMethodInNonBlockingContext" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Possibly blocking call in non-blocking context</problem_class>
+  <description>Possibly blocking call in non-blocking context could lead to thread starvation</description>
+  <highlighted_element>read</highlighted_element>
+  <language>kotlin</language>
+  <offset>31</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>213</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.Object copyUriToFile(android.net.Uri sourceUri, java.io.File destinationFile, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="BlockingMethodInNonBlockingContext" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Possibly blocking call in non-blocking context</problem_class>
+  <description>Possibly blocking call in non-blocking context could lead to thread starvation</description>
+  <highlighted_element>write</highlighted_element>
+  <language>kotlin</language>
+  <offset>29</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>229</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.Object copyUriToFile(android.net.Uri sourceUri, java.io.File destinationFile, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="BlockingMethodInNonBlockingContext" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Possibly blocking call in non-blocking context</problem_class>
+  <description>Possibly blocking call in non-blocking context could lead to thread starvation</description>
+  <highlighted_element>close</highlighted_element>
+  <language>kotlin</language>
+  <offset>29</offset>
+  <length>5</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>235</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.Object copyUriToFile(android.net.Uri sourceUri, java.io.File destinationFile, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="BlockingMethodInNonBlockingContext" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Possibly blocking call in non-blocking context</problem_class>
+  <description>Possibly blocking call in non-blocking context could lead to thread starvation</description>
+  <highlighted_element>close</highlighted_element>
+  <language>kotlin</language>
+  <offset>30</offset>
+  <length>5</length>
+</problem>
+</problems>

@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/CombatTrackerApplication.kt</file>
+  <line>156</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/CombatTrackerApplication.kt" />
+  <problem_class id="AndroidLintSwitchIntDef" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing @IntDef in Switch</problem_class>
+  <hints />
+  <description>&lt;html&gt;Switch statement on an &lt;code&gt;int&lt;/code&gt; with known associated constant missing case &lt;code&gt;ComponentCallbacks2.TRIM_MEMORY_BACKGROUND&lt;/code&gt;, &lt;code&gt;ComponentCallbacks2.TRIM_MEMORY_COMPLETE&lt;/code&gt;, &lt;code&gt;ComponentCallbacks2.TRIM_MEMORY_MODERATE&lt;/code&gt;, &lt;code&gt;ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW&lt;/code&gt;, &lt;code&gt;ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>when</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>4</length>
+</problem>
+</problems>

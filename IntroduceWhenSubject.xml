@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorEditActivity.kt</file>
+  <line>349</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorEditActivity boolean validateInitiative()" />
+  <problem_class id="IntroduceWhenSubject" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">'when' that can be simplified by introducing an argument</problem_class>
+  <description>'when' with subject should be used</description>
+  <highlighted_element>when</highlighted_element>
+  <language>kotlin</language>
+  <offset>15</offset>
+  <length>4</length>
+</problem>
+</problems>

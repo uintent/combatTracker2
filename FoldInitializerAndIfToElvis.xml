@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ActorRepository.kt</file>
+  <line>226</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.repository.ActorRepository java.lang.Object updateActor(com.example.combattracker.data.database.entities.Actor actor, android.net.Uri newPortraitUri, kotlin.coroutines.Continuation&lt;? super kotlin.Result&lt;? extends kotlin.Unit&gt;&gt; $completion)" />
+  <problem_class id="FoldInitializerAndIfToElvis" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">If-Null return/break/... foldable to '?:'</problem_class>
+  <description>If-Null return/break/... foldable to '?:'</description>
+  <highlighted_element>if (existingActor == null)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>26</length>
+</problem>
+</problems>

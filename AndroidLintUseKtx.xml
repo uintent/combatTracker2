@@ -1,0 +1,128 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ImageRepository.kt</file>
+  <line>178</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.repository</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ImageRepository.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX extension function &lt;code&gt;Bitmap.scale&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>Bitmap.createScaledBitmap( croppedBitmap, PORTRAIT_MAX_WIDTH, ...</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>165</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ImageRepository.kt</file>
+  <line>284</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.repository</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ImageRepository.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX extension function &lt;code&gt;Bitmap.scale&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>Bitmap.createScaledBitmap( source, BACKGROUND_MAX_WIDTH, targetH...</highlighted_element>
+  <language>kotlin</language>
+  <offset>15</offset>
+  <length>133</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>134</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX extension function &lt;code&gt;SharedPreferences.edit&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>prefs.edit()</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>166</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX extension function &lt;code&gt;SharedPreferences.edit&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>prefs.edit()</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>246</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX extension function &lt;code&gt;SharedPreferences.edit&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>prefs.edit()</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt</file>
+  <line>95</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX extension function &lt;code&gt;Bitmap.scale&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)</highlighted_element>
+  <language>kotlin</language>
+  <offset>21</offset>
+  <length>66</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt</file>
+  <line>120</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX function &lt;code&gt;createBitmap&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)</highlighted_element>
+  <language>kotlin</language>
+  <offset>21</offset>
+  <length>73</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt</file>
+  <line>153</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX function &lt;code&gt;createBitmap&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)</highlighted_element>
+  <language>kotlin</language>
+  <offset>21</offset>
+  <length>59</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt</file>
+  <line>304</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/ImageUtils.kt" />
+  <problem_class id="AndroidLintUseKtx" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use KTX extension function</problem_class>
+  <hints />
+  <description>&lt;html&gt;Use the KTX function &lt;code&gt;createBitmap&lt;/code&gt; instead?&lt;/html&gt;</description>
+  <highlighted_element>Bitmap.createBitmap( bitmap.width + (borderWidthPx * 2).toInt(), bitmap.heig...</highlighted_element>
+  <language>kotlin</language>
+  <offset>21</offset>
+  <length>179</length>
+</problem>
+</problems>

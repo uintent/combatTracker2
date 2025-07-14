@@ -1,0 +1,223 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/example/combattracker/ExampleInstrumentedTest.kt</file>
+  <line>11</line>
+  <module>combatTracker2.app.androidTest</module>
+  <package>com.example.combattracker</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ExampleInstrumentedTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/example/combattracker/ExampleInstrumentedTest.kt</file>
+  <line>18</line>
+  <module>combatTracker2.app.androidTest</module>
+  <package>com.example.combattracker</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ExampleInstrumentedTest void useAppContext()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/CombatTrackerApplication.kt</file>
+  <line>19</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.CombatTrackerApplication" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorEditActivity.kt</file>
+  <line>33</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.actors.ActorEditActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorLibraryActivity.kt</file>
+  <line>33</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.actors.ActorLibraryActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/ActorContextMenuFragment.kt</file>
+  <line>26</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.combat.ActorContextMenuFragment" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class has one instantiation, but the instantiation is not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatTrackerActivity.kt</file>
+  <line>29</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.combat.CombatTrackerActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/encounter/EncounterCreateActivity.kt</file>
+  <line>32</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.encounter</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.encounter.EncounterCreateActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/encounter/EncounterManageActivity.kt</file>
+  <line>26</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.encounter</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.encounter.EncounterManageActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/main/MainActivity.kt</file>
+  <line>28</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.main</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.main.MainActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsActivity.kt</file>
+  <line>22</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.settings.SettingsActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/combattracker/ExampleUnitTest.kt</file>
+  <line>7</line>
+  <module>combatTracker2.app.unitTest</module>
+  <package>com.example.combattracker</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ExampleUnitTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/example/combattracker/ExampleUnitTest.kt</file>
+  <line>13</line>
+  <module>combatTracker2.app.unitTest</module>
+  <package>com.example.combattracker</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ExampleUnitTest void addition_isCorrect()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+</problems>

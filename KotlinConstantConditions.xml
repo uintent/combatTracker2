@@ -1,0 +1,93 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorEditActivity.kt</file>
+  <line>350</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorEditActivity boolean validateInitiative()" />
+  <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Condition 'value == null' is always false</description>
+  <highlighted_element>value == null</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorLibraryActivity.kt</file>
+  <line>369</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorLibraryActivity void clearCategoryFilters()" />
+  <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Value of 'binding.chipGroupCategories.getChildAt(i) as? Chip' is always null</description>
+  <highlighted_element>binding.chipGroupCategories.getChildAt(i) as? Chip</highlighted_element>
+  <language>kotlin</language>
+  <offset>23</offset>
+  <length>50</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorLibraryActivity.kt</file>
+  <line>370</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.actors.ActorLibraryActivity void clearCategoryFilters()" />
+  <problem_class id="KotlinConstantConditions" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Value of 'chip' is always null</description>
+  <highlighted_element>chip</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/ActorContextMenuFragment.kt</file>
+  <line>278</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.ActorContextMenuFragment void setInitiative()" />
+  <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Condition 'initiative == null' is always false</description>
+  <highlighted_element>initiative == null</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/ActorContextMenuFragment.kt</file>
+  <line>346</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.ActorContextMenuFragment boolean validateInitiativeInput()" />
+  <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Condition 'text.toDoubleOrNull() == null' is always false</description>
+  <highlighted_element>text.toDoubleOrNull() == null</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>29</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatViewModel.kt</file>
+  <line>245</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.CombatViewModel void nextTurn()" />
+  <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Condition 'nextActor != null' is always true</description>
+  <highlighted_element>nextActor != null</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/encounter/adapter/ActorSelectionAdapter.kt</file>
+  <line>55</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.encounter.adapter</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.ui.encounter.adapter.ActorSelectionAdapter.ActorSelectionViewHolder" />
+  <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
+  <description>Condition 'it.isSelected != isChecked' is always false</description>
+  <highlighted_element>it.isSelected != isChecked</highlighted_element>
+  <language>kotlin</language>
+  <offset>24</offset>
+  <length>26</length>
+</problem>
+</problems>

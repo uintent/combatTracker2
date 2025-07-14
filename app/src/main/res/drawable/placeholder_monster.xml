@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="120dp"
+    android:viewportWidth="80"
+    android:viewportHeight="120">
+    <!-- Background -->
+    <path
+        android:fillColor="#FFEBEE"
+        android:pathData="M0,0h80v120h-80z"/>
+    <!-- Monster silhouette -->
+    <path
+        android:fillColor="#F44336"
+        android:pathData="M40,15C30,15 22,23 22,33V50C22,60 30,68 40,68C50,68 58,60 58,50V33C58,23 50,15 40,15M30,30C32,30 33.5,31.5 33.5,33.5C33.5,35.5 32,37 30,37C28,37 26.5,35.5 26.5,33.5C26.5,31.5 28,30 30,30M50,30C52,30 53.5,31.5 53.5,33.5C53.5,35.5 52,37 50,37C48,37 46.5,35.5 46.5,33.5C46.5,31.5 48,30 50,30M40,60C35,60 31,56 31,51H35C35,53.8 37.2,56 40,56C42.8,56 45,53.8 45,51H49C49,56 45,60 40,60M25,75L22,78V105H30V90H35V105H45V90H50V105H58V78L55,75V72H25V75Z"/>
+    <!-- Teeth -->
+    <path
+        android:fillColor="#D32F2F"
+        android:pathData="M35,51L37,54L39,51M41,51L43,54L45,51"/>
+</vector>

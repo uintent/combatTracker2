@@ -1,0 +1,44 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>23</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="AndroidLintLogNotTimber" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Logging call to Log instead of Timber</problem_class>
+  <hints />
+  <description>&lt;html&gt;Using 'Log' instead of 'Timber'&lt;/html&gt;</description>
+  <highlighted_element>Log.d(&quot;BaseActivity&quot;, &quot;TODO: Implement BaseActivity&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>53</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>23</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="AndroidLintLogNotTimber" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Logging call to Log instead of Timber</problem_class>
+  <hints />
+  <description>&lt;html&gt;Using 'Log' instead of 'Timber'&lt;/html&gt;</description>
+  <highlighted_element>Log.d(&quot;DialogUtils&quot;, &quot;TODO: Implement DialogUtils&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>51</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>23</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="AndroidLintLogNotTimber" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Logging call to Log instead of Timber</problem_class>
+  <hints />
+  <description>&lt;html&gt;Using 'Log' instead of 'Timber'&lt;/html&gt;</description>
+  <highlighted_element>Log.d(&quot;ImagePickerHelper&quot;, &quot;TODO: Implement ImagePickerHelper&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>63</length>
+</problem>
+</problems>

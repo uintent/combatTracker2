@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/main/MainActivity.kt</file>
+  <line>156</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.main</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/main/MainActivity.kt" />
+  <problem_class id="AndroidLintResourceType" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Wrong Resource Type</problem_class>
+  <hints />
+  <description>&lt;html&gt;Expected resource of type drawable&lt;/html&gt;</description>
+  <highlighted_element>android.R.attr.selectableItemBackground</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>39</length>
+</problem>
+</problems>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Combat Tracker</string>
+
+    <!-- Main Screen -->
+    <string name="manage_encounters">Manage Encounters</string>
+    <string name="manage_encounters_subtitle">Load or delete saved encounters</string>
+    <string name="create_new_encounter">Create New Encounter</string>
+    <string name="create_new_encounter_subtitle">Set up new combat encounter</string>
+    <string name="manage_actors">Manage Actors</string>
+    <string name="manage_actors_subtitle">Create, edit, delete actor library</string>
+    <string name="settings">Settings</string>
+    <string name="settings_subtitle">App configuration and reset options</string>
+    <string name="close_app">Close App</string>
+    <string name="close_app_subtitle">Exit application</string>
+
+    <!-- Encounter Count Messages -->
+    <string name="no_saved_encounters">No saved encounters</string>
+    <string name="one_saved_encounter">1 saved encounter</string>
+    <string name="x_saved_encounters">%d saved encounters</string>
+
+    <!-- Actor Count Messages -->
+    <string name="no_actors_in_library">No actors in library</string>
+    <string name="one_actor_in_library">1 actor in library</string>
+    <string name="x_actors_in_library">%d actors in library</string>
+
+    <!-- Actor Library Screen -->
+    <string name="actor_library">Actor Library</string>
+    <string name="search_actors">Search actors</string>
+    <string name="filter_by_category">Filter by category</string>
+    <string name="sort_by">Sort by</string>
+    <string name="all">All</string>
+    <string name="no_actors_match_filters">No actors match your filters</string>
+    <string name="try_adjusting_filters">Try adjusting your search or filters</string>
+    <string name="no_actors_yet">No actors in your library yet</string>
+    <string name="tap_plus_to_create">Tap the + button to create your first actor</string>
+    <string name="clear_filters">Clear filters</string>
+
+    <!-- Actor Edit Screen -->
+    <string name="create_actor">Create Actor</string>
+    <string name="edit_actor">Edit Actor</string>
+    <string name="actor_name">Actor Name</string>
+    <string name="actor_name_hint">Enter actor name</string>
+    <string name="category">Category</string>
+    <string name="initiative_modifier">Initiative Modifier</string>
+    <string name="portrait">Portrait</string>
+    <string name="select_portrait">Select Portrait</string>
+    <string name="remove_portrait">Remove Portrait</string>
+    <string name="no_portrait_selected">No portrait selected</string>
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
+    <string name="actor_name_required">Actor name is required</string>
+    <string name="name_already_exists">An actor with this name already exists</string>
+
+    <!-- Categories -->
+    <string name="category_player">Player</string>
+    <string name="category_npc">NPC</string>
+    <string name="category_monster">Monster</string>
+    <string name="category_other">Other</string>
+
+    <!-- Encounter Creation Screen -->
+    <string name="encounter_name">Encounter Name</string>
+    <string name="encounter_name_hint">Leave empty for auto-generated name</string>
+    <string name="select_actors">Select Actors</string>
+    <string name="no_actors_selected">No actors selected</string>
+    <string name="one_actor_selected">1 actor selected</string>
+    <string name="x_actors_selected">%d actors selected</string>
+    <string name="quantity">Qty</string>
+    <string name="save_encounter">Save Encounter</string>
+    <string name="save_and_start">Save &amp; Start</string>
+    <string name="how_many_x">How many %s?</string>
+    <string name="at_least_one_actor_required">Please select at least one actor</string>
+    <string name="no_actors_to_select">No actors in library</string>
+    <string name="create_actors_first">Create actors first before making an encounter</string>
+
+    <!-- Encounter Management Screen -->
+    <string name="manage_encounters_title">Manage Encounters</string>
+    <string name="create_new">Create New</string>
+    <string name="no_encounters">No saved encounters</string>
+    <string name="create_encounter_to_start">Create an encounter to get started</string>
+    <string name="round_x">Round %d</string>
+    <string name="x_actors">%d actors</string>
+    <string name="one_actor">1 actor</string>
+    <string name="no_actors">No actors</string>
+    <string name="modified_x">Modified: %s</string>
+    <string name="load">Load</string>
+    <string name="delete">Delete</string>
+    <string name="load_encounter_question">Load \'%s\' and start combat?</string>
+
+    <!-- Combat Tracker Screen -->
+    <string name="combat_tracker">Combat Tracker</string>
+    <string name="round">Round</string>
+    <string name="previous_turn">Previous Turn</string>
+    <string name="next_turn">Next Turn</string>
+    <string name="previous_round">Previous Round</string>
+    <string name="next_round">Next Round</string>
+    <string name="roll_initiative">Roll Initiative</string>
+    <string name="roll_all">Roll All</string>
+    <string name="roll_npcs">Roll NPCs</string>
+    <string name="add_actor">Add Actor</string>
+    <string name="missing_initiative_message">Roll initiative for all actors to begin</string>
+    <string name="no_initiative">—</string>
+    <string name="initiative_x">Initiative: %s</string>
+    <string name="current_x">Current: %s</string>
+    <string name="initiative_not_set">Not set</string>
+    <string name="set_initiative">Set Initiative</string>
+    <string name="move_left">Move Left</string>
+    <string name="move_right">Move Right</string>
+    <string name="remove_actor">Remove Actor</string>
+    <string name="save_encounter_menu">Save Encounter</string>
+    <string name="load_encounter">Load Encounter</string>
+    <string name="end_encounter">End Encounter</string>
+
+    <!-- Conditions -->
+    <string name="conditions">Conditions</string>
+    <string name="permanent">Permanent</string>
+    <string name="duration">Duration</string>
+    <string name="turns">turns</string>
+    <string name="one_turn">1 turn</string>
+    <string name="x_turns">%d turns</string>
+    <string name="apply">Apply</string>
+    <string name="invalid_duration">Please enter a duration or select Permanent</string>
+
+    <!-- D&D Conditions -->
+    <string name="condition_blinded">Blinded</string>
+    <string name="condition_charmed">Charmed</string>
+    <string name="condition_deafened">Deafened</string>
+    <string name="condition_exhaustion">Exhaustion</string>
+    <string name="condition_frightened">Frightened</string>
+    <string name="condition_grappled">Grappled</string>
+    <string name="condition_incapacitated">Incapacitated</string>
+    <string name="condition_invisible">Invisible</string>
+    <string name="condition_paralyzed">Paralyzed</string>
+    <string name="condition_petrified">Petrified</string>
+    <string name="condition_poisoned">Poisoned</string>
+    <string name="condition_prone">Prone</string>
+    <string name="condition_restrained">Restrained</string>
+    <string name="condition_stunned">Stunned</string>
+    <string name="condition_unconscious">Unconscious</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="background_image">Background Image</string>
+    <string name="set_background">Set Background</string>
+    <string name="remove_background">Remove Background</string>
+    <string name="reset_options">Reset Options</string>
+    <string name="reset_all_actors">Reset All Actors</string>
+    <string name="reset_all_encounters">Reset All Encounters</string>
+    <string name="reset_everything">Reset Everything</string>
+    <string name="storage_usage">Storage Usage</string>
+    <string name="total_storage_used">Total storage used: %s</string>
+    <string name="portrait_storage_used">Portraits: %s</string>
+    <string name="background_storage_used">Backgrounds: %s</string>
+
+    <!-- Dialogs -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm">Confirm</string>
+    <string name="warning">Warning</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+
+    <!-- Delete Confirmations -->
+    <string name="delete_actor_title">Delete Actor?</string>
+    <string name="delete_actor_message">Are you sure you want to delete %s?</string>
+    <string name="delete_encounter_title">Delete Encounter?</string>
+    <string name="delete_encounter_message">Are you sure you want to delete this encounter?</string>
+    <string name="actor_deleted">Actor deleted</string>
+    <string name="encounter_deleted">Encounter deleted</string>
+
+    <!-- End Encounter Dialog -->
+    <string name="end_encounter_title">End Encounter?</string>
+    <string name="end_encounter_message">Do you want to save before ending?</string>
+    <string name="save_and_end">Save &amp; End</string>
+    <string name="discard_and_end">Discard &amp; End</string>
+
+    <!-- Reset Confirmations -->
+    <string name="reset_actors_title">Reset All Actors?</string>
+    <string name="reset_actors_message">This will delete all actors AND all saved encounters. This cannot be undone.</string>
+    <string name="reset_encounters_title">Reset All Encounters?</string>
+    <string name="reset_encounters_message">This will delete all saved encounters. This cannot be undone.</string>
+    <string name="reset_everything_title">Reset Everything?</string>
+    <string name="reset_everything_message">This will delete all data including actors, encounters, and settings. This cannot be undone.</string>
+
+    <!-- Roll Initiative Dialogs -->
+    <string name="roll_initiative_title">Roll Initiative</string>
+    <string name="roll_all_message">Roll initiative for all actors? This will overwrite existing values.</string>
+    <string name="roll_npcs_message">Roll initiative for NPCs only? This will overwrite their existing values.</string>
+    <string name="roll">Roll</string>
+
+    <!-- Other Dialogs -->
+    <string name="close_app_title">Close App?</string>
+    <string name="close_app_message">Are you sure you want to exit?</string>
+    <string name="close">Close</string>
+    <string name="unsaved_changes">Unsaved Changes</string>
+    <string name="unsaved_changes_message">You have unsaved changes. Do you want to save before leaving?</string>
+    <string name="discard_encounter_title">Discard Encounter?</string>
+    <string name="discard_encounter_message">You have selected actors. Are you sure you want to discard this encounter?</string>
+    <string name="remove_actor_title">Remove Actor?</string>
+    <string name="remove_actor_message">Remove %s from the encounter?</string>
+    <string name="remove">Remove</string>
+    <string name="no_actors_title">No Actors</string>
+    <string name="no_actors_message">You need at least one actor to create an encounter. Would you like to create one now?</string>
+    <string name="active_encounter_title">Active Encounter</string>
+    <string name="active_encounter_message">You have an active encounter: %s. Would you like to continue?</string>
+    <string name="continue_text">Continue</string>
+    <string name="ignore">Ignore</string>
+
+    <!-- Error Messages -->
+    <string name="generic_error">An unexpected error occurred</string>
+    <string name="failed_to_load_actor">Failed to load actor</string>
+    <string name="failed_to_save_actor">Failed to save actor</string>
+    <string name="failed_to_delete_actor">Failed to delete actor</string>
+    <string name="failed_to_create_encounter">Failed to create encounter</string>
+    <string name="failed_to_load_encounter">Failed to load encounter</string>
+    <string name="failed_to_save_encounter">Failed to save encounter</string>
+    <string name="failed_to_delete_encounter">Failed to delete encounter</string>
+    <string name="encounter_not_found">Encounter not found</string>
+    <string name="encounter_corrupted">Failed to load encounter. It may have been deleted or corrupted.</string>
+    <string name="actor_not_found">Actor not found</string>
+    <string name="invalid_initiative">Invalid initiative value</string>
+    <string name="permission_required">Permission required to select images</string>
+    <string name="image_too_large">Image file is too large (max 10MB)</string>
+    <string name="failed_to_load_image">Failed to load image</string>
+    <string name="cannot_delete_actor_in_use">Cannot delete actor that is used in encounters</string>
+    <string name="must_be_number">Must be a number</string>
+    <string name="must_be_between_x_and_y">Must be between %1$d and %2$d</string>
+
+    <!-- Success Messages -->
+    <string name="actor_created">Actor created successfully</string>
+    <string name="actor_updated">Actor updated successfully</string>
+    <string name="encounter_created">Encounter created</string>
+    <string name="encounter_saved">Encounter saved</string>
+    <string name="encounter_loaded">Encounter loaded</string>
+    <string name="initiative_set">Initiative set to %s</string>
+    <string name="condition_applied">Condition applied</string>
+    <string name="condition_removed">Condition removed</string>
+
+    <!-- Accessibility -->
+    <string name="actor_portrait">Actor portrait</string>
+    <string name="actor_portrait_of_x">Portrait of %s</string>
+    <string name="x_taking_turn">%s is currently taking their turn</string>
+    <string name="x_completed_turn">%s has completed their turn</string>
+    <string name="x_no_initiative">%s has not rolled initiative</string>
+    <string name="x_has_condition_y">%s has condition: %s</string>
+    <string name="advance_to_next_turn">Advance to next turn</string>
+    <string name="go_back_to_previous_turn">Go back to previous turn</string>
+    <string name="advance_to_next_round">Advance to next round</string>
+    <string name="go_back_to_previous_round">Go back to previous round</string>
+
+    <!-- Feature Not Implemented -->
+    <string name="feature_coming_soon">%s feature coming soon</string>
+    <string name="not_yet_implemented">%s not yet implemented</string>
+    <string name="add_actor_feature">Add actor</string>
+    <string name="move_left_feature">Move left</string>
+    <string name="move_right_feature">Move right</string>
+
+    <!-- Auto-generated Names -->
+    <string name="enc_save_prefix">ENCsave_</string>
+
+    <!-- Menu Items -->
+    <string name="action_save">Save</string>
+    <string name="action_save_and_start">Save &amp; Start</string>
+    <string name="action_clear_filters">Clear Filters</string>
+    <string name="action_roll_all">Roll All</string>
+    <string name="action_roll_npcs">Roll NPCs</string>
+    <string name="action_add_actor">Add Actor</string>
+    <string name="action_save_encounter">Save Encounter</string>
+    <string name="action_create_new">Create New</string>
+</resources>

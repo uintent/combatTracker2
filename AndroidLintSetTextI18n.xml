@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorLibraryActivity.kt</file>
+  <line>194</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorLibraryActivity.kt" />
+  <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+  <hints />
+  <description>&lt;html&gt;String literal in &lt;code&gt;setText&lt;/code&gt; can not be translated. Use Android resources instead.&lt;/html&gt;</description>
+  <highlighted_element>All</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>3</length>
+</problem>
+</problems>

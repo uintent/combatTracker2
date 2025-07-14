@@ -1,0 +1,30 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/model/ActorCategory.kt</file>
+  <line>134</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.model.ActorCategory.Companion com.example.combattracker.data.model.ActorCategory getDefault()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;getDefault()&lt;/code&gt; always returns &lt;code&gt;com.example.combattracker.data.model.ActorCategory.MONSTER&lt;/code&gt;</description>
+  <highlighted_element>getDefault</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatActorAdapter.kt</file>
+  <line>242</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.CombatActorAdapter.CombatActorViewHolder boolean isAnyActorHighlighted()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>Method &lt;code&gt;isAnyActorHighlighted()&lt;/code&gt; always returns &lt;code&gt;false&lt;/code&gt;</description>
+  <highlighted_element>isAnyActorHighlighted</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>21</length>
+</problem>
+</problems>

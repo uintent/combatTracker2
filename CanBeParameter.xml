@@ -1,0 +1,54 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/encounter/EncounterCreateViewModel.kt</file>
+  <line>32</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.encounter</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.encounter.EncounterCreateViewModel EncounterCreateViewModel(com.example.combattracker.data.repository.EncounterRepository encounterRepository, com.example.combattracker.data.repository.ActorRepository actorRepository)" />
+  <problem_class id="CanBeParameter" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constructor parameter is never used as a property</problem_class>
+  <description>Constructor parameter is never used as a property</description>
+  <highlighted_element>val</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>3</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/main/MainViewModel.kt</file>
+  <line>28</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.main</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.main.MainViewModel MainViewModel(com.example.combattracker.data.repository.EncounterRepository encounterRepository, com.example.combattracker.data.repository.ActorRepository actorRepository)" />
+  <problem_class id="CanBeParameter" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constructor parameter is never used as a property</problem_class>
+  <description>Constructor parameter is never used as a property</description>
+  <highlighted_element>val</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>3</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>38</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.settings.SettingsViewModel SettingsViewModel(android.app.Application application, com.example.combattracker.data.repository.ActorRepository actorRepository, com.example.combattracker.data.repository.EncounterRepository encounterRepository, com.example.combattracker.data.repository.ImageRepository imageRepository)" />
+  <problem_class id="CanBeParameter" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constructor parameter is never used as a property</problem_class>
+  <description>Constructor parameter is never used as a property</description>
+  <highlighted_element>val</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>3</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>39</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.settings.SettingsViewModel SettingsViewModel(android.app.Application application, com.example.combattracker.data.repository.ActorRepository actorRepository, com.example.combattracker.data.repository.EncounterRepository encounterRepository, com.example.combattracker.data.repository.ImageRepository imageRepository)" />
+  <problem_class id="CanBeParameter" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constructor parameter is never used as a property</problem_class>
+  <description>Constructor parameter is never used as a property</description>
+  <highlighted_element>val</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>3</length>
+</problem>
+</problems>

@@ -1,0 +1,394 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatActorAdapter.kt</file>
+  <line>133</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatActorAdapter.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting '-&gt;' #loc</description>
+  <highlighted_element />
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>0</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>/</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>example</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>/</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>combattracker</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>.</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>ui</highlighted_element>
+  <language>kotlin</language>
+  <offset>34</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>.</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>common</highlighted_element>
+  <language>kotlin</language>
+  <offset>37</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>imports are only allowed in the beginning of file #loc</description>
+  <highlighted_element />
+  <language>kotlin</language>
+  <offset>43</offset>
+  <length>0</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>/</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>example</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>/</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>combattracker</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>.</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>ui</highlighted_element>
+  <language>kotlin</language>
+  <offset>34</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>.</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>common</highlighted_element>
+  <language>kotlin</language>
+  <offset>37</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>imports are only allowed in the beginning of file #loc</description>
+  <highlighted_element />
+  <language>kotlin</language>
+  <offset>43</offset>
+  <length>0</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>/</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>example</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>/</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>combattracker</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>.</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>ui</highlighted_element>
+  <language>kotlin</language>
+  <offset>34</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>.</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>Expecting a top level declaration #loc</description>
+  <highlighted_element>common</highlighted_element>
+  <language>kotlin</language>
+  <offset>37</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
+  <hints />
+  <description>imports are only allowed in the beginning of file #loc</description>
+  <highlighted_element />
+  <language>kotlin</language>
+  <offset>43</offset>
+  <length>0</length>
+</problem>
+</problems>

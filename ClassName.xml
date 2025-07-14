@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/InitiativeCalculator.kt</file>
+  <line>331</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.utils.InitiativeRollType.NPC_ONLY" />
+  <problem_class id="ClassName" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Class naming convention</problem_class>
+  <description>Class name &lt;code&gt;NPC_ONLY&lt;/code&gt; should not contain underscores #loc</description>
+  <highlighted_element>NPC_ONLY</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>8</length>
+</problem>
+</problems>

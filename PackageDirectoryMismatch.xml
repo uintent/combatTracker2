@@ -1,0 +1,54 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorListAdapter.kt</file>
+  <line>4</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.actors.adapter</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/actors/ActorListAdapter.kt" />
+  <problem_class id="PackageDirectoryMismatch" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Package name does not match containing directory</problem_class>
+  <description>Package directive does not match the file location</description>
+  <highlighted_element>package com.example.combattracker.ui.actors.adapter</highlighted_element>
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>51</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/BaseActivity.kt" />
+  <problem_class id="PackageDirectoryMismatch" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Package name does not match containing directory</problem_class>
+  <description>Package directive does not match the file location</description>
+  <highlighted_element>package com</highlighted_element>
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/DialogUtils.kt" />
+  <problem_class id="PackageDirectoryMismatch" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Package name does not match containing directory</problem_class>
+  <description>Package directive does not match the file location</description>
+  <highlighted_element>package com</highlighted_element>
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt</file>
+  <line>2</line>
+  <module>combatTracker2.app.main</module>
+  <package>com</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/common/ImagePickerHelper.kt" />
+  <problem_class id="PackageDirectoryMismatch" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Package name does not match containing directory</problem_class>
+  <description>Package directive does not match the file location</description>
+  <highlighted_element>package com</highlighted_element>
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>11</length>
+</problem>
+</problems>

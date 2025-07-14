@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/database/CombatTrackerDatabase.kt</file>
+  <line>121</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.database</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.data.database.CombatTrackerDatabase.Companion.DatabaseCallback" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Redundant qualifier name</description>
+  <highlighted_element>RoomDatabase.</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>13</length>
+</problem>
+</problems>

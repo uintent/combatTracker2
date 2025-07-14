@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="120dp"
+    android:viewportWidth="80"
+    android:viewportHeight="120">
+    <!-- Background -->
+    <path
+        android:fillColor="#FFF3E0"
+        android:pathData="M0,0h80v120h-80z"/>
+    <!-- Question mark -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M40,20C50,20 58,28 58,38C58,44 55,49 50,52L48,54C46,56 45,58 45,61V65H35V61C35,56 37,52 40,49L42,47C44,45 45,42 45,38C45,33 42,30 37,30C32,30 29,33 29,38H19C19,28 27,20 37,20H40M35,75H45V85H35V75Z"/>
+</vector>

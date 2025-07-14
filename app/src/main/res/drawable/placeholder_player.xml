@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="120dp"
+    android:viewportWidth="80"
+    android:viewportHeight="120">
+    <!-- Background -->
+    <path
+        android:fillColor="#E8F5E9"
+        android:pathData="M0,0h80v120h-80z"/>
+    <!-- Player silhouette -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M40,20C45.5,20 50,24.5 50,30C50,35.5 45.5,40 40,40C34.5,40 30,35.5 30,30C30,24.5 34.5,20 40,20M40,45C50,45 58,53 58,63V90H22V63C22,53 30,45 40,45Z"/>
+    <!-- Shield icon -->
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M40,70C40,70 32,72 32,78V84C32,88 36,90 40,90C44,90 48,88 48,84V78C48,72 40,70 40,70Z"/>
+</vector>

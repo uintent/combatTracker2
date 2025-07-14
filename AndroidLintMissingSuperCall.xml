@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatTrackerActivity.kt</file>
+  <line>123</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatTrackerActivity.kt" />
+  <problem_class id="AndroidLintMissingSuperCall" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Missing Super Call</problem_class>
+  <hints />
+  <description>&lt;html&gt;Overriding method should call &lt;code&gt;super.onBackPressed&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>onBackPressed</highlighted_element>
+  <language>kotlin</language>
+  <offset>17</offset>
+  <length>13</length>
+</problem>
+</problems>

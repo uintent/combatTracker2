@@ -1,0 +1,28 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/InitiativeCalculator.kt</file>
+  <line>328</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.utils.InitiativeRollType.ALL" />
+  <problem_class id="ConvertObjectToDataObject" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Convert 'object' to 'data object'</problem_class>
+  <description>'sealed' sub-object can be converted to 'data object'</description>
+  <highlighted_element>object</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/InitiativeCalculator.kt</file>
+  <line>331</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="class" FQNAME="com.example.combattracker.utils.InitiativeRollType.NPC_ONLY" />
+  <problem_class id="ConvertObjectToDataObject" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Convert 'object' to 'data object'</problem_class>
+  <description>'sealed' sub-object can be converted to 'data object'</description>
+  <highlighted_element>object</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+</problem>
+</problems>

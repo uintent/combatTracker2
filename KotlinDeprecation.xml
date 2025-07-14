@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>173</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.String sanitizeFilename(java.lang.String filename)" />
+  <problem_class id="KotlinDeprecation" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Usage of redundant or deprecated syntax or deprecated symbols</problem_class>
+  <description>'toLowerCase(Locale): String' is deprecated. Use lowercase() instead.</description>
+  <highlighted_element>toLowerCase</highlighted_element>
+  <language>kotlin</language>
+  <offset>13</offset>
+  <length>11</length>
+</problem>
+</problems>

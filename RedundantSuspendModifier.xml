@@ -1,0 +1,106 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ImageRepository.kt</file>
+  <line>107</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.repository.ImageRepository java.lang.Object loadAndProcessPortrait(android.net.Uri sourceUri, kotlin.coroutines.Continuation&lt;? super android.graphics.Bitmap&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/data/repository/ImageRepository.kt</file>
+  <line>239</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.data.repository.ImageRepository java.lang.Object loadAndProcessBackground(android.net.Uri sourceUri, kotlin.coroutines.Continuation&lt;? super android.graphics.Bitmap&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/combat/CombatViewModel.kt</file>
+  <line>516</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.combat</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.combat.CombatViewModel java.lang.Object reloadActorConditions(long actorId, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/main/MainViewModel.kt</file>
+  <line>140</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.main</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.main.MainViewModel java.lang.Object verifyDatabaseIntegrity(kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>188</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.settings.SettingsViewModel java.lang.Object resetActors(kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>214</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.settings.SettingsViewModel java.lang.Object resetEncounters(kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/ui/settings/SettingsViewModel.kt</file>
+  <line>292</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.ui.settings</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.ui.settings.SettingsViewModel java.lang.Object clearCache(kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/example/combattracker/utils/FileStoragehelper.kt</file>
+  <line>190</line>
+  <module>combatTracker2.app.main</module>
+  <package>com.example.combattracker.utils</package>
+  <entry_point TYPE="method" FQNAME="com.example.combattracker.utils.FileStorageHelper java.lang.Object copyUriToFile(android.net.Uri sourceUri, java.io.File destinationFile, kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt; $completion)" />
+  <problem_class id="RedundantSuspendModifier" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant 'suspend' modifier</problem_class>
+  <description>Redundant 'suspend' modifier</description>
+  <highlighted_element>suspend</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+</problem>
+</problems>

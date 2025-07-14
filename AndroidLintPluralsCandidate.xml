@@ -1,0 +1,28 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/values/strings.xml</file>
+  <line>5</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+  <problem_class id="AndroidLintPluralsCandidate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Potential Plurals</problem_class>
+  <hints />
+  <description>&lt;html&gt;Formatting %d followed by words (&quot;saved&quot;): This should probably be a plural rather than a string&lt;/html&gt;</description>
+  <highlighted_element>&lt;string name=&quot;multiple_saved_encounters&quot;&gt;%d saved encounters&lt;/string&gt;</highlighted_element>
+  <language>XML</language>
+  <offset>4</offset>
+  <length>69</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/values/strings.xml</file>
+  <line>8</line>
+  <module>combatTracker2.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+  <problem_class id="AndroidLintPluralsCandidate" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Potential Plurals</problem_class>
+  <hints />
+  <description>&lt;html&gt;Formatting %d followed by words (&quot;actors&quot;): This should probably be a plural rather than a string&lt;/html&gt;</description>
+  <highlighted_element>&lt;string name=&quot;multiple_actors_in_library&quot;&gt;%d actors in library&lt;/string&gt;</highlighted_element>
+  <language>XML</language>
+  <offset>4</offset>
+  <length>71</length>
+</problem>
+</problems>

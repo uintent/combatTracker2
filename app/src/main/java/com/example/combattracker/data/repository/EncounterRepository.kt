@@ -1,0 +1,535 @@
+// File: EncounterRepository.kt
+package com.example.combattracker.data.repository
+
+import com.example.combattracker.data.database.dao.ActorDao
+import com.example.combattracker.data.database.dao.ConditionDao
+import com.example.combattracker.data.database.dao.EncounterDao
+import com.example.combattracker.data.database.entities.*
+import com.example.combattracker.data.model.ConditionType
+import com.example.combattracker.data.model.InitiativeState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+
+/**
+ * EncounterRepository - Business logic layer for encounter management
+ *
+ * Purpose:
+ * - Manages encounter lifecycle (create, save, load, delete)
+ * - Handles actor instance numbering for multiple copies
+ * - Coordinates combat state including initiative and conditions
+ * - Ensures data integrity when loading/saving encounters
+ *
+ * Requirements Reference:
+ * From section 3.3: Encounter Management
+ * - Create encounters with selected actors
+ * - Save/load encounter state
+ * - Handle multiple instances with unique numbering
+ * From section 3.6.1: Save current encounter state (actors, initiative order, turn status, conditions, round number)
+ */
+class EncounterRepository(
+    private val encounterDao: EncounterDao,
+    private val actorDao: ActorDao,
+    private val conditionDao: ConditionDao
+) {
+
+    // ========== Query Operations ==========
+
+    /**
+     * Get all encounters for the management screen
+     * Includes actor count for display
+     *
+     * @return Flow of encounters with metadata
+     */
+    fun getAllEncounters(): Flow<List<EncounterWithCount>> {
+        return encounterDao.getAllEncountersWithActorCount()
+    }
+
+    /**
+     * Get a single encounter by ID
+     *
+     * @param encounterId The encounter ID
+     * @return The encounter or null if not found
+     */
+    suspend fun getEncounterById(encounterId: Long): Encounter? {
+        return withContext(Dispatchers.IO) {
+            encounterDao.getEncounterById(encounterId)
+        }
+    }
+
+    // ========== Create Operations ==========
+
+    /**
+     * Create a new encounter with selected actors
+     *
+     * Business Rules:
+     * - Encounter name is optional (auto-generated if not provided)
+     * - Handles multiple instances of the same actor with numbering
+     * - Validates all actors exist before creating
+     *
+     * @param name Optional encounter name
+     * @param selectedActors Map of actor ID to instance count
+     * @return Result with encounter ID or error
+     */
+    suspend fun createEncounter(
+        name: String?,
+        selectedActors: Map<Long, Int>
+    ): Result<Long> = withContext(Dispatchers.IO) {
+        try {
+            // Validate input
+            if (selectedActors.isEmpty()) {
+                return@withContext Result.failure(
+                    IllegalArgumentException("An encounter must have at least one actor")
+                )
+            }
+
+            // Validate all actors exist
+            val actorIds = selectedActors.keys.toList()
+            val actors = actorDao.getActorsByIds(actorIds)
+
+            if (actors.size != actorIds.size) {
+                return@withContext Result.failure(
+                    IllegalStateException("Some selected actors no longer exist")
+                )
+            }
+
+            // Create the encounter
+            val encounter = Encounter.create(name)
+            val encounterId = encounterDao.insertEncounter(encounter)
+
+            // Create encounter actors with proper numbering
+            val encounterActors = createEncounterActors(
+                encounterId = encounterId,
+                selectedActors = selectedActors,
+                baseActors = actors
+            )
+
+            // Insert all encounter actors
+            encounterDao.insertEncounterActors(*encounterActors.toTypedArray())
+
+            Timber.d("Created encounter: ${encounter.name} with ${encounterActors.size} actors")
+            Result.success(encounterId)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to create encounter")
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Create encounter actor instances with proper numbering
+     *
+     * Implements the numbering system from requirements:
+     * - Single instance: No number
+     * - Multiple instances: "Name 1", "Name 2", etc.
+     *
+     * @param encounterId The encounter ID
+     * @param selectedActors Map of actor ID to count
+     * @param baseActors List of base actors
+     * @return List of encounter actors with unique names
+     */
+    private fun createEncounterActors(
+        encounterId: Long,
+        selectedActors: Map<Long, Int>,
+        baseActors: List<Actor>
+    ): List<EncounterActor> {
+        val encounterActors = mutableListOf<EncounterActor>()
+        var addedOrder = 0
+
+        baseActors.forEach { actor ->
+            val count = selectedActors[actor.id] ?: 0
+
+            if (count == 1) {
+                // Single instance - no numbering
+                encounterActors.add(
+                    EncounterActor(
+                        encounterId = encounterId,
+                        baseActorId = actor.id,
+                        displayName = actor.name,
+                        instanceNumber = 0,
+                        initiativeModifier = actor.initiativeModifier,
+                        addedOrder = addedOrder++
+                    )
+                )
+            } else if (count > 1) {
+                // Multiple instances - add numbers
+                repeat(count) { index ->
+                    val instanceNumber = index + 1
+                    encounterActors.add(
+                        EncounterActor(
+                            encounterId = encounterId,
+                            baseActorId = actor.id,
+                            displayName = "${actor.name} $instanceNumber",
+                            instanceNumber = instanceNumber,
+                            initiativeModifier = actor.initiativeModifier,
+                            addedOrder = addedOrder++
+                        )
+                    )
+                }
+            }
+        }
+
+        return encounterActors
+    }
+
+    // ========== Load Operations ==========
+
+    /**
+     * Load a complete encounter for combat
+     *
+     * Validates:
+     * - All actors still exist in the library
+     * - Conditions are valid
+     * - Data integrity is maintained
+     *
+     * @param encounterId The encounter to load
+     * @return Result with encounter data or error
+     */
+    suspend fun loadEncounter(encounterId: Long): Result<EncounterCombatData> = withContext(Dispatchers.IO) {
+        try {
+            // Load the encounter
+            val encounter = encounterDao.getEncounterById(encounterId)
+                ?: return@withContext Result.failure(
+                    IllegalArgumentException("Encounter not found")
+                )
+
+            // Load actors with base actor details
+            val actorsWithDetails = encounterDao.getEncounterActorsWithDetails(encounterId)
+
+            // Validate all actors still exist
+            if (actorsWithDetails.isEmpty()) {
+                return@withContext Result.failure(
+                    IllegalStateException("Encounter has no valid actors")
+                )
+            }
+
+            // Load conditions for all actors
+            val conditions = encounterDao.getEncounterConditions(encounterId)
+                .groupBy { it.actorCondition.encounterActorId }
+
+            // Create combat data
+            val combatData = EncounterCombatData(
+                encounter = encounter,
+                actors = actorsWithDetails,
+                conditions = conditions
+            )
+
+            Timber.d("Loaded encounter: ${encounter.name} with ${actorsWithDetails.size} actors")
+            Result.success(combatData)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to load encounter")
+            Result.failure(e)
+        }
+    }
+
+    // ========== Save Operations ==========
+
+    /**
+     * Save the current state of an encounter
+     *
+     * Updates:
+     * - Current round
+     * - Active actor
+     * - Initiative values
+     * - Turn status
+     * - Active conditions
+     *
+     * @param encounterId The encounter ID
+     * @param currentRound Current round number
+     * @param activeActorId Currently active actor
+     * @param actors List of actors with current state
+     * @return Result with success or error
+     */
+    suspend fun saveEncounterState(
+        encounterId: Long,
+        currentRound: Int,
+        activeActorId: Long?,
+        actors: List<EncounterActor>
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            // Load existing encounter
+            val encounter = encounterDao.getEncounterById(encounterId)
+                ?: return@withContext Result.failure(
+                    IllegalArgumentException("Encounter not found")
+                )
+
+            // Update encounter state
+            val updatedEncounter = encounter.copy(
+                currentRound = currentRound,
+                activeActorId = activeActorId,
+                isStarted = true
+            ).withUpdatedTimestamp()
+
+            encounterDao.updateEncounter(updatedEncounter)
+
+            // Update all actors
+            encounterDao.updateEncounterActors(*actors.toTypedArray())
+
+            // Clean up expired conditions
+            val expiredCount = encounterDao.deleteExpiredConditions(encounterId)
+            if (expiredCount > 0) {
+                Timber.d("Removed $expiredCount expired conditions")
+            }
+
+            Timber.d("Saved encounter state: Round $currentRound")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to save encounter state")
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Save as new encounter (not overwriting original)
+     *
+     * Requirements: "If saving a previously loaded encounter, a new save
+     * is generated with a new auto-generated name"
+     *
+     * @param originalEncounterId The encounter being saved
+     * @param customName Optional custom name
+     * @param currentRound Current round
+     * @param activeActorId Active actor
+     * @param actors Current actor states
+     * @return Result with new encounter ID or error
+     */
+    suspend fun saveAsNewEncounter(
+        originalEncounterId: Long,
+        customName: String?,
+        currentRound: Int,
+        activeActorId: Long?,
+        actors: List<EncounterActor>
+    ): Result<Long> = withContext(Dispatchers.IO) {
+        try {
+            // Create new encounter
+            val newEncounter = Encounter.create(customName).copy(
+                currentRound = currentRound,
+                activeActorId = activeActorId,
+                isStarted = true
+            )
+
+            val newEncounterId = encounterDao.insertEncounter(newEncounter)
+
+            // Copy actors to new encounter
+            val newActors = actors.map { actor ->
+                actor.copy(
+                    id = 0, // Reset ID for new insert
+                    encounterId = newEncounterId
+                )
+            }
+
+            encounterDao.insertEncounterActors(*newActors.toTypedArray())
+
+            // Copy active conditions
+            actors.forEach { actor ->
+                val conditions = encounterDao.getActorConditions(actor.id)
+                conditions.forEach { conditionWithDetails ->
+                    val newActorId = newActors.find {
+                        it.baseActorId == actor.baseActorId &&
+                                it.instanceNumber == actor.instanceNumber
+                    }?.id ?: return@forEach
+
+                    val newCondition = conditionWithDetails.actorCondition.copy(
+                        id = 0,
+                        encounterActorId = newActorId
+                    )
+                    encounterDao.insertActorCondition(newCondition)
+                }
+            }
+
+            Timber.d("Saved as new encounter: ${newEncounter.name}")
+            Result.success(newEncounterId)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to save as new encounter")
+            Result.failure(e)
+        }
+    }
+
+    // ========== Update Operations ==========
+
+    /**
+     * Add actors to an existing encounter mid-combat
+     *
+     * @param encounterId The encounter ID
+     * @param actorIds List of actor IDs to add
+     * @param manualInitiatives Map of actor ID to manual initiative value
+     * @return Result with list of new encounter actors or error
+     */
+    suspend fun addActorsToEncounter(
+        encounterId: Long,
+        actorIds: List<Long>,
+        manualInitiatives: Map<Long, Double>
+    ): Result<List<EncounterActor>> = withContext(Dispatchers.IO) {
+        try {
+            // Validate encounter exists
+            val encounter = encounterDao.getEncounterById(encounterId)
+                ?: return@withContext Result.failure(
+                    IllegalArgumentException("Encounter not found")
+                )
+
+            // Get existing actors to determine numbering
+            val existingActors = encounterDao.getEncounterActorsWithDetails(encounterId)
+            val maxAddedOrder = existingActors.maxOfOrNull { it.encounterActor.addedOrder } ?: -1
+
+            // Load base actors
+            val baseActors = actorDao.getActorsByIds(actorIds)
+
+            // Create new encounter actors with proper numbering
+            val newActors = mutableListOf<EncounterActor>()
+            var addedOrder = maxAddedOrder + 1
+
+            baseActors.forEach { actor ->
+                // Get highest instance number for this actor
+                val highestInstance = encounterDao.getHighestInstanceNumber(encounterId, actor.id) ?: 0
+                val instanceNumber = if (highestInstance > 0) highestInstance + 1 else 0
+
+                val displayName = if (instanceNumber > 0) {
+                    "${actor.name} $instanceNumber"
+                } else {
+                    actor.name
+                }
+
+                val encounterActor = EncounterActor(
+                    encounterId = encounterId,
+                    baseActorId = actor.id,
+                    displayName = displayName,
+                    instanceNumber = instanceNumber,
+                    initiative = manualInitiatives[actor.id],
+                    initiativeModifier = actor.initiativeModifier,
+                    addedOrder = addedOrder++
+                )
+
+                newActors.add(encounterActor)
+            }
+
+            // Insert new actors
+            encounterDao.insertEncounterActors(*newActors.toTypedArray())
+
+            Timber.d("Added ${newActors.size} actors to encounter")
+            Result.success(newActors)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to add actors to encounter")
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Remove an actor from encounter
+     *
+     * @param encounterActorId The encounter actor to remove
+     * @return Result with success or error
+     */
+    suspend fun removeActorFromEncounter(encounterActorId: Long): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val actor = encounterDao.getEncounterActorsWithDetails(encounterActorId).firstOrNull()
+                ?: return@withContext Result.failure(
+                    IllegalArgumentException("Actor not found in encounter")
+                )
+
+            encounterDao.deleteEncounterActor(actor.encounterActor)
+
+            Timber.d("Removed actor from encounter: ${actor.encounterActor.displayName}")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to remove actor from encounter")
+            Result.failure(e)
+        }
+    }
+
+    // ========== Delete Operations ==========
+
+    /**
+     * Delete an encounter
+     * Cascades to delete all actors and conditions
+     *
+     * @param encounterId The encounter to delete
+     * @return Result with success or error
+     */
+    suspend fun deleteEncounter(encounterId: Long): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            encounterDao.deleteEncounterById(encounterId)
+            Timber.d("Deleted encounter: $encounterId")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to delete encounter")
+            Result.failure(e)
+        }
+    }
+
+    // ========== Condition Operations ==========
+
+    /**
+     * Apply a condition to an actor
+     *
+     * @param actorId The encounter actor ID
+     * @param conditionType The condition to apply
+     * @param isPermanent Whether the condition is permanent
+     * @param duration Duration in turns (if not permanent)
+     * @param currentRound Current combat round
+     * @return Result with success or error
+     */
+    suspend fun applyCondition(
+        actorId: Long,
+        conditionType: ConditionType,
+        isPermanent: Boolean,
+        duration: Int?,
+        currentRound: Int
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val condition = if (isPermanent) {
+                ActorCondition.createPermanent(actorId, conditionType.id, currentRound)
+            } else {
+                if (duration == null || duration <= 0) {
+                    return@withContext Result.failure(
+                        IllegalArgumentException("Duration required for non-permanent conditions")
+                    )
+                }
+                ActorCondition.createTemporary(actorId, conditionType.id, duration, currentRound)
+            }
+
+            encounterDao.insertActorCondition(condition)
+
+            Timber.d("Applied condition ${conditionType.displayName} to actor $actorId")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to apply condition")
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Remove a condition from an actor
+     *
+     * @param conditionId The actor condition ID
+     * @return Result with success or error
+     */
+    suspend fun removeCondition(conditionId: Long): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            encounterDao.deleteActorConditionById(conditionId)
+            Timber.d("Removed condition: $conditionId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to remove condition")
+            Result.failure(e)
+        }
+    }
+}
+
+// ========== Data Classes ==========
+
+/**
+ * Complete encounter data for combat
+ */
+data class EncounterCombatData(
+    val encounter: Encounter,
+    val actors: List<EncounterActorWithActor>,
+    val conditions: Map<Long, List<ActorConditionWithDetails>>
+)
