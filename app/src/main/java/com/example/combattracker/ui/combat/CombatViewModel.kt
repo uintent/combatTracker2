@@ -4,7 +4,6 @@
 package com.example.combattracker.ui.combat
 
 import androidx.lifecycle.*
-import com.example.combattracker.data.database.dao.ActorConditionWithDetails
 import com.example.combattracker.data.database.dao.ConditionDao
 import com.example.combattracker.data.database.dao.EncounterActorWithActor
 import com.example.combattracker.data.database.entities.*
@@ -132,7 +131,7 @@ class CombatViewModel(
         viewModelScope.launch {
             try {
                 val actorCategories = encounterActors.associate { actorWithActor ->
-                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.category
+                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.getActorCategory()
                 }
 
                 val results = InitiativeCalculator.rollInitiativeForActors(
@@ -175,7 +174,7 @@ class CombatViewModel(
         viewModelScope.launch {
             try {
                 val actorCategories = encounterActors.associate { actorWithActor ->
-                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.category
+                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.getActorCategory()
                 }
 
                 val results = InitiativeCalculator.rollInitiativeForActors(
@@ -557,7 +556,7 @@ class CombatViewModel(
                 id = actor.id,
                 displayName = actor.displayName,
                 portraitPath = baseActor.portraitPath,
-                category = baseActor.category,
+                category = baseActor.getActorCategory(),
                 initiative = actor.initiative,
                 conditions = conditions.map { conditionWithDetails -> conditionWithDetails.condition },
                 isActive = actor.id == encounter.currentActorId,
