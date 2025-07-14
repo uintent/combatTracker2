@@ -21,34 +21,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Toolbar -->
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintEnd_toEndOf="parent"
+        <!-- Back button in top left corner -->
+        <ImageButton
+            android:id="@+id/buttonBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/go_back"
+            android:padding="12dp"
+            android:src="@drawable/ic_arrow_left"
+            app:tint="?attr/colorOnBackground"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Round counter -->
-        <TextView
-            android:id="@+id/textRound"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/round_background"
+        <!-- Menu button in top right corner -->
+        <ImageButton
+            android:id="@+id/buttonMenu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/menu"
             android:padding="12dp"
-            android:text="@string/round_x"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            android:textColor="?attr/colorOnPrimary"
+            android:src="@drawable/ic_more_vert"
+            app:tint="?attr/colorOnBackground"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            tools:text="Round 1" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Missing initiative warning -->
+        <!-- Missing initiative warning at top center -->
         <TextView
             android:id="@+id/textMissingInitiative"
             android:layout_width="wrap_content"
@@ -61,36 +62,27 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textRound"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
-        <!-- Actor RecyclerView container -->
-        <FrameLayout
-            android:id="@+id/actorContainer"
+        <!-- Actor RecyclerView - aligned to top -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewActors"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/turnControlsContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textMissingInitiative">
+            app:layout_constraintTop_toBottomOf="@+id/textMissingInitiative"
+            tools:listitem="@layout/item_combat_actor" />
 
-            <!-- Horizontal RecyclerView for actors -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewActors"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_combat_actor" />
-
-        </FrameLayout>
-
-        <!-- Turn controls container -->
+        <!-- Turn controls container with round counter -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/turnControlsContainer"
             android:layout_width="0dp"
@@ -132,6 +124,22 @@
                     app:icon="@drawable/ic_skip_previous" />
 
             </LinearLayout>
+
+            <!-- Round counter in center -->
+            <TextView
+                android:id="@+id/textRound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_background"
+                android:padding="16dp"
+                android:text="@string/round_x"
+                android:textAppearance="?attr/textAppearanceHeadline4"
+                android:textColor="?attr/colorOnPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/nextControls"
+                app:layout_constraintStart_toEndOf="@+id/previousControls"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Round 1" />
 
             <!-- Next controls -->
             <LinearLayout

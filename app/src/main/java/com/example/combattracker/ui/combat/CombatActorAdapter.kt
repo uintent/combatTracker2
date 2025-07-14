@@ -1,12 +1,10 @@
-// File: CombatActorAdapter.kt
-// Location: app/src/main/java/com/example/combattracker/ui/combat/CombatActorAdapter.kt
-
 package com.example.combattracker.ui.combat
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -19,6 +17,7 @@ import com.example.combattracker.utils.formatInitiative
 import com.example.combattracker.utils.gone
 import com.example.combattracker.utils.loadFromInternalStorage
 import com.example.combattracker.utils.visible
+import kotlin.math.min
 
 /**
  * CombatActorAdapter - RecyclerView adapter for horizontal combat tracker
@@ -45,10 +44,38 @@ class CombatActorAdapter(
 ) {
 
     private var highlightedActorId: Long? = null
+    private var itemWidth: Int = 0
+    private var itemHeight: Int = 0
+    private var density: Float = 1f  // Add this
+
+    // Update the updateItemDimensions method to accept density
+    fun updateItemDimensions(recyclerViewWidth: Int, recyclerViewHeight: Int, itemCount: Int, density: Float) {
+        if (itemCount == 0) return
+
+        this.density = density  // Store density
+
+        // Calculate available width (accounting for padding and margins)
+        val horizontalPadding = (48 * density).toInt() // 24dp padding on each side
+        val itemMargin = (16 * density).toInt() // 8dp margin on each side of item
+        val availableWidth = recyclerViewWidth - horizontalPadding
+
+        // Rest of the method remains the same...
+        itemWidth = (availableWidth - (itemMargin * itemCount)) / itemCount
+
+        val maxInactiveHeight = (recyclerViewHeight * 0.8).toInt()
+        val calculatedHeight = (itemWidth * 1.5).toInt()
+
+        itemHeight = min(calculatedHeight, maxInactiveHeight)
+        itemWidth = (itemHeight / 1.5).toInt()
+
+        notifyDataSetChanged()
+    }
+
+    // Remove the problematic dpToPx() extension function at class level
 
     // ========== ViewHolder ==========
 
-    class CombatActorViewHolder(
+    inner class CombatActorViewHolder(
         private val binding: ItemCombatActorBinding,
         private val onActorClick: (EncounterActorState) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -63,6 +90,21 @@ class CombatActorAdapter(
 
         fun bind(actor: EncounterActorState, highlightedActorId: Long?) {
             currentActor = actor
+
+            // Apply dynamic sizing
+            val layoutParams = binding.portraitCard.layoutParams
+            if (itemWidth > 0 && itemHeight > 0) {
+                layoutParams.width = itemWidth
+                layoutParams.height = itemHeight
+
+                // Scale up active actor by 20%
+                if (actor.isActive) {
+                    layoutParams.width = (itemWidth * 1.2).toInt()
+                    layoutParams.height = (itemHeight * 1.2).toInt()
+                }
+
+                binding.portraitCard.layoutParams = layoutParams
+            }
 
             // Set actor name
             binding.textActorName.text = actor.displayName
@@ -98,20 +140,10 @@ class CombatActorAdapter(
             binding.missingInitiativeOverlay.gone()
             binding.contextMenuOverlay.gone()
 
-            // Reset scale
-            binding.portraitCard.scaleX = 1.0f
-            binding.portraitCard.scaleY = 1.0f
-
             when {
                 // Missing initiative - show red overlay
                 actor.missingInitiative -> {
                     binding.missingInitiativeOverlay.visible()
-                }
-
-                // Active actor - scale up the portrait card
-                actor.isActive -> {
-                    binding.portraitCard.scaleX = 1.2f
-                    binding.portraitCard.scaleY = 1.2f
                 }
 
                 // Has taken turn - show grey overlay
@@ -146,14 +178,13 @@ class CombatActorAdapter(
 
             // Add condition icons (limit to show to avoid overflow)
             conditions.take(3).forEach { condition ->
-                val iconView = LayoutInflater.from(binding.root.context)
-                    .inflate(R.layout.view_condition_icon, binding.conditionsContainer, false)
-
-                // Set icon based on condition
-                val iconRes = getConditionIcon(condition)
-                iconView.findViewById<ImageView>(R.id.imageCondition)
-                    ?.setImageResource(iconRes)
-
+                val iconView = ImageView(binding.root.context).apply {
+                    layoutParams = LinearLayout.LayoutParams(24.dpToPx(), 24.dpToPx()).apply {
+                        setMargins(0, 2.dpToPx(), 0, 2.dpToPx())
+                    }
+                    setImageResource(getConditionIcon(condition))
+                    contentDescription = condition.name
+                }
                 binding.conditionsContainer.addView(iconView)
             }
 
@@ -167,6 +198,11 @@ class CombatActorAdapter(
 
                 binding.conditionsContainer.addView(moreView)
             }
+        }
+
+        // Extension function to convert dp to pixels for views
+        private fun Int.dpToPx(): Int {
+            return (this * binding.root.context.resources.displayMetrics.density).toInt()
         }
 
         /**
@@ -196,7 +232,7 @@ class CombatActorAdapter(
                 "invisible" -> R.drawable.ic_condition_invisible
                 "paralyzed" -> R.drawable.ic_condition_paralyzed
                 "petrified" -> R.drawable.ic_condition_petrified
-                "poisoned" -> R.drawable.ic_condition_poisoned  // Note the typo in resource name
+                "poisoned" -> R.drawable.ic_condition_poisoned
                 "prone" -> R.drawable.ic_condition_prone
                 "restrained" -> R.drawable.ic_condition_restrained
                 "stunned" -> R.drawable.ic_condition_stunned

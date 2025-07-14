@@ -25,6 +25,9 @@ import com.example.combattracker.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import android.view.View
+import androidx.appcompat.widget.PopupMenu
+import android.view.ViewTreeObserver
 
 /**
  * CombatTrackerActivity - Main combat tracking screen
@@ -75,6 +78,15 @@ class CombatTrackerActivity : AppCompatActivity() {
 
         binding = ActivityCombatTrackerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Make the activity fullscreen
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+
+        // Hide the action bar
+        supportActionBar?.hide()
 
         setupToolbar()
         setupViews()
@@ -161,20 +173,35 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Setup toolbar
      */
     private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
+        //setSupportActionBar(binding.toolbar)
+        //supportActionBar?.apply {
+        //    setDisplayHomeAsUpEnabled(true)
             // Title will be set when encounter loads
-        }
+        //}
     }
 
-    /**
-     * Setup views
-     */
     private fun setupViews() {
         setupActorRecyclerView()
         setupTurnControls()
         setupBackgroundImage()
+
+        // Add new button handlers
+        binding.buttonBack.setOnClickListener {
+            onBackPressed()
+        }
+
+        binding.buttonMenu.setOnClickListener {
+            showOverflowMenu(it)
+        }
+    }
+
+    private fun showOverflowMenu(anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        popup.menuInflater.inflate(R.menu.menu_combat_tracker, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            onOptionsItemSelected(item)
+        }
+        popup.show()
     }
 
     /**
@@ -183,6 +210,7 @@ class CombatTrackerActivity : AppCompatActivity() {
     private fun setupActorRecyclerView() {
         combatActorAdapter = CombatActorAdapter(
             onActorClick = { actor ->
+                viewModel.selectActor(actor.id)  // Changed from setSelectedActor
                 showActorContextMenu(actor)
             }
         )
@@ -191,10 +219,17 @@ class CombatTrackerActivity : AppCompatActivity() {
             adapter = combatActorAdapter
             layoutManager = LinearLayoutManager(
                 this@CombatTrackerActivity,
-                RecyclerView.HORIZONTAL,
+                LinearLayoutManager.HORIZONTAL,
                 false
             )
-            setHasFixedSize(false) // Size changes when active actor changes
+
+            // Add observer for size changes
+            viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    updateActorSizing()  // CALL IT HERE
+                }
+            })
         }
     }
 
@@ -274,6 +309,13 @@ class CombatTrackerActivity : AppCompatActivity() {
         viewModel.isLoading.observe(this) { isLoading ->
             binding.progressBar.visibleIf(isLoading)
             binding.combatContent.visibleIf(!isLoading)
+        }
+
+        viewModel.combatState.observe(this) { state ->
+            combatActorAdapter.submitList(state.actors) {
+                // Update sizing after list is submitted
+                updateActorSizing()
+            }
         }
 
         // Observe errors
@@ -455,5 +497,19 @@ class CombatTrackerActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton(Constants.Dialogs.BUTTON_OK, null)
             .show()
+    }
+
+    private fun updateActorSizing() {
+        val recyclerView = binding.recyclerViewActors
+        val itemCount = combatActorAdapter.itemCount
+
+        if (itemCount > 0) {
+            combatActorAdapter.updateItemDimensions(
+                recyclerView.width,
+                recyclerView.height,
+                itemCount,
+                resources.displayMetrics.density  // Pass density here
+            )
+        }
     }
 }

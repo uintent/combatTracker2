@@ -438,6 +438,9 @@
     <string name="action_save_encounter">Save Encounter</string>
     <string name="action_create_new">Create New</string>
 
+    <string name="go_back">Go back</string>
+    <string name="menu">Menu</string>
+
     <!-- Special System String -->
     <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
 </resources>

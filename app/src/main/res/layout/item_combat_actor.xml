@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackground">
+    android:orientation="vertical"
+    android:gravity="top|center_horizontal">
 
     <!-- Portrait container with 1:1.5 aspect ratio -->
     <androidx.cardview.widget.CardView
         android:id="@+id/portraitCard"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp">
 
@@ -97,17 +99,16 @@
         android:id="@+id/textActorName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/name_background"
         android:maxWidth="120dp"
-        android:padding="4dp"
+        android:padding="6dp"
         android:textAppearance="?attr/textAppearanceBody2"
         android:textColor="?attr/colorOnPrimary"
         android:textStyle="bold"
         android:gravity="center"
         android:ellipsize="end"
-        android:maxLines="1"
+        android:maxLines="2"
         tools:text="Goblin Warrior 1" />
 
-</FrameLayout>
+</LinearLayout>
