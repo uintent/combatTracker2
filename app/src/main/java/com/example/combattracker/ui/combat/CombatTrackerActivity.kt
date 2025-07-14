@@ -3,11 +3,6 @@
 
 package com.example.combattracker.ui.combat
 
-import androidx.appcompat.app.AlertDialog
-import com.example.combattracker.utils.toast
-import com.example.combattracker.utils.navigateToEncounterList
-import com.example.combattracker.utils.showEndEncounterDialog
-
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
