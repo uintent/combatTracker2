@@ -255,6 +255,7 @@
     <string name="no_actors_message">You need at least one actor to create an encounter. Would you like to create one now?</string>
     <string name="active_encounter_title">Active Encounter</string>
     <string name="active_encounter_message">You have an active encounter: %s. Would you like to continue?</string>
+    <string name="create_encounter_message">Create an encounter to get started</string>
 
     <!-- Quantity Dialog -->
     <string name="quantity_dialog_title">Set Quantity</string>
@@ -286,6 +287,7 @@
     <string name="must_be_between_x_and_y">Must be between %1$d and %2$d</string>
     <string name="invalid_number_format">Invalid number format</string>
     <string name="value_out_of_range">Value must be between %1$d and %2$d</string>
+    <string name="encounter_not_available">No saved encounters</string>
 
     <!-- Success Messages -->
     <string name="actor_created">Actor created successfully</string>

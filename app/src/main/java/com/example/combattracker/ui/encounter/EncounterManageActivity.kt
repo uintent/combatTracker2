@@ -60,6 +60,7 @@ class EncounterManageActivity : AppCompatActivity() {
 
         setupToolbar()
         setupRecyclerView()
+        setupFab()
         observeViewModel()
 
         Timber.d("EncounterManageActivity created")
@@ -115,6 +116,15 @@ class EncounterManageActivity : AppCompatActivity() {
             adapter = encounterAdapter
             layoutManager = LinearLayoutManager(this@EncounterManageActivity)
             setHasFixedSize(true)
+        }
+    }
+
+    /**
+     * Setup Floating Action Button
+     */
+    private fun setupFab() {
+        binding.fabCreateEncounter.setOnClickListener {
+            createNewEncounter()
         }
     }
 

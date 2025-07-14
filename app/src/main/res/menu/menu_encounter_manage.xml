@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File: menu_encounter_manage.xml -->
+<!-- Location: app/src/main/res/menu/menu_encounter_manage.xml -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_create_new"
+        android:title="@string/create_new_encounter"
+        android:icon="@drawable/ic_add_encounter"
+        app:showAsAction="ifRoom" />
+
+</menu>

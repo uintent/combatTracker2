@@ -141,7 +141,7 @@ class EncounterCreateActivity : AppCompatActivity() {
         })
 
         // Show hint about auto-generated name
-        binding.textInputName.helperText = "Leave empty for auto-generated name"
+        binding.textInputLayoutName.helperText = "Leave empty for auto-generated name"
     }
 
     /**
@@ -204,8 +204,8 @@ class EncounterCreateActivity : AppCompatActivity() {
 
         // Observe loading state
         viewModel.isLoading.observe(this) { isLoading ->
-            // Show/hide progress indicator if available in layout
-            // binding.progressBar?.visibleIf(isLoading)
+            binding.progressBar.visibleIf(isLoading)
+            binding.scrollView.visibleIf(!isLoading)
         }
 
         // Observe save complete
@@ -233,13 +233,12 @@ class EncounterCreateActivity : AppCompatActivity() {
      * Update empty state
      */
     private fun updateEmptyState(isEmpty: Boolean) {
-        binding.emptyState.visibleIf(isEmpty)
+        binding.emptyStateLayout.visibleIf(isEmpty)
         binding.recyclerViewActors.visibleIf(!isEmpty)
 
         if (isEmpty) {
-            binding.textEmpty.text = "No actors in library"
-            // If there's a sub-message TextView, update it too
-            // binding.textEmptySubMessage?.text = "Create actors first before making an encounter"
+            binding.textEmptyMessage.text = "No actors in library"
+            binding.textEmptySubMessage.text = "Create actors first before making an encounter"
         }
     }
 
@@ -247,7 +246,7 @@ class EncounterCreateActivity : AppCompatActivity() {
      * Update selected actor count
      */
     private fun updateSelectedCount(count: Int) {
-        binding.textSelectedInfo.text = when (count) {
+        binding.textSelectedCount.text = when (count) {
             0 -> "No actors selected"
             1 -> "1 actor selected"
             else -> "$count actors selected"
@@ -279,11 +278,11 @@ class EncounterCreateActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("How many ${actor.name}?")
             .setView(dialogBinding.root)
-            .setPositiveButton("OK") { dialog, which ->
+            .setPositiveButton("OK") { _, _ ->
                 val quantity = dialogBinding.numberPicker.value
                 viewModel.setActorQuantity(actor, quantity)
             }
-            .setNegativeButton("Remove") { dialog, which ->
+            .setNegativeButton("Remove") { _, _ ->
                 viewModel.removeActor(actor.id)
             }
             .setNeutralButton(Constants.Dialogs.BUTTON_CANCEL, null)
@@ -323,7 +322,7 @@ class EncounterCreateActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("Discard Encounter?")
             .setMessage("You have selected actors. Are you sure you want to discard this encounter?")
-            .setPositiveButton("Discard") { dialog, which ->
+            .setPositiveButton("Discard") { _, _ ->
                 finish()
             }
             .setNegativeButton(Constants.Dialogs.BUTTON_CANCEL, null)

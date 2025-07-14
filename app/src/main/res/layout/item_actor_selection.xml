@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- File: item_actor_selection.xml -->
+<!-- Location: app/src/main/res/layout/item_actor_selection.xml -->
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -37,7 +40,7 @@
         android:layout_marginEnd="8dp"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/textQuantity"
+        app:layout_constraintEnd_toStartOf="@+id/layoutQuantity"
         app:layout_constraintStart_toEndOf="@+id/imagePortrait"
         app:layout_constraintTop_toTopOf="@+id/imagePortrait"
         tools:text="Goblin Warrior" />
@@ -55,38 +58,44 @@
         app:layout_constraintTop_toBottomOf="@+id/textActorName"
         tools:text="Monster" />
 
-    <!-- Quantity display -->
+    <!-- Initiative modifier -->
     <TextView
-        android:id="@+id/textQuantity"
-        android:layout_width="wrap_content"
+        android:id="@+id/textInitiative"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:textAppearance="?attr/textAppearanceBody1"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonQuantity"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="×3"
-        tools:visibility="visible" />
+        android:layout_marginTop="2dp"
+        android:textAppearance="?attr/textAppearanceCaption"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintEnd_toEndOf="@+id/textActorName"
+        app:layout_constraintStart_toStartOf="@+id/textActorName"
+        app:layout_constraintTop_toBottomOf="@+id/textCategory"
+        tools:text="Initiative: +2" />
 
-    <!-- Quantity button -->
-    <Button
-        android:id="@+id/buttonQuantity"
-        style="?attr/materialButtonOutlinedStyle"
+    <!-- Quantity layout container -->
+    <LinearLayout
+        android:id="@+id/layoutQuantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="12dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="4dp"
-        android:text="@string/quantity"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:visibility="gone"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="visible">
+
+        <!-- Quantity display -->
+        <TextView
+            android:id="@+id/textQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            tools:text="×3" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

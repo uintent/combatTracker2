@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- File: activity_settings.xml -->
+<!-- Location: app/src/main/res/layout/activity_settings.xml -->
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,6 +23,15 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:title="@string/settings_title" />
 
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
         <!-- Settings Content -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,6 +46,15 @@
                 android:text="@string/background_image"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textBackgroundStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Using default black background"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -54,6 +75,7 @@
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:enabled="false"
                     android:text="@string/remove_background" />
 
             </LinearLayout>
@@ -72,16 +94,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/total_storage_used"
+                android:text="Total: 0 B"
                 android:textAppearance="?attr/textAppearanceBody1"
-                tools:text="Total storage used: 25.3 MB" />
+                tools:text="Total: 25.3 MB" />
 
             <TextView
                 android:id="@+id/textPortraitStorage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/portrait_storage_used"
+                android:text="Portraits: 0 B"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary"
                 tools:text="Portraits: 18.7 MB" />
@@ -91,10 +113,86 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/background_storage_used"
+                android:text="Backgrounds: 0 B"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary"
                 tools:text="Backgrounds: 6.6 MB" />
+
+            <TextView
+                android:id="@+id/textDatabaseStorage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Database: 0 B"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Database: 120 KB" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/textCacheSize"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cache: 0 B"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="Cache: 2.1 MB" />
+
+                <Button
+                    android:id="@+id/buttonClearCache"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Clear Cache"
+                    android:textSize="12sp"
+                    android:minHeight="36dp"
+                    android:enabled="false" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonRefreshStorage"
+                style="?attr/materialButtonTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Refresh"
+                android:textSize="12sp" />
+
+            <!-- Data Info Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Data"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textActorCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="0 actors in library"
+                android:textAppearance="?attr/textAppearanceBody2"
+                tools:text="12 actors in library" />
+
+            <TextView
+                android:id="@+id/textEncounterCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="0 saved encounters"
+                android:textAppearance="?attr/textAppearanceBody2"
+                tools:text="3 saved encounters" />
 
             <!-- Reset Options Section -->
             <TextView
@@ -105,6 +203,71 @@
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:text="Warning: Reset actions cannot be undone!"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="?attr/colorError" />
+
+            <!-- Reset Actors Button (not card) -->
+            <Button
+                android:id="@+id/buttonResetActors"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Reset All Actors"
+                android:textColor="?attr/colorError" />
+
+            <!-- Reset Encounters Button -->
+            <Button
+                android:id="@+id/buttonResetEncounters"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Reset All Encounters"
+                android:textColor="?attr/colorError" />
+
+            <!-- Reset All Button -->
+            <Button
+                android:id="@+id/buttonResetAll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="?attr/colorError"
+                android:text="Reset Everything"
+                android:textColor="?attr/colorOnError" />
+
+            <!-- About Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="About"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Version 1.0.0"
+                android:textAppearance="?attr/textAppearanceBody2"
+                tools:text="Version 1.0.0" />
+
+            <Button
+                android:id="@+id/buttonLicenses"
+                style="?attr/materialButtonTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Open Source Licenses" />
+
+            <!-- Cards for reset options (keeping for reference, but using buttons above) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardResetActors"
                 android:layout_width="match_parent"
@@ -113,6 +276,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:visibility="gone"
                 app:cardBackgroundColor="?attr/colorErrorContainer"
                 app:cardElevation="2dp">
 
@@ -150,6 +314,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:visibility="gone"
                 app:cardBackgroundColor="?attr/colorErrorContainer"
                 app:cardElevation="2dp">
 
@@ -187,6 +352,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:visibility="gone"
                 app:cardBackgroundColor="?attr/colorError"
                 app:cardElevation="2dp">
 

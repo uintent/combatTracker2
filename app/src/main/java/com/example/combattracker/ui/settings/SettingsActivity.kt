@@ -41,6 +41,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private val viewModel: SettingsViewModel by viewModels {
         SettingsViewModel.Factory(
+            application,  // Fixed: Pass Application as first parameter
             (application as CombatTrackerApplication).actorRepository,
             (application as CombatTrackerApplication).encounterRepository,
             (application as CombatTrackerApplication).imageRepository
@@ -108,7 +109,6 @@ class SettingsActivity : AppCompatActivity() {
         setupBackgroundSection()
         setupResetSection()
         setupStorageSection()
-        setupAboutSection()
     }
 
     /**
@@ -128,43 +128,25 @@ class SettingsActivity : AppCompatActivity() {
      * Setup reset options section
      */
     private fun setupResetSection() {
-        binding.buttonResetActors.setOnClickListener {
+        binding.cardResetActors.setOnClickListener {
             confirmResetActors()
         }
 
-        binding.buttonResetEncounters.setOnClickListener {
+        binding.cardResetEncounters.setOnClickListener {
             confirmResetEncounters()
         }
 
-        binding.buttonResetAll.setOnClickListener {
+        binding.cardResetEverything.setOnClickListener {
             confirmResetAll()
         }
     }
 
     /**
-     * Setup storage information section
+     * Setup storage information section - if button exists
      */
     private fun setupStorageSection() {
-        binding.buttonClearCache.setOnClickListener {
-            confirmClearCache()
-        }
-
-        binding.buttonRefreshStorage.setOnClickListener {
-            viewModel.loadStorageInfo()
-        }
-    }
-
-    /**
-     * Setup about section
-     */
-    private fun setupAboutSection() {
-        // Set version info
-        binding.textVersion.text = "Version ${BuildConfig.VERSION_NAME}"
-
-        binding.buttonLicenses.setOnClickListener {
-            // Show open source licenses
-            toast("Open source licenses")
-        }
+        // Storage section buttons are not in the current layout
+        // This is kept for future enhancement
     }
 
     // ========== ViewModel Observation ==========
@@ -176,11 +158,13 @@ class SettingsActivity : AppCompatActivity() {
         // Background image state
         viewModel.hasBackgroundImage.observe(this) { hasBackground ->
             binding.buttonRemoveBackground.isEnabled = hasBackground
-            binding.textBackgroundStatus.text = if (hasBackground) {
-                "Custom background set"
-            } else {
-                "Using default black background"
-            }
+
+            // Update status text if it exists in the layout
+            // binding.textBackgroundStatus?.text = if (hasBackground) {
+            //     "Custom background set"
+            // } else {
+            //     "Using default black background"
+            // }
         }
 
         // Storage info
@@ -190,16 +174,19 @@ class SettingsActivity : AppCompatActivity() {
 
         // Actor and encounter counts
         viewModel.actorCount.observe(this) { count ->
-            binding.textActorCount.text = "$count actors in library"
+            // Update count display if view exists
+            // binding.textActorCount?.text = "$count actors in library"
         }
 
         viewModel.encounterCount.observe(this) { count ->
-            binding.textEncounterCount.text = "$count saved encounters"
+            // Update count display if view exists
+            // binding.textEncounterCount?.text = "$count saved encounters"
         }
 
         // Loading state
         viewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.visibleIf(isLoading)
+            // Show progress if view exists
+            // binding.progressBar?.visibleIf(isLoading)
             updateButtonStates(!isLoading)
         }
 
@@ -238,11 +225,11 @@ class SettingsActivity : AppCompatActivity() {
         binding.textTotalStorage.text = "Total: ${formatBytes(info.totalBytes)}"
         binding.textPortraitStorage.text = "Portraits: ${formatBytes(info.portraitBytes)}"
         binding.textBackgroundStorage.text = "Backgrounds: ${formatBytes(info.backgroundBytes)}"
-        binding.textDatabaseStorage.text = "Database: ${formatBytes(info.databaseBytes)}"
 
-        // Update cache info
-        binding.textCacheSize.text = "Cache: ${formatBytes(info.cacheBytes)}"
-        binding.buttonClearCache.isEnabled = info.cacheBytes > 0
+        // Update additional storage info if views exist
+        // binding.textDatabaseStorage?.text = "Database: ${formatBytes(info.databaseBytes)}"
+        // binding.textCacheSize?.text = "Cache: ${formatBytes(info.cacheBytes)}"
+        // binding.buttonClearCache?.isEnabled = info.cacheBytes > 0
     }
 
     /**
@@ -251,10 +238,9 @@ class SettingsActivity : AppCompatActivity() {
     private fun updateButtonStates(enabled: Boolean) {
         binding.buttonSetBackground.isEnabled = enabled
         binding.buttonRemoveBackground.isEnabled = enabled && (viewModel.hasBackgroundImage.value == true)
-        binding.buttonResetActors.isEnabled = enabled
-        binding.buttonResetEncounters.isEnabled = enabled
-        binding.buttonResetAll.isEnabled = enabled
-        binding.buttonClearCache.isEnabled = enabled
+        binding.cardResetActors.isEnabled = enabled
+        binding.cardResetEncounters.isEnabled = enabled
+        binding.cardResetEverything.isEnabled = enabled
     }
 
     // ========== Confirmation Dialogs ==========
@@ -333,23 +319,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     /**
-     * Confirm cache clear
-     */
-    private fun confirmClearCache() {
-        AlertDialog.Builder(this)
-            .setTitle("Clear Cache?")
-            .setMessage("This will clear temporary files and may improve performance.")
-            .setPositiveButton("Clear") { _, _ ->
-                lifecycleScope.launch {
-                    viewModel.clearCache()
-                    toast("Cache cleared")
-                }
-            }
-            .setNegativeButton(Constants.Dialogs.BUTTON_CANCEL, null)
-            .show()
-    }
-
-    /**
      * Show error message
      */
     private fun showError(message: String) {
@@ -392,11 +361,4 @@ enum class ResetType {
     ACTORS,
     ENCOUNTERS,
     ALL
-}
-
-/**
- * Placeholder for BuildConfig
- */
-private object BuildConfig {
-    const val VERSION_NAME = "1.0.0"
 }
