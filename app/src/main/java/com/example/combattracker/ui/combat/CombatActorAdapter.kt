@@ -4,8 +4,10 @@
 package com.example.combattracker.ui.combat
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +15,10 @@ import com.example.combattracker.R
 import com.example.combattracker.data.database.entities.Condition
 import com.example.combattracker.data.model.ActorCategory
 import com.example.combattracker.databinding.ItemCombatActorBinding
-import com.example.combattracker.utils.*
+import com.example.combattracker.utils.formatInitiative
+import com.example.combattracker.utils.gone
+import com.example.combattracker.utils.loadFromInternalStorage
+import com.example.combattracker.utils.visible
 
 /**
  * CombatActorAdapter - RecyclerView adapter for horizontal combat tracker
@@ -39,6 +44,8 @@ class CombatActorAdapter(
     CombatActorDiffCallback()
 ) {
 
+    private var highlightedActorId: Long? = null
+
     // ========== ViewHolder ==========
 
     class CombatActorViewHolder(
@@ -54,18 +61,11 @@ class CombatActorAdapter(
             }
         }
 
-        fun bind(actor: EncounterActorState) {
+        fun bind(actor: EncounterActorState, highlightedActorId: Long?) {
             currentActor = actor
 
             // Set actor name
             binding.textActorName.text = actor.displayName
-
-            // Show initiative value (optional - could be in context menu only)
-            binding.textInitiative.text = if (actor.initiative != null) {
-                InitiativeCalculator.formatInitiative(actor.initiative, showDecimals = false)
-            } else {
-                "—"
-            }
 
             // Load portrait
             if (actor.portraitPath != null) {
@@ -80,7 +80,7 @@ class CombatActorAdapter(
             }
 
             // Apply visual states
-            applyVisualStates(actor)
+            applyVisualStates(actor, highlightedActorId)
 
             // Display conditions
             displayConditions(actor.conditions)
@@ -92,46 +92,41 @@ class CombatActorAdapter(
         /**
          * Apply visual states based on actor status
          */
-        private fun applyVisualStates(actor: EncounterActorState) {
-            val context = binding.root.context
+        private fun applyVisualStates(actor: EncounterActorState, highlightedActorId: Long?) {
+            // Reset all overlays to gone
+            binding.completedOverlay.gone()
+            binding.missingInitiativeOverlay.gone()
+            binding.contextMenuOverlay.gone()
 
-            // Reset to default state
-            binding.root.alpha = 1.0f
-            binding.overlayView.gone()
-            binding.portraitContainer.scaleX = 1.0f
-            binding.portraitContainer.scaleY = 1.0f
+            // Reset scale
+            binding.portraitCard.scaleX = 1.0f
+            binding.portraitCard.scaleY = 1.0f
 
             when {
-                // Missing initiative - red overlay
+                // Missing initiative - show red overlay
                 actor.missingInitiative -> {
-                    binding.overlayView.visible()
-                    binding.overlayView.setBackgroundColor(
-                        ContextCompat.getColor(context, R.color.overlay_missing_initiative)
-                    )
+                    binding.missingInitiativeOverlay.visible()
                 }
 
-                // Active actor - larger size
+                // Active actor - scale up the portrait card
                 actor.isActive -> {
-                    binding.portraitContainer.scaleX = 1.2f
-                    binding.portraitContainer.scaleY = 1.2f
+                    binding.portraitCard.scaleX = 1.2f
+                    binding.portraitCard.scaleY = 1.2f
                 }
 
-                // Has taken turn - greyed out
+                // Has taken turn - show grey overlay
                 actor.hasTakenTurn -> {
-                    binding.root.alpha = 0.5f
+                    binding.completedOverlay.visible()
                 }
 
-                // Context menu open for another actor - green tint
-                actor.isHighlighted -> {
-                    // This actor is selected, no overlay
+                // This actor is highlighted (context menu open)
+                actor.id == highlightedActorId -> {
+                    // No overlay for the selected actor
                 }
 
-                // Remove "else if" and just use the condition directly
-                currentActor != actor && isAnyActorHighlighted() -> {
-                    binding.overlayView.visible()
-                    binding.overlayView.setBackgroundColor(
-                        ContextCompat.getColor(context, R.color.overlay_context_menu)
-                    )
+                // Another actor is highlighted - show green overlay
+                highlightedActorId != null && actor.id != highlightedActorId -> {
+                    binding.contextMenuOverlay.visible()
                 }
             }
         }
@@ -140,38 +135,37 @@ class CombatActorAdapter(
          * Display condition icons
          */
         private fun displayConditions(conditions: List<Condition>) {
-            binding.conditionContainer.removeAllViews()
+            binding.conditionsContainer.removeAllViews()
 
             if (conditions.isEmpty()) {
-                binding.conditionContainer.gone()
+                binding.conditionsContainer.gone()
                 return
             }
 
-            binding.conditionContainer.visible()
+            binding.conditionsContainer.visible()
 
             // Add condition icons (limit to show to avoid overflow)
             conditions.take(3).forEach { condition ->
                 val iconView = LayoutInflater.from(binding.root.context)
-                    .inflate(R.layout.view_condition_icon, binding.conditionContainer, false)
+                    .inflate(R.layout.view_condition_icon, binding.conditionsContainer, false)
 
                 // Set icon based on condition
-                // This assumes you have drawable resources for each condition
                 val iconRes = getConditionIcon(condition)
-                iconView.findViewById<android.widget.ImageView>(R.id.imageCondition)
-                    .setImageResource(iconRes)
+                iconView.findViewById<ImageView>(R.id.imageCondition)
+                    ?.setImageResource(iconRes)
 
-                binding.conditionContainer.addView(iconView)
+                binding.conditionsContainer.addView(iconView)
             }
 
             // Show "+X" if more conditions
             if (conditions.size > 3) {
                 val moreView = LayoutInflater.from(binding.root.context)
-                    .inflate(R.layout.view_condition_more, binding.conditionContainer, false)
+                    .inflate(R.layout.view_condition_more, binding.conditionsContainer, false)
 
-                moreView.findViewById<android.widget.TextView>(R.id.textMore)
-                    .text = "+${conditions.size - 3}"
+                moreView.findViewById<TextView>(R.id.textMore)
+                    ?.text = "+${conditions.size - 3}"
 
-                binding.conditionContainer.addView(moreView)
+                binding.conditionsContainer.addView(moreView)
             }
         }
 
@@ -196,18 +190,18 @@ class CombatActorAdapter(
                 "charmed" -> R.drawable.ic_condition_charmed
                 "deafened" -> R.drawable.ic_condition_deafened
                 "exhaustion" -> R.drawable.ic_condition_exhaustion
-                "frightened" -> R.drawable.ic_condition_frightened
+                "frightened" -> R.drawable.ic_condition_freightened  // Note the typo in resource name
                 "grappled" -> R.drawable.ic_condition_grappled
                 "incapacitated" -> R.drawable.ic_condition_incapacitated
                 "invisible" -> R.drawable.ic_condition_invisible
                 "paralyzed" -> R.drawable.ic_condition_paralyzed
                 "petrified" -> R.drawable.ic_condition_petrified
-                "poisoned" -> R.drawable.ic_condition_poisoned
+                "poisoned" -> R.drawable.ic_condition_poisoned  // Note the typo in resource name
                 "prone" -> R.drawable.ic_condition_prone
                 "restrained" -> R.drawable.ic_condition_restrained
                 "stunned" -> R.drawable.ic_condition_stunned
                 "unconscious" -> R.drawable.ic_condition_unconscious
-                else -> R.drawable.ic_condition_default  // <- Make sure this line exists!
+                else -> R.drawable.ic_condition_default
             }
         }
 
@@ -219,7 +213,7 @@ class CombatActorAdapter(
                 append(actor.displayName)
 
                 if (actor.initiative != null) {
-                    append(", initiative ${InitiativeCalculator.formatInitiative(actor.initiative)}")
+                    append(", initiative ${formatInitiative(actor.initiative)}")
                 } else {
                     append(", no initiative")
                 }
@@ -235,15 +229,6 @@ class CombatActorAdapter(
                 }
             }
         }
-
-        /**
-         * Check if any actor is highlighted (context menu open)
-         * This would be tracked in the adapter or passed from parent
-         */
-        private fun isAnyActorHighlighted(): Boolean {
-            // This would need to be implemented based on your state management
-            return false
-        }
     }
 
     // ========== Adapter Methods ==========
@@ -258,12 +243,10 @@ class CombatActorAdapter(
     }
 
     override fun onBindViewHolder(holder: CombatActorViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), highlightedActorId)
     }
 
     // ========== State Management ==========
-
-    private var highlightedActorId: Long? = null
 
     /**
      * Set which actor is highlighted (for context menu)
