@@ -4,13 +4,16 @@
 package com.example.combattracker.ui.combat
 
 import androidx.lifecycle.*
+import com.example.combattracker.data.database.dao.ActorConditionWithDetails
 import com.example.combattracker.data.database.dao.ConditionDao
+import com.example.combattracker.data.database.dao.EncounterActorWithActor
 import com.example.combattracker.data.database.entities.*
 import com.example.combattracker.data.model.ActorCategory
 import com.example.combattracker.data.model.ConditionType
 import com.example.combattracker.data.repository.EncounterCombatData
 import com.example.combattracker.data.repository.EncounterRepository
 import com.example.combattracker.utils.InitiativeCalculator
+import com.example.combattracker.utils.InitiativeRollType
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -106,9 +109,12 @@ class CombatViewModel(
         // If no active actor set, find first with initiative
         if (data.encounter.currentActorId == null) {
             val firstActor = encounterActors
-                .filter { it.encounterActor.hasInitiative() }
-                .sortedWith(compareByDescending<EncounterActorWithActor> { it.encounterActor.initiative }
-                    .thenBy { it.encounterActor.tieBreakOrder })
+                .filter { actorWithActor -> actorWithActor.encounterActor.hasInitiative() }
+                .sortedWith(compareByDescending<EncounterActorWithActor> { actorWithActor ->
+                    actorWithActor.encounterActor.initiative
+                }.thenBy { actorWithActor ->
+                    actorWithActor.encounterActor.tieBreakOrder
+                })
                 .firstOrNull()
 
             currentEncounter = currentEncounter?.copy(currentActorId = firstActor?.encounterActor?.id)
@@ -125,20 +131,21 @@ class CombatViewModel(
     fun rollInitiativeForAll() {
         viewModelScope.launch {
             try {
-                val actorCategories = encounterActors.associate {
-                    it.encounterActor.baseActorId to it.actor.getActorCategory()
+                val actorCategories = encounterActors.associate { actorWithActor ->
+                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.category
                 }
 
                 val results = InitiativeCalculator.rollInitiativeForActors(
-                    actors = encounterActors.map { it.encounterActor },
+                    actors = encounterActors.map { actorWithActor -> actorWithActor.encounterActor },
                     rollType = InitiativeRollType.ALL,
                     actorCategories = actorCategories
                 )
 
                 // Update actors with rolled initiatives
                 results.forEach { (actorId, initiative) ->
-                    val actor = encounterActors.find { it.encounterActor.id == actorId }
-                        ?.encounterActor ?: return@forEach
+                    val actor = encounterActors.find { actorWithActor ->
+                        actorWithActor.encounterActor.id == actorId
+                    }?.encounterActor ?: return@forEach
 
                     val updatedActor = actor.copy(initiative = initiative)
                     updateActorInList(updatedActor)
@@ -167,20 +174,21 @@ class CombatViewModel(
     fun rollInitiativeForNPCs() {
         viewModelScope.launch {
             try {
-                val actorCategories = encounterActors.associate {
-                    it.encounterActor.baseActorId to it.actor.getActorCategory()
+                val actorCategories = encounterActors.associate { actorWithActor ->
+                    actorWithActor.encounterActor.baseActorId to actorWithActor.actor.category
                 }
 
                 val results = InitiativeCalculator.rollInitiativeForActors(
-                    actors = encounterActors.map { it.encounterActor },
+                    actors = encounterActors.map { actorWithActor -> actorWithActor.encounterActor },
                     rollType = InitiativeRollType.NPC_ONLY,
                     actorCategories = actorCategories
                 )
 
                 // Update actors with rolled initiatives
                 results.forEach { (actorId, initiative) ->
-                    val actor = encounterActors.find { it.encounterActor.id == actorId }
-                        ?.encounterActor ?: return@forEach
+                    val actor = encounterActors.find { actorWithActor ->
+                        actorWithActor.encounterActor.id == actorId
+                    }?.encounterActor ?: return@forEach
 
                     val updatedActor = actor.copy(initiative = initiative)
                     updateActorInList(updatedActor)
@@ -201,8 +209,9 @@ class CombatViewModel(
     fun setActorInitiative(actorId: Long, initiative: Double) {
         viewModelScope.launch {
             try {
-                val actor = encounterActors.find { it.encounterActor.id == actorId }
-                    ?.encounterActor ?: return@launch
+                val actor = encounterActors.find { actorWithActor ->
+                    actorWithActor.encounterActor.id == actorId
+                }?.encounterActor ?: return@launch
 
                 val updatedActor = actor.copy(initiative = initiative)
                 updateActorInList(updatedActor)
@@ -225,8 +234,8 @@ class CombatViewModel(
         if (!state.canProgress) return
 
         val sortedActors = getSortedActors()
-        val currentIndex = sortedActors.indexOfFirst {
-            it.encounterActor.id == currentEncounter?.currentActorId
+        val currentIndex = sortedActors.indexOfFirst { actorWithActor ->
+            actorWithActor.encounterActor.id == currentEncounter?.currentActorId
         }
 
         if (currentIndex == -1) return
@@ -240,7 +249,7 @@ class CombatViewModel(
         // Find next actor who hasn't taken turn
         val nextActor = sortedActors
             .drop(currentIndex + 1)
-            .firstOrNull { !it.encounterActor.hasTakenTurn }
+            .firstOrNull { actorWithActor -> !actorWithActor.encounterActor.hasTakenTurn }
 
         if (nextActor != null) {
             // Move to next actor in same round
@@ -264,8 +273,8 @@ class CombatViewModel(
         if (!state.canProgress || state.isFirstTurn) return
 
         val sortedActors = getSortedActors()
-        val currentIndex = sortedActors.indexOfFirst {
-            it.encounterActor.id == currentEncounter?.currentActorId
+        val currentIndex = sortedActors.indexOfFirst { actorWithActor ->
+            actorWithActor.encounterActor.id == currentEncounter?.currentActorId
         }
 
         if (currentIndex <= 0) return
@@ -366,7 +375,9 @@ class CombatViewModel(
                 encounterRepository.removeActorFromEncounter(actorId).fold(
                     onSuccess = {
                         // Remove from local list
-                        encounterActors.removeAll { it.encounterActor.id == actorId }
+                        encounterActors.removeAll { actorWithActor ->
+                            actorWithActor.encounterActor.id == actorId
+                        }
                         actorConditions.remove(actorId)
 
                         // If removed actor was active, move to next
@@ -403,19 +414,19 @@ class CombatViewModel(
         viewModelScope.launch {
             try {
                 val currentConditions = actorConditions[actorId] ?: emptyList()
-                val hasCondition = currentConditions.any {
-                    it.condition.id == conditionType.id
+                val hasCondition = currentConditions.any { conditionWithDetails ->
+                    conditionWithDetails.condition.id == conditionType.id
                 }
 
                 if (hasCondition) {
                     // Remove condition
-                    val conditionId = currentConditions.first {
-                        it.condition.id == conditionType.id
+                    val conditionId = currentConditions.first { conditionWithDetails ->
+                        conditionWithDetails.condition.id == conditionType.id
                     }.actorCondition.id
 
                     // Remove from local state
-                    actorConditions[actorId] = currentConditions.filter {
-                        it.condition.id != conditionType.id
+                    actorConditions[actorId] = currentConditions.filter { conditionWithDetails ->
+                        conditionWithDetails.condition.id != conditionType.id
                     }
                 } else {
                     // Add condition
@@ -453,7 +464,7 @@ class CombatViewModel(
     suspend fun saveEncounter(name: String) {
         try {
             val encounter = currentEncounter ?: return
-            val actors = encounterActors.map { it.encounterActor }
+            val actors = encounterActors.map { actorWithActor -> actorWithActor.encounterActor }
 
             encounterRepository.saveAsNewEncounter(
                 originalEncounterId = encounterId,
@@ -480,12 +491,14 @@ class CombatViewModel(
      * Update an actor in the local list
      */
     private fun updateActorInList(updatedActor: EncounterActor) {
-        val index = encounterActors.indexOfFirst {
-            it.encounterActor.id == updatedActor.id
+        val index = encounterActors.indexOfFirst { actorWithActor ->
+            actorWithActor.encounterActor.id == updatedActor.id
         }
         if (index >= 0) {
-            encounterActors[index] = encounterActors[index].copy(
-                encounterActor = updatedActor
+            val existing = encounterActors[index]
+            encounterActors[index] = EncounterActorWithActor(
+                encounterActor = updatedActor,
+                actor = existing.actor
             )
         }
     }
@@ -495,9 +508,11 @@ class CombatViewModel(
      */
     private fun getSortedActors(): List<EncounterActorWithActor> {
         return encounterActors.sortedWith(
-            compareByDescending<EncounterActorWithActor> { it.encounterActor.initiative ?: -999.0 }
-                .thenBy { it.encounterActor.tieBreakOrder }
-                .thenBy { it.encounterActor.addedOrder }
+            compareByDescending<EncounterActorWithActor> { actorWithActor ->
+                actorWithActor.encounterActor.initiative ?: -999.0
+            }
+                .thenBy { actorWithActor -> actorWithActor.encounterActor.tieBreakOrder }
+                .thenBy { actorWithActor -> actorWithActor.encounterActor.addedOrder }
         )
     }
 
@@ -525,11 +540,13 @@ class CombatViewModel(
         val encounter = currentEncounter ?: return
         val sortedActors = getSortedActors()
 
-        val currentActorIndex = sortedActors.indexOfFirst {
-            it.encounterActor.id == encounter.currentActorId
+        val currentActorIndex = sortedActors.indexOfFirst { actorWithActor ->
+            actorWithActor.encounterActor.id == encounter.currentActorId
         }
 
-        val hasAllInitiatives = sortedActors.all { it.encounterActor.hasInitiative() }
+        val hasAllInitiatives = sortedActors.all { actorWithActor ->
+            actorWithActor.encounterActor.hasInitiative()
+        }
 
         val actorStates = sortedActors.map { actorWithActor ->
             val actor = actorWithActor.encounterActor
@@ -540,9 +557,9 @@ class CombatViewModel(
                 id = actor.id,
                 displayName = actor.displayName,
                 portraitPath = baseActor.portraitPath,
-                category = baseActor.getActorCategory(),
+                category = baseActor.category,
                 initiative = actor.initiative,
-                conditions = conditions.map { it.condition },
+                conditions = conditions.map { conditionWithDetails -> conditionWithDetails.condition },
                 isActive = actor.id == encounter.currentActorId,
                 hasTakenTurn = actor.hasTakenTurn,
                 missingInitiative = !actor.hasInitiative(),
@@ -557,7 +574,7 @@ class CombatViewModel(
             currentActorId = encounter.currentActorId,
             currentActorIndex = if (currentActorIndex >= 0) currentActorIndex else null,
             canProgress = hasAllInitiatives,
-            isFirstTurn = currentActorIndex == 0 && !sortedActors.getOrNull(0)?.encounterActor?.hasTakenTurn ?: false,
+            isFirstTurn = currentActorIndex == 0 && !(sortedActors.getOrNull(0)?.encounterActor?.hasTakenTurn ?: false),
             isLastTurn = currentActorIndex == sortedActors.lastIndex
         )
     }
@@ -586,6 +603,10 @@ class CombatViewModel(
         }
     }
 }
+
+// ========== Extension Functions ==========
+
+private fun EncounterActor.hasInitiative(): Boolean = this.initiative != null
 
 // ========== Data Classes ==========
 
