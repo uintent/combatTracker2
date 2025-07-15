@@ -57,7 +57,7 @@ object ImageUtils {
      */
     private const val GREY_OUT_ALPHA = 0.5f
     private const val RED_OVERLAY_ALPHA = 0.3f
-    private const val GREEN_TINT_ALPHA = 0.2f
+    private const val GREEN_TINT_ALPHA = 0.5f
     private const val HIGHLIGHT_BORDER_WIDTH_DP = 3f
 
     /**

@@ -6,7 +6,7 @@
 
     <!-- optional white background — delete this <path> if you prefer transparency -->
     <path
-        android:fillColor="#FFFFFFFF"
+        android:fillColor="#D50000"
         android:pathData="M0,0h1086v1280h-1086z"/>
 
     <!-- original silhouette, kept exactly as-is and wrapped in a group
