@@ -31,6 +31,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import android.graphics.Color
+import com.example.combattracker.data.database.entities.Actor
+import com.example.combattracker.databinding.DialogAddActorBinding
+import com.example.combattracker.ui.encounter.ActorSelectionAdapter
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.collect
+import android.widget.EditText
+import android.text.InputType
+import com.example.combattracker.ui.encounter.*
 
 /**
  * CombatTrackerActivity - Main combat tracking screen
@@ -60,6 +68,7 @@ class CombatTrackerActivity : AppCompatActivity() {
         val encounterId = intent.getLongExtra(Constants.Extras.ENCOUNTER_ID, -1L)
         CombatViewModel.Factory(
             (application as CombatTrackerApplication).encounterRepository,
+            (application as CombatTrackerApplication).actorRepository,  // Add this line
             (application as CombatTrackerApplication).conditionDao,
             encounterId
         )
@@ -516,8 +525,141 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Add actor to encounter
      */
     private fun addActorToEncounter() {
-        // This would open a dialog to select actors from library
-        toast("Add actor feature coming soon")
+        lifecycleScope.launch {
+            // Get all actors from repository
+            val actorRepository = (application as CombatTrackerApplication).actorRepository
+
+            try {
+                // Use take(1) to get just the first emission
+                actorRepository.getAllActors().take(1).collect { actorList ->
+                    if (actorList.isEmpty()) {
+                        Timber.w("No actors in library to add to encounter")
+                        return@collect
+                    }
+
+                    // Create dialog
+                    val dialogBinding = DialogAddActorBinding.inflate(layoutInflater)
+
+                    // Track selected actors and quantities
+                    val selectedActors = mutableMapOf<Long, Int>()
+                    val actorStates = actorList.map { actor ->
+                        ActorSelectionState(actor, false, 1)
+                    }.toMutableList()
+
+                    // Create adapter first (declare it before using it in lambdas)
+                    lateinit var adapter: ActorSelectionAdapter
+
+                    // Initialize adapter with its callbacks
+                    adapter = ActorSelectionAdapter(
+                        onActorChecked = { state, isChecked ->
+                            val index = actorStates.indexOfFirst { it.actor.id == state.actor.id }
+                            if (index >= 0) {
+                                actorStates[index] = state.copy(isSelected = isChecked)
+                                if (isChecked) {
+                                    selectedActors[state.actor.id] = state.quantity
+                                } else {
+                                    selectedActors.remove(state.actor.id)
+                                }
+                            }
+                        },
+                        onQuantityClick = { state ->
+                            // Show quantity dialog
+                            showQuantityDialog(state) { newQuantity ->
+                                val index = actorStates.indexOfFirst { it.actor.id == state.actor.id }
+                                if (index >= 0) {
+                                    actorStates[index] = state.copy(quantity = newQuantity)
+                                    selectedActors[state.actor.id] = newQuantity
+                                    adapter.notifyItemChanged(index)
+                                }
+                            }
+                        }
+                    )
+
+                    dialogBinding.recyclerViewActors.adapter = adapter
+                    adapter.submitList(actorStates)
+
+                    // Create and show dialog
+                    AlertDialog.Builder(this@CombatTrackerActivity)
+                        .setTitle("Add Actors to Encounter")
+                        .setView(dialogBinding.root)
+                        .setPositiveButton("Add") { _, _ ->
+                            Timber.d("Adding ${selectedActors.size} actors to encounter")
+                            // Add selected actors with their quantities
+                            selectedActors.forEach { (actorId, quantity) ->
+                                for (i in 1..quantity) {
+                                    addActorToEncounterWithInitiative(actorId)
+                                }
+                            }
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to load actors for selection")
+            }
+        }
+    }
+
+    private fun showQuantityDialog(state: ActorSelectionState, onQuantitySet: (Int) -> Unit) {
+        val input = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setText(state.quantity.toString())
+            selectAll()
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Set Quantity for ${state.actor.name}")
+            .setView(input)
+            .setPositiveButton("Set") { _, _ ->
+                val quantity = input.text.toString().toIntOrNull() ?: 1
+                onQuantitySet(quantity.coerceIn(1, 99))
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun addActorToEncounterWithInitiative(actorId: Long) {
+        lifecycleScope.launch {
+            // First, get the actor name to show in the dialog
+            val actorRepository = (application as CombatTrackerApplication).actorRepository
+            val actor = actorRepository.getActorById(actorId)
+            val actorName = actor?.name ?: "Unknown Actor"
+
+            // Show dialog to set initiative for the new actor
+            val input = EditText(this@CombatTrackerActivity).apply {
+                inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+                hint = "Enter initiative"
+            }
+
+            AlertDialog.Builder(this@CombatTrackerActivity)
+                .setTitle("Set Initiative for $actorName")
+                .setMessage("Enter initiative value for the new actor")
+                .setView(input)
+                .setPositiveButton("Add") { _, _ ->
+                    val initiative = input.text.toString().toDoubleOrNull()
+                    if (initiative != null) {
+                        // Add actor with initiative
+                        lifecycleScope.launch {
+                            try {
+                                viewModel.addActorToEncounter(actorId, initiative)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to add actor")
+                                // Show error to user
+                                AlertDialog.Builder(this@CombatTrackerActivity)
+                                    .setTitle("Error")
+                                    .setMessage("Failed to add actor. They may already be in the encounter.")
+                                    .setPositiveButton("OK", null)
+                                    .show()
+                            }
+                        }
+                    } else {
+                        Timber.w("Invalid initiative value entered")
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .show()
+        }
     }
 
     /**

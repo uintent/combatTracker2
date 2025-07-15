@@ -370,7 +370,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         AlertDialog.Builder(requireContext())
             .setTitle("Remove Actor?")
             .setMessage("Remove ${currentActor?.displayName} from the encounter?")
-            .setPositiveButton("Remove") { dialog, which ->
+            .setPositiveButton("Remove") { _, _ ->
                 combatViewModel.removeActor(actorId)
                 setFragmentResult(RESULT_ACTOR_REMOVED, bundleOf("actor_id" to actorId))
                 dismiss()

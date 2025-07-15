@@ -361,6 +361,11 @@ interface EncounterDao {
     @Query("SELECT * FROM encounter_actors WHERE encounterId = :encounterId ORDER BY id")
     suspend fun getEncounterActorsRaw(encounterId: Long): List<EncounterActor>
 
+    /**
+     * Get all display names for a specific base actor in an encounter
+     */
+    @Query("SELECT displayName FROM encounter_actors WHERE encounterId = :encounterId AND baseActorId = :baseActorId")
+    suspend fun getExistingDisplayNames(encounterId: Long, baseActorId: Long): List<String>
 }
 
 // ========== Data Classes for Complex Queries ==========

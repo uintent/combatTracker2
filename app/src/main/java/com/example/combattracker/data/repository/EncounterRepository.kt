@@ -401,14 +401,23 @@ class EncounterRepository(
             var addedOrder = maxAddedOrder + 1
 
             baseActors.forEach { actor ->
-                // Get highest instance number for this actor
-                val highestInstance = encounterDao.getHighestInstanceNumber(encounterId, actor.id) ?: 0
-                val instanceNumber = if (highestInstance > 0) highestInstance + 1 else 0
+                // Get existing display names for this actor
+                val existingNames = encounterDao.getExistingDisplayNames(encounterId, actor.id)
 
-                val displayName = if (instanceNumber > 0) {
-                    "${actor.name} $instanceNumber"
-                } else {
-                    actor.name
+                // Find the next available number
+                var instanceNumber = 0
+                var displayName = actor.name
+
+                // If the base name already exists, find the next available number
+                if (existingNames.contains(displayName)) {
+                    instanceNumber = 1
+                    displayName = "${actor.name} $instanceNumber"
+
+                    // Keep incrementing until we find an unused name
+                    while (existingNames.contains(displayName)) {
+                        instanceNumber++
+                        displayName = "${actor.name} $instanceNumber"
+                    }
                 }
 
                 val encounterActor = EncounterActor(

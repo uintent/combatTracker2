@@ -9,6 +9,7 @@ import com.example.combattracker.data.database.dao.EncounterActorWithActor
 import com.example.combattracker.data.database.entities.*
 import com.example.combattracker.data.model.ActorCategory
 import com.example.combattracker.data.model.ConditionType
+import com.example.combattracker.data.repository.ActorRepository
 import com.example.combattracker.data.repository.EncounterCombatData
 import com.example.combattracker.data.repository.EncounterRepository
 import com.example.combattracker.utils.InitiativeCalculator
@@ -36,6 +37,7 @@ import timber.log.Timber
  */
 class CombatViewModel(
     private val encounterRepository: EncounterRepository,
+    private val actorRepository: ActorRepository,
     private val conditionDao: ConditionDao,
     private val encounterId: Long
 ) : ViewModel() {
@@ -57,7 +59,7 @@ class CombatViewModel(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _encounterLoaded = MutableLiveData<Boolean?>()  // Make it nullable
+    private val _encounterLoaded = MutableLiveData<Boolean?>()
     val encounterLoaded: LiveData<Boolean?> = _encounterLoaded
 
     private val _selectedActorId = MutableLiveData<Long?>()
@@ -68,9 +70,8 @@ class CombatViewModel(
     init {
         if (encounterId == -1L) {
             _errorMessage.value = "Invalid encounter ID"
-            _encounterLoaded.value = false  // Explicitly set to false only on error
+            _encounterLoaded.value = false
         }
-        // Don't set any value otherwise - leave it null until load attempt
     }
 
     // ========== Public Methods - Loading ==========
@@ -81,18 +82,15 @@ class CombatViewModel(
     suspend fun loadEncounter() {
         _isLoading.value = true
 
-        // Add debug call
-        encounterRepository.debugLoadEncounter(encounterId)
-
         encounterRepository.loadEncounter(encounterId).fold(
             onSuccess = { data ->
                 initializeCombat(data)
-                _encounterLoaded.value = true  // Explicitly set to true on success
+                _encounterLoaded.value = true
             },
             onFailure = { error ->
                 Timber.e(error, "Failed to load encounter")
                 _errorMessage.value = "Failed to load encounter: ${error.message}"
-                _encounterLoaded.value = false  // Only set to false on actual failure
+                _encounterLoaded.value = false
             }
         )
 
@@ -370,7 +368,7 @@ class CombatViewModel(
      */
     fun clearSelectedActor() {
         _selectedActorId.value = null
-        updateCombatState()  // Make sure this is called
+        updateCombatState()
     }
 
     /**
@@ -403,6 +401,48 @@ class CombatViewModel(
                 )
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to remove actor"
+            }
+        }
+    }
+
+    /**
+     * Add a new actor to the encounter with specified initiative
+     */
+    fun addActorToEncounter(baseActorId: Long, initiative: Double) {
+        viewModelScope.launch {
+            try {
+                // Use the repository method that takes a list
+                val result = encounterRepository.addActorsToEncounter(
+                    encounterId = encounterId,
+                    actorIds = listOf(baseActorId),
+                    manualInitiatives = mapOf(baseActorId to initiative)
+                )
+
+                result.fold(
+                    onSuccess = { newActors ->
+                        // Reload encounter to get updated state
+                        loadEncounter()
+
+                        val actorName = newActors.firstOrNull()?.displayName ?: "Actor"
+                        Timber.d("Added actor to encounter: $actorName with initiative $initiative")
+                    },
+                    onFailure = { error ->
+                        Timber.e(error, "Failed to add actor to encounter")
+                        if (error.message?.contains("UNIQUE constraint failed") == true) {
+                            _errorMessage.value = "This actor is already in the encounter with that name. Try removing them first if you want to add them again."
+                        } else {
+                            _errorMessage.value = "Failed to add actor: ${error.message}"
+                        }
+                    }
+                )
+
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to add actor to encounter")
+                if (e.message?.contains("UNIQUE constraint failed") == true) {
+                    _errorMessage.value = "This actor is already in the encounter with that name. Try removing them first if you want to add them again."
+                } else {
+                    _errorMessage.value = "Failed to add actor: ${e.message}"
+                }
             }
         }
     }
@@ -597,6 +637,7 @@ class CombatViewModel(
 
     class Factory(
         private val encounterRepository: EncounterRepository,
+        private val actorRepository: ActorRepository,
         private val conditionDao: ConditionDao,
         private val encounterId: Long
     ) : ViewModelProvider.Factory {
@@ -604,7 +645,7 @@ class CombatViewModel(
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(CombatViewModel::class.java)) {
-                return CombatViewModel(encounterRepository, conditionDao, encounterId) as T
+                return CombatViewModel(encounterRepository, actorRepository, conditionDao, encounterId) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
