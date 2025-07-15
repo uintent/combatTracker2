@@ -27,6 +27,8 @@ import com.example.combattracker.utils.visible
 import com.example.combattracker.utils.visibleIf
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
+import com.google.android.material.snackbar.Snackbar
+import android.widget.EditText
 
 /**
  * ActorContextMenuFragment - Bottom sheet for actor actions during combat
@@ -99,6 +101,33 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
         observeViewModel()
         setupViews()
+
+        // Add close button handler
+        binding.buttonClose.setOnClickListener {
+            saveCurrentChanges()
+            dismiss()
+        }
+    }
+
+    // Add method to save current changes
+    private fun saveCurrentChanges() {
+        // Save any pending initiative changes
+        val initiativeText = binding.editTextInitiative.text.toString()
+        if (initiativeText.isNotEmpty()) {
+            val initiative = initiativeText.toDoubleOrNull()
+            if (initiative != null) {
+                combatViewModel.setActorInitiative(actorId, initiative)
+                Timber.d("Saved initiative $initiative for actor $actorId")
+            }
+        }
+
+        // Conditions are already saved immediately when toggled, so no need to save them here
+    }
+
+    // Override dismiss to always save changes
+    override fun dismiss() {
+        saveCurrentChanges()
+        super.dismiss()
     }
 
     override fun onDestroyView() {
@@ -306,18 +335,20 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         val duration = if (isPermanent) null else durationText.toIntOrNull()
 
         if (!isPermanent && duration == null) {
-            requireContext().toast("Please enter a duration or select Permanent")
+            Timber.w("Attempted to apply condition without duration: ${conditionType.displayName}")
+            Snackbar.make(binding.root, "Please enter a duration or select Permanent", Snackbar.LENGTH_SHORT).show()
             return
         }
 
+        // Apply the condition immediately
         combatViewModel.toggleCondition(actorId, conditionType, isPermanent, duration)
 
-        // Notify parent
-        setFragmentResult(RESULT_CONDITION_TOGGLED, bundleOf(
-            "actor_id" to actorId,
-            "condition_id" to conditionType.id,
-            "applied" to true
-        ))
+        // Clear the duration field after applying
+        val conditionIndex = ConditionType.values().indexOf(conditionType)
+        val conditionView = binding.conditionsContainer.getChildAt(conditionIndex)
+        conditionView?.findViewById<EditText>(R.id.editTextDuration)?.setText("")
+
+        Timber.d("Condition applied: ${conditionType.displayName}, permanent: $isPermanent, duration: $duration")
     }
 
     private fun removeCondition(conditionType: ConditionType) {
@@ -393,5 +424,41 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             ConditionType.STUNNED -> R.drawable.ic_condition_stunned
             ConditionType.UNCONSCIOUS -> R.drawable.ic_condition_unconscious
         }
+    }
+
+    /**
+     * Update the fragment to display a different actor
+     * This allows reusing the same fragment instance when switching between actors
+     */
+    fun updateActor(newActorId: Long) {
+        // Save any pending changes for the current actor
+        saveCurrentChanges()
+
+        // Update to the new actor
+        actorId = newActorId
+
+        // Find the new actor in the current state
+        val state = combatViewModel.combatState.value
+        currentActor = state?.actors?.find { it.id == actorId }
+
+        // Update the UI with the new actor's data
+        currentActor?.let { updateUI(it) }
+
+        // Clear any input fields
+        binding.editTextInitiative.setText("")
+        binding.textInputLayoutInitiative.error = null
+
+        // Reset all condition checkboxes and fields
+        for (i in 0 until binding.conditionsContainer.childCount) {
+            val conditionView = binding.conditionsContainer.getChildAt(i)
+            conditionView?.findViewById<CheckBox>(R.id.checkboxCondition)?.isChecked = false
+            conditionView?.findViewById<EditText>(R.id.editTextDuration)?.setText("")
+            conditionView?.findViewById<CheckBox>(R.id.checkboxPermanent)?.isChecked = false
+        }
+
+        // Update conditions UI for the new actor
+        currentActor?.let { updateConditionsUI(it) }
+
+        Timber.d("Updated bottom sheet to show actor: $actorId")
     }
 }

@@ -314,30 +314,36 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Setup bottom sheet for actor context menu
      */
     private fun setupBottomSheet() {
-        Timber.d("Setting up bottom sheet...")
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        try {
-            bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                Timber.d("Bottom sheet state changed to: $newState")
 
-            Timber.d("Bottom sheet initialized. State: ${bottomSheetBehavior.state}")
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    // Clear the selected actor when bottom sheet is hidden
+                    viewModel.clearSelectedActor()
 
-            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    Timber.d("Bottom sheet state changed to: $newState")
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        viewModel.clearSelectedActor()
-                        combatActorAdapter.setHighlightedActor(null)
+                    // IMPORTANT: Clear the highlighted actor in the adapter
+                    combatActorAdapter.setHighlightedActor(null)
+
+                    // Clear the fragment reference
+                    currentBottomSheetFragment = null
+
+                    // Remove any fragment from the container
+                    supportFragmentManager.findFragmentById(R.id.bottomSheet)?.let { fragment ->
+                        supportFragmentManager.beginTransaction()
+                            .remove(fragment)
+                            .commitNow()
                     }
                 }
+            }
 
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    // Optional: Add any slide animations here
-                }
-            })
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to setup bottom sheet")
-        }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // Optional: Add any slide animations here
+            }
+        })
     }
 
     // ========== ViewModel Observation ==========
@@ -436,25 +442,40 @@ class CombatTrackerActivity : AppCompatActivity() {
     /**
      * Show actor context menu
      */
+    private var currentBottomSheetFragment: ActorContextMenuFragment? = null
+
     private fun showActorContextMenu(actor: EncounterActorState) {
-        Timber.d("showActorContextMenu called for actor: ${actor.displayName} (id: ${actor.id})")
+        Timber.d("showActorContextMenu called for actor: ${actor.displayName}")
 
-        // Load the ActorContextMenuFragment into the bottom sheet
-        val fragment = ActorContextMenuFragment.newInstance(actor.id)
+        // Check if we already have a fragment showing
+        val existingFragment = supportFragmentManager.findFragmentById(R.id.bottomSheet) as? ActorContextMenuFragment
 
-        Timber.d("Creating fragment transaction...")
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.bottomSheet, fragment)
-            .commit()
+        if (existingFragment != null && existingFragment.isAdded) {
+            // Update the existing fragment with new actor data
+            existingFragment.updateActor(actor.id)
 
-        // Highlight the selected actor
-        Timber.d("Setting highlighted actor...")
-        combatActorAdapter.setHighlightedActor(actor.id)
+            // Update highlighting
+            combatActorAdapter.setHighlightedActor(actor.id)
 
-        // Show the bottom sheet
-        Timber.d("Attempting to expand bottom sheet. Current state: ${bottomSheetBehavior.state}")
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        Timber.d("Bottom sheet state after setting: ${bottomSheetBehavior.state}")
+            // Make sure bottom sheet is expanded
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        } else {
+            // Create new fragment for the first time
+            val newFragment = ActorContextMenuFragment.newInstance(actor.id)
+            currentBottomSheetFragment = newFragment
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.bottomSheet, newFragment)
+                .commit()
+
+            // Highlight the selected actor
+            combatActorAdapter.setHighlightedActor(actor.id)
+
+            // Show the bottom sheet
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
     }
 
     /**

@@ -370,7 +370,7 @@ class CombatViewModel(
      */
     fun clearSelectedActor() {
         _selectedActorId.value = null
-        updateCombatState()
+        updateCombatState()  // Make sure this is called
     }
 
     /**
