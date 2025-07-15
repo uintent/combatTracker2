@@ -366,6 +366,39 @@ interface EncounterDao {
      */
     @Query("SELECT displayName FROM encounter_actors WHERE encounterId = :encounterId AND baseActorId = :baseActorId")
     suspend fun getExistingDisplayNames(encounterId: Long, baseActorId: Long): List<String>
+
+    /**
+     * Alternative query without @Relation annotation
+     * For debugging duplicate issues
+     */
+    @Query("""
+    SELECT 
+        ea.id as ea_id,
+        ea.encounterId as ea_encounterId,
+        ea.baseActorId as ea_baseActorId,
+        ea.displayName as ea_displayName,
+        ea.instanceNumber as ea_instanceNumber,
+        ea.initiative as ea_initiative,
+        ea.initiativeModifier as ea_initiativeModifier,
+        ea.hasTakenTurn as ea_hasTakenTurn,
+        ea.tieBreakOrder as ea_tieBreakOrder,
+        ea.addedOrder as ea_addedOrder,
+        ea.isHidden as ea_isHidden,
+        a.id as a_id,
+        a.name as a_name,
+        a.portraitPath as a_portraitPath,
+        a.initiativeModifier as a_initiativeModifier,
+        a.category as a_category
+    FROM encounter_actors ea
+    INNER JOIN actors a ON ea.baseActorId = a.id
+    WHERE ea.encounterId = :encounterId
+    ORDER BY 
+        CASE WHEN ea.initiative IS NULL THEN 1 ELSE 0 END,
+        ea.initiative DESC,
+        ea.tieBreakOrder ASC,
+        ea.addedOrder ASC
+""")
+    suspend fun debugGetEncounterActorsManual(encounterId: Long): List<EncounterActorDebugRow>
 }
 
 // ========== Data Classes for Complex Queries ==========
@@ -475,3 +508,26 @@ data class EncounterWithFullDetails(
     )
     val conditions: List<ActorConditionWithDetails>
 )
+
+/**
+ * Debug data class for checking actor data
+ */
+data class EncounterActorDebugRow(
+    val ea_id: Long,
+    val ea_encounterId: Long,
+    val ea_baseActorId: Long,
+    val ea_displayName: String,
+    val ea_instanceNumber: Int,
+    val ea_initiative: Double?,
+    val ea_initiativeModifier: Int,
+    val ea_hasTakenTurn: Boolean,
+    val ea_tieBreakOrder: Int,
+    val ea_addedOrder: Int,
+    val ea_isHidden: Boolean,
+    val a_id: Long,
+    val a_name: String,
+    val a_portraitPath: String?,
+    val a_initiativeModifier: Int,
+    val a_category: String
+)
+

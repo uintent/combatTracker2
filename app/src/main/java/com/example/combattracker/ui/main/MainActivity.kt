@@ -198,9 +198,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Observe active encounter (if any)
-        viewModel.activeEncounter.observe(this) { encounter ->
-            if (encounter != null) {
-                showActiveEncounterPrompt(encounter)
+        viewModel.activeEncounter.observe(this) { encounterData ->
+            if (encounterData != null) {
+                // encounterData is a Pair<Long, String>
+                // encounterData.first is the ID (Long)
+                // encounterData.second is the name (String)
+                showActiveEncounterPrompt(encounterData.first, encounterData.second)
             }
         }
     }
@@ -282,13 +285,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * Show prompt for active encounter
      */
-    private fun showActiveEncounterPrompt(encounterName: String) {
+    private fun showActiveEncounterPrompt(encounterId: Long, encounterName: String) {
         AlertDialog.Builder(this)
             .setTitle("Active Encounter")
             .setMessage("You have an active encounter: $encounterName. Would you like to continue?")
             .setPositiveButton("Continue") { _, _ ->
-                // This would need the encounter ID, which we'd get from a more complete ViewModel
-                toast("Continue encounter: $encounterName")
+                navigateToCombatTracker(encounterId)
             }
             .setNegativeButton("Ignore", null)
             .show()
@@ -337,5 +339,12 @@ class MainActivity : AppCompatActivity() {
                 dpToPx(2f).toFloat()
             }
         }
+    }
+
+    private fun navigateToCombatTracker(encounterId: Long) {
+        val intent = Intent(this, CombatTrackerActivity::class.java).apply {
+            putExtra(Constants.Extras.ENCOUNTER_ID, encounterId)
+        }
+        startActivity(intent)
     }
 }

@@ -214,12 +214,40 @@ class CombatViewModel(
     fun setActorInitiative(actorId: Long, initiative: Double) {
         viewModelScope.launch {
             try {
-                val actor = encounterActors.find { actorWithActor ->
-                    actorWithActor.encounterActor.id == actorId
-                }?.encounterActor ?: return@launch
+                // Debug: Log what we're looking for
+                Timber.d("Setting initiative for actor ID: $actorId to value: $initiative")
+
+                // Debug: Log all actors
+                encounterActors.forEach {
+                    Timber.d("Available actor: ${it.encounterActor.displayName} (ID: ${it.encounterActor.id}, BaseID: ${it.encounterActor.baseActorId})")
+                }
+
+                val actorWithDetails = encounterActors.find { it.encounterActor.id == actorId }
+
+                if (actorWithDetails == null) {
+                    Timber.e("Actor not found with ID: $actorId")
+                    return@launch
+                }
+
+                val actor = actorWithDetails.encounterActor
+                Timber.d("Found actor: ${actor.displayName} (ID: ${actor.id}, BaseID: ${actor.baseActorId})")
 
                 val updatedActor = actor.copy(initiative = initiative)
+
+                // Debug: Log before update
+                Timber.d("Before update:")
+                encounterActors.forEach {
+                    Timber.d("  ${it.encounterActor.displayName}: initiative = ${it.encounterActor.initiative}")
+                }
+
                 updateActorInList(updatedActor)
+
+                // Debug: Log after update
+                Timber.d("After update:")
+                encounterActors.forEach {
+                    Timber.d("  ${it.encounterActor.displayName}: initiative = ${it.encounterActor.initiative}")
+                }
+
                 updateCombatState()
 
             } catch (e: Exception) {
@@ -567,18 +595,25 @@ class CombatViewModel(
 
     /**
      * Update an actor in the local list
+     * Ensures no shared references between actor instances
      */
     private fun updateActorInList(updatedActor: EncounterActor) {
-        val index = encounterActors.indexOfFirst { actorWithActor ->
-            actorWithActor.encounterActor.id == updatedActor.id
+        // Create a new list to ensure no shared references
+        val newList = encounterActors.map { existingActorWithDetails ->
+            if (existingActorWithDetails.encounterActor.id == updatedActor.id) {
+                // Only update this specific actor
+                existingActorWithDetails.copy(
+                    encounterActor = updatedActor
+                )
+            } else {
+                // Keep other actors unchanged
+                existingActorWithDetails
+            }
         }
-        if (index >= 0) {
-            val existing = encounterActors[index]
-            encounterActors[index] = EncounterActorWithActor(
-                encounterActor = updatedActor,
-                actor = existing.actor
-            )
-        }
+
+        // Replace the entire list
+        encounterActors.clear()
+        encounterActors.addAll(newList)
     }
 
     /**

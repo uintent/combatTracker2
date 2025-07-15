@@ -189,34 +189,69 @@ class EncounterRepository(
      * @param encounterId The encounter to load
      * @return Result with encounter data or error
      */
+    /**
+     * Load a complete encounter for combat
+     *
+     * Validates:
+     * - All actors still exist in the library
+     * - Conditions are valid
+     * - Data integrity is maintained
+     *
+     * @param encounterId The encounter to load
+     * @return Result with encounter data or error
+     */
+    // In EncounterRepository.kt, add debugging to loadEncounter:
+
+    // In EncounterRepository.kt, add debugging to loadEncounter:
+
+    // In EncounterRepository.kt, modify loadEncounter to use both queries for comparison:
+
+    // In EncounterRepository.kt, replace the getEncounterActorsWithDetails call with manual mapping:
+
     suspend fun loadEncounter(encounterId: Long): Result<EncounterCombatData> = withContext(Dispatchers.IO) {
         try {
-            Timber.d("=== LOADING ENCOUNTER $encounterId ===")
-
             // Load the encounter
             val encounter = encounterDao.getEncounterById(encounterId)
-            if (encounter == null) {
-                Timber.e("Encounter not found with ID: $encounterId")
-                return@withContext Result.failure(
+                ?: return@withContext Result.failure(
                     IllegalArgumentException("Encounter not found")
                 )
-            }
-            Timber.d("Loaded encounter: ${encounter.name}, created: ${encounter.createdDate}, modified: ${encounter.lastModifiedDate}")
 
-            // Load actors with base actor details
-            val actorsFixed = encounterDao.getEncounterActorsFixed(encounterId)
-            val actorsWithDetails = actorsFixed.map { it.toEncounterActorWithActor() }
-            Timber.d("Loaded ${actorsWithDetails.size} actors for encounter")
+            // Mark the encounter as active when loading
+            val activeEncounter = encounter.forLoading()
+            encounterDao.updateEncounter(activeEncounter)
 
-            // Log each actor
-            actorsWithDetails.forEach { actorWithDetails ->
-                Timber.d("  Actor: ${actorWithDetails.encounterActor.displayName} " +
-                        "(baseActorId: ${actorWithDetails.encounterActor.baseActorId})")
+            // Use the debug query and convert to EncounterActorWithActor
+            val debugActors = encounterDao.debugGetEncounterActorsManual(encounterId)
+
+            // Convert debug results to EncounterActorWithActor
+            val actorsWithDetails = debugActors.map { row ->
+                val encounterActor = EncounterActor(
+                    id = row.ea_id, // Use the correct ID!
+                    encounterId = row.ea_encounterId,
+                    baseActorId = row.ea_baseActorId,
+                    displayName = row.ea_displayName,
+                    instanceNumber = row.ea_instanceNumber,
+                    initiative = row.ea_initiative,
+                    initiativeModifier = row.ea_initiativeModifier,
+                    hasTakenTurn = row.ea_hasTakenTurn,
+                    tieBreakOrder = row.ea_tieBreakOrder,
+                    addedOrder = row.ea_addedOrder,
+                    isHidden = false // Add this if missing from debug query
+                )
+
+                val actor = Actor(
+                    id = row.a_id,
+                    name = row.a_name,
+                    portraitPath = row.a_portraitPath,
+                    initiativeModifier = row.a_initiativeModifier,
+                    category = row.a_category
+                )
+
+                EncounterActorWithActor(encounterActor, actor)
             }
 
             // Validate all actors still exist
             if (actorsWithDetails.isEmpty()) {
-                Timber.e("No actors found for encounter $encounterId")
                 return@withContext Result.failure(
                     IllegalStateException("Encounter has no valid actors")
                 )
@@ -225,21 +260,19 @@ class EncounterRepository(
             // Load conditions for all actors
             val conditions = encounterDao.getEncounterConditions(encounterId)
                 .groupBy { it.actorCondition.encounterActorId }
-            Timber.d("Loaded conditions for ${conditions.size} actors")
 
-            // Create combat data
+            // Create combat data with the active encounter
             val combatData = EncounterCombatData(
-                encounter = encounter,
+                encounter = activeEncounter,
                 actors = actorsWithDetails,
                 conditions = conditions
             )
 
-            Timber.d("=== ENCOUNTER LOADED SUCCESSFULLY ===")
+            Timber.d("Loaded encounter: ${encounter.name} with ${actorsWithDetails.size} actors")
             Result.success(combatData)
 
         } catch (e: Exception) {
-            Timber.e(e, "Failed to load encounter: ${e.message}")
-            Timber.e("Stack trace: ${e.stackTraceToString()}")
+            Timber.e(e, "Failed to load encounter")
             Result.failure(e)
         }
     }

@@ -1,4 +1,3 @@
-// File: MainViewModel.kt
 package com.example.combattracker.ui.main
 
 import androidx.lifecycle.*
@@ -58,15 +57,21 @@ class MainViewModel(
         .asLiveData()
 
     /**
-     * Currently active encounter name (if any)
+     * Currently active encounter (if any)
      * An encounter is "active" if it's started but not completed
+     * Changed to Pair<Long, String> to include both ID and name
      */
-    val activeEncounter: LiveData<String?> = encounterRepository
+
+    val activeEncounter: LiveData<Pair<Long, String>?> = encounterRepository
         .getAllEncounters()
         .map { encounters ->
-            encounters.firstOrNull {
-                it.encounter.isStarted && !it.encounter.isCompleted
-            }?.encounter?.name
+            encounters.firstOrNull { encounterWithCount ->
+                val encounter = encounterWithCount.encounter
+                // Check if encounter is explicitly active OR has been started
+                encounter.isActive || (encounter.currentRound > 0)
+            }?.encounter?.let { encounter ->
+                Pair(encounter.id, encounter.name)
+            }
         }
         .asLiveData()
 
@@ -255,6 +260,7 @@ data class MainScreenState(
     val isLoading: Boolean = false,
     val actorCount: Int = 0,
     val encounterCount: Int = 0,
+    val activeEncounterId: Long? = null,
     val activeEncounterName: String? = null,
     val hasError: Boolean = false,
     val errorMessage: String? = null
