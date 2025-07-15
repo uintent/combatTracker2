@@ -30,6 +30,7 @@ import com.example.combattracker.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import android.graphics.Color
 
 /**
  * CombatTrackerActivity - Main combat tracking screen
@@ -125,6 +126,15 @@ class CombatTrackerActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+        // Listen for close request
+        supportFragmentManager.setFragmentResultListener(
+            ActorContextMenuFragment.RESULT_CLOSE_REQUESTED,
+            this
+        ) { _, _ ->
+            // Hide the bottom sheet through the behavior
+            // This will trigger the cleanup in onStateChanged
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
         Timber.d("CombatTrackerActivity created")
     }
 
@@ -135,10 +145,6 @@ class CombatTrackerActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
             R.id.action_roll_all -> {
                 confirmRollInitiative(all = true)
                 true
@@ -153,6 +159,10 @@ class CombatTrackerActivity : AppCompatActivity() {
             }
             R.id.action_save_encounter -> {
                 saveEncounter()
+                true
+            }
+            R.id.action_return_main -> {
+                showEndEncounterDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -198,10 +208,6 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Setup button handlers
      */
     private fun setupButtons() {
-        // Add new button handlers
-        binding.buttonBack.setOnClickListener {
-            onBackPressed()
-        }
 
         binding.buttonMenu.setOnClickListener {
             showOverflowMenu(it)
@@ -305,8 +311,12 @@ class CombatTrackerActivity : AppCompatActivity() {
         if (backgroundPath != null) {
             binding.backgroundImageView.loadFromInternalStorage(backgroundPath)
             binding.backgroundImageView.visible()
+            // Set round text to white when background is present
+            binding.textRound.setTextColor(Color.WHITE)
         } else {
             binding.backgroundImageView.gone()
+            // Set round text to black when no background
+            binding.textRound.setTextColor(Color.BLACK)
         }
     }
 

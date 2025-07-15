@@ -72,6 +72,9 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         const val RESULT_ADD_ACTOR = "add_actor"
         const val RESULT_END_ENCOUNTER = "end_encounter"
 
+        // Add this new constant
+        const val RESULT_CLOSE_REQUESTED = "close_requested"
+
         fun newInstance(actorId: Long): ActorContextMenuFragment {
             return ActorContextMenuFragment().apply {
                 arguments = bundleOf(ARG_ACTOR_ID to actorId)
@@ -105,7 +108,8 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Add close button handler
         binding.buttonClose.setOnClickListener {
             saveCurrentChanges()
-            dismiss()
+            // Request the activity to hide the bottom sheet
+            setFragmentResult(RESULT_CLOSE_REQUESTED, bundleOf())
         }
     }
 

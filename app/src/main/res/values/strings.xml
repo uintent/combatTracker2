@@ -226,6 +226,7 @@
     <string name="end_encounter_message">Do you want to save before ending?</string>
     <string name="save_and_end">Save &amp; End</string>
     <string name="discard_and_end">Discard &amp; End</string>
+    <string name="return_to_main_menu">Return to Main Menu</string>
 
     <!-- Reset Confirmations -->
     <string name="reset_actors_title">Reset All Actors?</string>

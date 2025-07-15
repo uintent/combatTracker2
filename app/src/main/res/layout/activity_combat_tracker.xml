@@ -21,34 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Back button in top left corner -->
-        <ImageButton
-            android:id="@+id/buttonBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/go_back"
-            android:padding="12dp"
-            android:src="@drawable/ic_arrow_left"
-            app:tint="?attr/colorOnBackground"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Menu button in top right corner -->
-        <ImageButton
-            android:id="@+id/buttonMenu"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/menu"
-            android:padding="12dp"
-            android:src="@drawable/ic_more_vert"
-            app:tint="?attr/colorOnBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <!-- Missing initiative warning at top center -->
         <TextView
             android:id="@+id/textMissingInitiative"
@@ -82,7 +54,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textMissingInitiative"
             tools:listitem="@layout/item_combat_actor" />
 
-        <!-- Turn controls container with round counter -->
+        <!-- Turn controls container -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/turnControlsContainer"
             android:layout_width="0dp"
@@ -106,40 +78,58 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonPreviousTurn"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
+                    style="?attr/materialIconButtonStyle"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     android:contentDescription="@string/go_back_to_previous_turn"
-                    android:text="@string/previous_turn"
-                    app:icon="@drawable/ic_arrow_left" />
+                    app:icon="@drawable/ic_arrow_left"
+                    app:iconSize="24dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonPreviousRound"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
+                    style="?attr/materialIconButtonStyle"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     android:layout_marginTop="8dp"
                     android:contentDescription="@string/go_back_to_previous_round"
-                    android:text="@string/previous_round"
-                    app:icon="@drawable/ic_skip_previous" />
+                    app:icon="@drawable/ic_skip_previous"
+                    app:iconSize="24dp" />
 
             </LinearLayout>
 
-            <!-- Round counter in center -->
-            <TextView
-                android:id="@+id/textRound"
+            <!-- Menu button and round counter in center -->
+            <LinearLayout
+                android:id="@+id/centerControls"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/round_background"
-                android:padding="16dp"
-                android:text="@string/round_x"
-                android:textAppearance="?attr/textAppearanceHeadline4"
-                android:textColor="?attr/colorOnPrimary"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/nextControls"
                 app:layout_constraintStart_toEndOf="@+id/previousControls"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Round 1" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/buttonMenu"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/menu"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_more_vert"
+                    app:tint="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/textRound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/round_x"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="@android:color/black"
+                    tools:text="Round 1" />
+
+            </LinearLayout>
 
             <!-- Next controls -->
             <LinearLayout
@@ -153,24 +143,22 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonNextTurn"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
+                    style="?attr/materialIconButtonStyle"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     android:contentDescription="@string/advance_to_next_turn"
-                    android:text="@string/next_turn"
                     app:icon="@drawable/ic_arrow_right"
-                    app:iconGravity="end" />
+                    app:iconSize="24dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonNextRound"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
+                    style="?attr/materialIconButtonStyle"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     android:layout_marginTop="8dp"
                     android:contentDescription="@string/advance_to_next_round"
-                    android:text="@string/next_round"
                     app:icon="@drawable/ic_skip_next"
-                    app:iconGravity="end" />
+                    app:iconSize="24dp" />
 
             </LinearLayout>
 

@@ -29,4 +29,17 @@
         android:title="@string/action_save_encounter"
         app:showAsAction="never" />
 
+    <!-- Divider -->
+    <item
+        android:id="@+id/divider"
+        android:title=""
+        android:enabled="false"
+        app:showAsAction="never" />
+
+    <!-- Return to Main Menu -->
+    <item
+        android:id="@+id/action_return_main"
+        android:title="@string/return_to_main_menu"
+        app:showAsAction="never" />
+
 </menu>
