@@ -411,7 +411,29 @@ class CombatViewModel(
     fun addActorToEncounter(baseActorId: Long, initiative: Double) {
         viewModelScope.launch {
             try {
-                // Use the repository method that takes a list
+                // Get the base actor name
+                val baseActor = actorRepository.getActorById(baseActorId)
+                if (baseActor == null) {
+                    _errorMessage.value = "Actor not found"
+                    return@launch
+                }
+
+                // Get existing display names in the encounter
+                val existingNames = encounterActors.map { it.encounterActor.displayName }.toSet()
+
+                // Find the next available name
+                var displayName = baseActor.name
+                var counter = 1
+
+                // If base name exists, add numbers until we find an available one
+                if (existingNames.contains(displayName)) {
+                    do {
+                        counter++
+                        displayName = "${baseActor.name} $counter"
+                    } while (existingNames.contains(displayName))
+                }
+
+                // Use the repository method to add to database
                 val result = encounterRepository.addActorsToEncounter(
                     encounterId = encounterId,
                     actorIds = listOf(baseActorId),
@@ -420,16 +442,29 @@ class CombatViewModel(
 
                 result.fold(
                     onSuccess = { newActors ->
-                        // Reload encounter to get updated state
-                        loadEncounter()
+                        // Instead of reloading everything, just add the new actor to our current state
+                        val newActor = newActors.firstOrNull()
+                        if (newActor != null) {
+                            // Create the EncounterActorWithActor object
+                            val actorWithActor = EncounterActorWithActor(
+                                encounterActor = newActor,
+                                actor = baseActor
+                            )
 
-                        val actorName = newActors.firstOrNull()?.displayName ?: "Actor"
-                        Timber.d("Added actor to encounter: $actorName with initiative $initiative")
+                            // Add to our local list
+                            encounterActors.add(actorWithActor)
+
+                            // Update the combat state without losing existing data
+                            updateCombatState()
+
+                            Timber.d("Added actor to encounter: ${newActor.displayName} with initiative $initiative")
+                        }
                     },
                     onFailure = { error ->
                         Timber.e(error, "Failed to add actor to encounter")
+
                         if (error.message?.contains("UNIQUE constraint failed") == true) {
-                            _errorMessage.value = "This actor is already in the encounter with that name. Try removing them first if you want to add them again."
+                            _errorMessage.value = "Unable to add actor. Please try removing existing instances first."
                         } else {
                             _errorMessage.value = "Failed to add actor: ${error.message}"
                         }
@@ -438,11 +473,7 @@ class CombatViewModel(
 
             } catch (e: Exception) {
                 Timber.e(e, "Failed to add actor to encounter")
-                if (e.message?.contains("UNIQUE constraint failed") == true) {
-                    _errorMessage.value = "This actor is already in the encounter with that name. Try removing them first if you want to add them again."
-                } else {
-                    _errorMessage.value = "Failed to add actor: ${e.message}"
-                }
+                _errorMessage.value = "Failed to add actor: ${e.message}"
             }
         }
     }
