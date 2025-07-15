@@ -18,6 +18,8 @@ import com.example.combattracker.utils.gone
 import com.example.combattracker.utils.loadFromInternalStorage
 import com.example.combattracker.utils.visible
 import kotlin.math.min
+import timber.log.Timber
+import android.view.MotionEvent
 
 /**
  * CombatActorAdapter - RecyclerView adapter for horizontal combat tracker
@@ -42,6 +44,10 @@ class CombatActorAdapter(
 ) : ListAdapter<EncounterActorState, CombatActorAdapter.CombatActorViewHolder>(
     CombatActorDiffCallback()
 ) {
+
+    init {
+        Timber.d("CombatActorAdapter created with onActorClick callback")
+    }
 
     private var highlightedActorId: Long? = null
     private var itemWidth: Int = 0
@@ -83,13 +89,34 @@ class CombatActorAdapter(
         private var currentActor: EncounterActorState? = null
 
         init {
-            binding.root.setOnClickListener {
-                currentActor?.let { onActorClick(it) }
+            // Set click listener on the portrait card, not the root
+            binding.portraitCard.setOnClickListener {
+                Timber.d("Actor portrait clicked in adapter")
+                currentActor?.let {
+                    Timber.d("Invoking onActorClick for: ${it.displayName}")
+                    onActorClick(it)
+                } ?: Timber.e("currentActor is null on click")
             }
         }
 
         fun bind(actor: EncounterActorState, highlightedActorId: Long?) {
             currentActor = actor
+
+            // Test with a simple color change on touch
+            binding.portraitCard.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        Timber.d("Touch DOWN on ${actor.displayName}")
+                        v.alpha = 0.7f
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        Timber.d("Touch UP on ${actor.displayName}")
+                        v.alpha = 1.0f
+                        v.performClick() // Important for accessibility
+                    }
+                }
+                false // Return false to allow click listener to also fire
+            }
 
             // Apply dynamic sizing
             val layoutParams = binding.portraitCard.layoutParams

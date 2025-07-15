@@ -8,7 +8,11 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewTreeObserver
 import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,13 +25,11 @@ import com.example.combattracker.data.database.entities.EncounterActor
 import com.example.combattracker.databinding.ActivityCombatTrackerBinding
 import com.example.combattracker.databinding.DialogSaveEncounterBinding
 import com.example.combattracker.ui.actors.ActorLibraryActivity
+import com.example.combattracker.ui.encounter.EncounterManageActivity
 import com.example.combattracker.utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import android.view.View
-import androidx.appcompat.widget.PopupMenu
-import android.view.ViewTreeObserver
 
 /**
  * CombatTrackerActivity - Main combat tracking screen
@@ -63,7 +65,7 @@ class CombatTrackerActivity : AppCompatActivity() {
     }
 
     private lateinit var combatActorAdapter: CombatActorAdapter
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
 
     // ========== Lifecycle Methods ==========
 
@@ -79,6 +81,10 @@ class CombatTrackerActivity : AppCompatActivity() {
         binding = ActivityCombatTrackerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Debug check
+        Timber.d("Bottom sheet view exists: ${binding.bottomSheet != null}")
+        Timber.d("Bottom sheet visibility: ${binding.bottomSheet.visibility}")
+
         // Make the activity fullscreen
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -88,7 +94,6 @@ class CombatTrackerActivity : AppCompatActivity() {
         // Hide the action bar
         supportActionBar?.hide()
 
-        setupToolbar()
         setupViews()
         setupBottomSheet()
         observeViewModel()
@@ -154,7 +159,6 @@ class CombatTrackerActivity : AppCompatActivity() {
         }
     }
 
-    @Suppress("MissingSuperCall")
     override fun onBackPressed() {
         // Check if bottom sheet is expanded
         if (::bottomSheetBehavior.isInitialized &&
@@ -163,28 +167,37 @@ class CombatTrackerActivity : AppCompatActivity() {
             return
         }
 
-        // Otherwise show end encounter dialog
-        showEndEncounterDialog()
+        // Show end encounter dialog
+        AlertDialog.Builder(this)
+            .setTitle(Constants.Dialogs.END_ENCOUNTER_TITLE)
+            .setMessage(Constants.Dialogs.END_ENCOUNTER_MESSAGE)
+            .setPositiveButton(Constants.Dialogs.END_ENCOUNTER_SAVE) { _, _ ->
+                saveEncounter()
+                super.onBackPressed() // Now we call super to actually go back
+            }
+            .setNegativeButton(Constants.Dialogs.END_ENCOUNTER_DISCARD) { _, _ ->
+                super.onBackPressed() // Call super to go back without saving
+            }
+            .setNeutralButton(Constants.Dialogs.BUTTON_CANCEL, null) // Don't call super - stay in activity
+            .show()
     }
 
     // ========== UI Setup ==========
 
     /**
-     * Setup toolbar
+     * Setup views
      */
-    private fun setupToolbar() {
-        //setSupportActionBar(binding.toolbar)
-        //supportActionBar?.apply {
-        //    setDisplayHomeAsUpEnabled(true)
-            // Title will be set when encounter loads
-        //}
-    }
-
     private fun setupViews() {
         setupActorRecyclerView()
         setupTurnControls()
         setupBackgroundImage()
+        setupButtons()
+    }
 
+    /**
+     * Setup button handlers
+     */
+    private fun setupButtons() {
         // Add new button handlers
         binding.buttonBack.setOnClickListener {
             onBackPressed()
@@ -195,6 +208,9 @@ class CombatTrackerActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Show overflow menu
+     */
     private fun showOverflowMenu(anchor: View) {
         val popup = PopupMenu(this, anchor)
         popup.menuInflater.inflate(R.menu.menu_combat_tracker, popup.menu)
@@ -208,28 +224,53 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Setup actor RecyclerView for horizontal scrolling
      */
     private fun setupActorRecyclerView() {
+        Timber.d("Setting up actor RecyclerView")
+
         combatActorAdapter = CombatActorAdapter(
             onActorClick = { actor ->
-                viewModel.selectActor(actor.id)  // Changed from setSelectedActor
+                Timber.d("onActorClick lambda called for: ${actor.displayName}")
+                viewModel.selectActor(actor.id)
                 showActorContextMenu(actor)
             }
         )
+
+        Timber.d("Adapter created, setting on RecyclerView")
 
         binding.recyclerViewActors.apply {
             adapter = combatActorAdapter
             layoutManager = LinearLayoutManager(
                 this@CombatTrackerActivity,
-                LinearLayoutManager.HORIZONTAL,
+                RecyclerView.HORIZONTAL,
                 false
             )
+            setHasFixedSize(false)
 
             // Add observer for size changes
             viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    updateActorSizing()  // CALL IT HERE
+                    updateActorSizing()
                 }
             })
+        }
+
+        Timber.d("RecyclerView setup complete")
+    }
+
+    /**
+     * Update actor sizing based on RecyclerView dimensions
+     */
+    private fun updateActorSizing() {
+        val recyclerView = binding.recyclerViewActors
+        val itemCount = combatActorAdapter.itemCount
+
+        if (itemCount > 0) {
+            combatActorAdapter.updateItemDimensions(
+                recyclerView.width,
+                recyclerView.height,
+                itemCount,
+                resources.displayMetrics.density
+            )
         }
     }
 
@@ -273,25 +314,30 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Setup bottom sheet for actor context menu
      */
     private fun setupBottomSheet() {
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        Timber.d("Setting up bottom sheet...")
 
-        // Set peek height to 0 so it's fully hidden
-        bottomSheetBehavior.peekHeight = 0
+        try {
+            bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        // Handle back button when expanded
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: android.view.View, newState: Int) {
-                // Update actor highlighting when sheet opens/closes
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    viewModel.clearSelectedActor()
+            Timber.d("Bottom sheet initialized. State: ${bottomSheetBehavior.state}")
+
+            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    Timber.d("Bottom sheet state changed to: $newState")
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        viewModel.clearSelectedActor()
+                        combatActorAdapter.setHighlightedActor(null)
+                    }
                 }
-            }
 
-            override fun onSlide(bottomSheet: android.view.View, slideOffset: Float) {
-                // Not needed
-            }
-        })
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    // Optional: Add any slide animations here
+                }
+            })
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to setup bottom sheet")
+        }
     }
 
     // ========== ViewModel Observation ==========
@@ -303,19 +349,16 @@ class CombatTrackerActivity : AppCompatActivity() {
         // Observe combat state
         viewModel.combatState.observe(this) { state ->
             updateCombatUI(state)
+            combatActorAdapter.submitList(state.actors) {
+                // Update sizing after list is submitted
+                updateActorSizing()
+            }
         }
 
         // Observe loading
         viewModel.isLoading.observe(this) { isLoading ->
             binding.progressBar.visibleIf(isLoading)
             binding.combatContent.visibleIf(!isLoading)
-        }
-
-        viewModel.combatState.observe(this) { state ->
-            combatActorAdapter.submitList(state.actors) {
-                // Update sizing after list is submitted
-                updateActorSizing()
-            }
         }
 
         // Observe errors
@@ -328,10 +371,23 @@ class CombatTrackerActivity : AppCompatActivity() {
 
         // Observe encounter loaded
         viewModel.encounterLoaded.observe(this) { loaded ->
-            // Only react to explicit false, not null
-            if (loaded == false) {
-                showEncounterLoadError()
+            loaded?.let {
+                if (!it) {
+                    showEncounterLoadError()
+                }
             }
+        }
+
+        // Observe if there are missing initiatives
+        viewModel.combatState.observe(this) { state ->
+            val hasMissing = state.actors.any { !it.hasTakenTurn && it.missingInitiative }
+            binding.textMissingInitiative.visibility = if (hasMissing) View.VISIBLE else View.GONE
+
+            // Disable turn controls when initiative is missing
+            binding.buttonNextTurn.isEnabled = !hasMissing
+            binding.buttonPreviousTurn.isEnabled = !hasMissing
+            binding.buttonNextRound.isEnabled = !hasMissing
+            binding.buttonPreviousRound.isEnabled = !hasMissing
         }
     }
 
@@ -339,14 +395,8 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Update combat UI with new state
      */
     private fun updateCombatUI(state: CombatState) {
-        // Update toolbar
-        supportActionBar?.title = state.encounterName
-
         // Update round display
-        binding.textRound.text = "Round ${state.roundNumber}"
-
-        // Update actor list
-        combatActorAdapter.submitList(state.actors)
+        binding.textRound.text = getString(R.string.round_x, state.roundNumber)
 
         // Update turn controls
         binding.buttonPreviousTurn.isEnabled = !state.isFirstTurn && state.canProgress
@@ -357,7 +407,6 @@ class CombatTrackerActivity : AppCompatActivity() {
         // Show message if actors missing initiative
         if (!state.canProgress) {
             binding.textMissingInitiative.visible()
-            binding.textMissingInitiative.text = "Roll initiative for all actors to begin"
         } else {
             binding.textMissingInitiative.gone()
         }
@@ -388,13 +437,24 @@ class CombatTrackerActivity : AppCompatActivity() {
      * Show actor context menu
      */
     private fun showActorContextMenu(actor: EncounterActorState) {
-        viewModel.selectActor(actor.id)
+        Timber.d("showActorContextMenu called for actor: ${actor.displayName} (id: ${actor.id})")
 
-        // Show the actor context menu fragment
+        // Load the ActorContextMenuFragment into the bottom sheet
         val fragment = ActorContextMenuFragment.newInstance(actor.id)
-        fragment.show(supportFragmentManager, Constants.FragmentTags.ACTOR_CONTEXT_MENU)
 
+        Timber.d("Creating fragment transaction...")
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.bottomSheet, fragment)
+            .commit()
+
+        // Highlight the selected actor
+        Timber.d("Setting highlighted actor...")
+        combatActorAdapter.setHighlightedActor(actor.id)
+
+        // Show the bottom sheet
+        Timber.d("Attempting to expand bottom sheet. Current state: ${bottomSheetBehavior.state}")
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        Timber.d("Bottom sheet state after setting: ${bottomSheetBehavior.state}")
     }
 
     /**
@@ -457,7 +517,7 @@ class CombatTrackerActivity : AppCompatActivity() {
     /**
      * Show end encounter dialog
      */
-    private fun showEndEncounterDialog() {
+    fun showEndEncounterDialog() {
         AlertDialog.Builder(this)
             .setTitle(Constants.Dialogs.END_ENCOUNTER_TITLE)
             .setMessage(Constants.Dialogs.END_ENCOUNTER_MESSAGE)
@@ -473,14 +533,27 @@ class CombatTrackerActivity : AppCompatActivity() {
     }
 
     /**
+     * Navigate to encounter list
+     */
+    fun navigateToEncounterList() {
+        val intent = Intent(this, EncounterManageActivity::class.java)
+        startActivity(intent)
+    }
+
+    /**
+     * Show save encounter dialog (public for fragment access)
+     */
+    fun showSaveEncounterDialog() {
+        saveEncounter()
+    }
+
+    /**
      * Show encounter load error
      */
     private fun showEncounterLoadError() {
-        val errorMsg = viewModel.errorMessage.value ?: "Unknown error"
-
         AlertDialog.Builder(this)
-            .setTitle("Failed to Load Encounter")
-            .setMessage("The encounter could not be loaded.\n\nError: $errorMsg\n\nThis usually happens when actors in the encounter have been deleted from the actor library.")
+            .setTitle("Error")
+            .setMessage("Failed to load encounter. It may have been deleted or corrupted.")
             .setPositiveButton(Constants.Dialogs.BUTTON_OK) { _, _ ->
                 finish()
             }
@@ -497,19 +570,5 @@ class CombatTrackerActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton(Constants.Dialogs.BUTTON_OK, null)
             .show()
-    }
-
-    private fun updateActorSizing() {
-        val recyclerView = binding.recyclerViewActors
-        val itemCount = combatActorAdapter.itemCount
-
-        if (itemCount > 0) {
-            combatActorAdapter.updateItemDimensions(
-                recyclerView.width,
-                recyclerView.height,
-                itemCount,
-                resources.displayMetrics.density  // Pass density here
-            )
-        }
     }
 }
