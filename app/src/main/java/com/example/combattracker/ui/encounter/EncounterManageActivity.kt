@@ -198,7 +198,7 @@ class EncounterManageActivity : AppCompatActivity() {
     private fun startCombatTracker(encounterId: Long) {
         val intent = Intent(this, CombatTrackerActivity::class.java).apply {
             putExtra(Constants.Extras.ENCOUNTER_ID, encounterId)
-            putExtra(Constants.Extras.START_COMBAT, true)
+            // DO NOT set START_COMBAT to true - we want to preserve existing initiative values
         }
         startActivity(intent)
         finish() // Close this screen when loading encounter

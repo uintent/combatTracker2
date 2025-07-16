@@ -177,6 +177,27 @@ class CombatViewModel(
                     )
                 }
 
+                // Persist the updated initiative values to database
+                val encounter = currentEncounter
+                if (encounter != null) {
+                    val actors = encounterActors.map { it.encounterActor }
+
+                    encounterRepository.saveEncounterState(
+                        encounterId = encounterId,
+                        currentRound = encounter.currentRound,
+                        activeActorId = encounter.currentActorId,
+                        actors = actors
+                    ).fold(
+                        onSuccess = {
+                            Timber.d("Successfully persisted initiative values to database")
+                        },
+                        onFailure = { error ->
+                            Timber.e(error, "Failed to persist initiative values")
+                            _errorMessage.value = "Initiative rolled but failed to save: ${error.message}"
+                        }
+                    )
+                }
+
                 updateCombatState()
 
             } catch (e: Exception) {
@@ -254,6 +275,7 @@ class CombatViewModel(
                 }
 
                 updateActorInList(updatedActor)
+                persistCurrentState()
 
                 // Debug: Log after update
                 Timber.d("After update:")
@@ -877,6 +899,22 @@ class CombatViewModel(
      */
     fun getActorConditionDetails(actorId: Long): List<ActorConditionWithDetails> {
         return actorConditions[actorId] ?: emptyList()
+    }
+
+    private suspend fun persistCurrentState() {
+        try {
+            val encounter = currentEncounter ?: return
+            val actors = encounterActors.map { it.encounterActor }
+
+            encounterRepository.saveEncounterState(
+                encounterId = encounterId,
+                currentRound = encounter.currentRound,
+                activeActorId = encounter.currentActorId,
+                actors = actors
+            )
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to persist encounter state")
+        }
     }
 }
 
