@@ -591,6 +591,24 @@ class CombatViewModel(
         }
     }
 
+    /**
+     * Deactivate current encounter when ending with discard
+     */
+    suspend fun deactivateCurrentEncounter() {
+        try {
+            encounterRepository.deactivateEncounter(encounterId).fold(
+                onSuccess = {
+                    Timber.d("Encounter deactivated")
+                },
+                onFailure = { error ->
+                    _errorMessage.value = "Failed to deactivate encounter: ${error.message}"
+                }
+            )
+        } catch (e: Exception) {
+            _errorMessage.value = "Failed to deactivate encounter"
+        }
+    }
+
     // ========== Private Methods ==========
 
     /**

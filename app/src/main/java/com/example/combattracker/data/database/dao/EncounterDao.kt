@@ -356,6 +356,15 @@ interface EncounterDao {
     suspend fun getActiveEncounterCount(): Int
 
     /**
+     * Deactivate all encounters
+     * Used when starting a new encounter or loading an existing one
+     *
+     * @return Number of encounters that were deactivated
+     */
+    @Query("UPDATE encounters SET isActive = 0 WHERE isActive = 1")
+    suspend fun deactivateAllEncounters(): Int
+
+    /**
      * Debug query to get raw encounter actors data
      */
     @Query("SELECT * FROM encounter_actors WHERE encounterId = :encounterId ORDER BY id")

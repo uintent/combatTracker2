@@ -195,7 +195,10 @@ class CombatTrackerActivity : AppCompatActivity() {
                 super.onBackPressed() // Now we call super to actually go back
             }
             .setNegativeButton(Constants.Dialogs.END_ENCOUNTER_DISCARD) { _, _ ->
-                super.onBackPressed() // Call super to go back without saving
+                lifecycleScope.launch {
+                    viewModel.deactivateCurrentEncounter()
+                    finish()
+                }
             }
             .setNeutralButton(Constants.Dialogs.BUTTON_CANCEL, null) // Don't call super - stay in activity
             .show()

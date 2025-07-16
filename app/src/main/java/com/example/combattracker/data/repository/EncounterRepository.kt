@@ -61,6 +61,46 @@ class EncounterRepository(
         }
     }
 
+    /**
+     * Deactivate all active encounters
+     * Called before starting a new encounter or loading an existing one
+     *
+     * @return Number of encounters deactivated
+     */
+    suspend fun deactivateAllEncounters(): Int = withContext(Dispatchers.IO) {
+        val count = encounterDao.deactivateAllEncounters()
+        if (count > 0) {
+            Timber.d("Deactivated $count active encounter(s)")
+        }
+        return@withContext count
+    }
+
+    /**
+     * Deactivate a specific encounter
+     * Called when ending an encounter with "discard & end"
+     *
+     * @param encounterId The encounter to deactivate
+     * @return Result with success or error
+     */
+    suspend fun deactivateEncounter(encounterId: Long): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val encounter = encounterDao.getEncounterById(encounterId)
+                ?: return@withContext Result.failure(
+                    IllegalArgumentException("Encounter not found")
+                )
+
+            val deactivated = encounter.copy(isActive = false).withUpdatedTimestamp()
+            encounterDao.updateEncounter(deactivated)
+
+            Timber.d("Deactivated encounter: ${encounter.name}")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to deactivate encounter")
+            Result.failure(e)
+        }
+    }
+
     // ========== Create Operations ==========
 
     /**
@@ -96,6 +136,9 @@ class EncounterRepository(
                     IllegalStateException("Some selected actors no longer exist")
                 )
             }
+
+            // Deactivate any currently active encounters
+            deactivateAllEncounters()
 
             // Create the encounter
             val encounter = Encounter.create(name)
@@ -215,6 +258,9 @@ class EncounterRepository(
                 ?: return@withContext Result.failure(
                     IllegalArgumentException("Encounter not found")
                 )
+
+            // Deactivate any currently active encounters
+            deactivateAllEncounters()
 
             // Mark the encounter as active when loading
             val activeEncounter = encounter.forLoading()
@@ -360,6 +406,7 @@ class EncounterRepository(
             val newEncounter = Encounter.create(customName).copy(
                 currentRound = currentRound,
                 currentActorId = activeActorId,
+                isActive = false
             )
 
             val newEncounterId = encounterDao.insertEncounter(newEncounter)
