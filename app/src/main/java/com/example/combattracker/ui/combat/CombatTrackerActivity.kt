@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.collect
 import android.widget.EditText
 import android.text.InputType
 import com.example.combattracker.ui.encounter.*
+import kotlinx.coroutines.delay
 
 /**
  * CombatTrackerActivity - Main combat tracking screen
@@ -195,6 +196,11 @@ class CombatTrackerActivity : AppCompatActivity() {
                 super.onBackPressed() // Now we call super to actually go back
             }
             .setNegativeButton(Constants.Dialogs.END_ENCOUNTER_DISCARD) { _, _ ->
+                // Set a flag in shared preferences to indicate we're returning from combat
+                getSharedPreferences(Constants.PREFS_NAME, MODE_PRIVATE).edit()
+                    .putBoolean("returning_from_combat", true)
+                    .apply()
+
                 lifecycleScope.launch {
                     viewModel.deactivateCurrentEncounter()
                     finish()
@@ -702,9 +708,25 @@ class CombatTrackerActivity : AppCompatActivity() {
                 finish()
             }
             .setNegativeButton(Constants.Dialogs.END_ENCOUNTER_DISCARD) { _, _ ->
+                // Show a progress dialog while deactivating
+                val progressDialog = AlertDialog.Builder(this)
+                    .setMessage("Ending encounter...")
+                    .setCancelable(false)
+                    .create()
+
+                progressDialog.show()
+
                 lifecycleScope.launch {
-                    viewModel.deactivateCurrentEncounter()
-                    finish()
+                    try {
+                        viewModel.deactivateCurrentEncounter()
+                        // Add a small delay to ensure database write completes
+                        kotlinx.coroutines.delay(100)
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to deactivate encounter")
+                    } finally {
+                        progressDialog.dismiss()
+                        finish()
+                    }
                 }
             }
             .setNeutralButton(Constants.Dialogs.BUTTON_CANCEL, null)

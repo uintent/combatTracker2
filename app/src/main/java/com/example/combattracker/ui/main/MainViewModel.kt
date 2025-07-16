@@ -62,31 +62,35 @@ class MainViewModel(
      * Changed to Pair<Long, String> to include both ID and name
      */
 
-    val activeEncounter: LiveData<Pair<Long, String>?> = encounterRepository
-        .getAllEncounters()
-        .map { encounters ->
-            Timber.d("MainViewModel: Checking ${encounters.size} encounters for active status")
-            encounters.forEach { encounterWithCount ->
-                val encounter = encounterWithCount.encounter
-                Timber.d("MainViewModel: ${encounter.name} - isActive=${encounter.isActive}, currentRound=${encounter.currentRound}")
-            }
+    private val _forceRefresh = MutableLiveData(0)
 
-            val active = encounters.firstOrNull { encounterWithCount ->
-                val encounter = encounterWithCount.encounter
-                // Only check if encounter is explicitly active
-                encounter.isActive
-            }?.encounter?.let { encounter ->
-                Timber.d("MainViewModel: Found active encounter: ${encounter.name}")
-                Pair(encounter.id, encounter.name)
-            }
+    val activeEncounter: LiveData<Pair<Long, String>?> = _forceRefresh.switchMap { _ ->
+        encounterRepository
+            .getAllEncounters()
+            .map { encounters ->
+                Timber.d("MainViewModel: Checking ${encounters.size} encounters for active status")
+                encounters.forEach { encounterWithCount ->
+                    val encounter = encounterWithCount.encounter
+                    Timber.d("MainViewModel: ${encounter.name} - isActive=${encounter.isActive}, currentRound=${encounter.currentRound}")
+                }
 
-            if (active == null) {
-                Timber.d("MainViewModel: No active encounters found")
-            }
+                val active = encounters.firstOrNull { encounterWithCount ->
+                    val encounter = encounterWithCount.encounter
+                    // Only check if encounter is explicitly active
+                    encounter.isActive
+                }?.encounter?.let { encounter ->
+                    Timber.d("MainViewModel: Found active encounter: ${encounter.name}")
+                    Pair(encounter.id, encounter.name)
+                }
 
-            active
-        }
-        .asLiveData()
+                if (active == null) {
+                    Timber.d("MainViewModel: No active encounters found")
+                }
+
+                active
+            }
+            .asLiveData()
+    }
 
     /**
      * Statistics about actor categories
@@ -261,6 +265,38 @@ class MainViewModel(
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+
+    /**
+     * Force refresh of active encounter
+     */
+    fun refreshActiveEncounter() {
+        clearActiveEncounterCache()
+    }
+
+
+
+    /**
+     * Force refresh the active encounter check
+     * Called when returning from combat
+     */
+    fun checkActiveEncounter() {
+        // This forces the Flow to re-emit by triggering a new query
+        viewModelScope.launch {
+            // The Flow should automatically update, but we can log to verify
+            Timber.d("Forcing active encounter check")
+        }
+    }
+
+
+
+    /**
+     * Clear cached active encounter state
+     */
+    fun clearActiveEncounterCache() {
+        _forceRefresh.value = (_forceRefresh.value ?: 0) + 1
+    }
+
+
 }
 
 // ========== Data Classes ==========

@@ -25,6 +25,7 @@ import com.example.combattracker.utils.*
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlinx.coroutines.delay
 
 /**
  * MainActivity - Main menu screen of the Combat Tracker app
@@ -50,6 +51,8 @@ class MainActivity : AppCompatActivity() {
      * View binding for type-safe view access
      */
     private lateinit var binding: ActivityMainBinding
+
+    private var isReturningFromCombat = false
 
     /**
      * ViewModel for main screen logic
@@ -82,6 +85,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Check if we're returning from combat
+        val prefs = getSharedPreferences(Constants.PREFS_NAME, MODE_PRIVATE)
+        isReturningFromCombat = prefs.getBoolean("returning_from_combat", false)
+        if (isReturningFromCombat) {
+            // Clear the flag
+            prefs.edit().remove("returning_from_combat").apply()
+        }
+
         // Setup UI components
         setupToolbar()
         setupMenuCards()
@@ -96,8 +107,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh statistics when returning to main screen
-        viewModel.refreshStatistics()
+
+        Timber.d("MainActivity onResume called, isReturningFromCombat = $isReturningFromCombat")
+
+        // Clear the flag after a delay
+        lifecycleScope.launch {
+            if (isReturningFromCombat) {
+                delay(1000)
+                isReturningFromCombat = false
+                Timber.d("MainActivity: Cleared isReturningFromCombat flag")
+            }
+        }
+
+        // When returning from combat, the Flow might not have updated yet
+        // Add a small delay to allow the database Flow to emit the new state
+        lifecycleScope.launch {
+            delay(200) // Small delay to ensure Flow updates
+            viewModel.refreshStatistics()
+            viewModel.refreshActiveEncounter()
+            viewModel.checkActiveEncounter()
+        }
     }
 
     // ========== UI Setup ==========
@@ -199,7 +228,8 @@ class MainActivity : AppCompatActivity() {
 
         // Observe active encounter (if any)
         viewModel.activeEncounter.observe(this) { encounterData ->
-            if (encounterData != null) {
+            Timber.d("MainActivity: activeEncounter observer triggered with: $encounterData")
+            if (encounterData != null && !isReturningFromCombat) {
                 // encounterData is a Pair<Long, String>
                 // encounterData.first is the ID (Long)
                 // encounterData.second is the name (String)
@@ -342,9 +372,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToCombatTracker(encounterId: Long) {
+        isReturningFromCombat = true
         val intent = Intent(this, CombatTrackerActivity::class.java).apply {
             putExtra(Constants.Extras.ENCOUNTER_ID, encounterId)
         }
         startActivity(intent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Clear any cached active encounter state when leaving
+        viewModel.clearActiveEncounterCache()
     }
 }
