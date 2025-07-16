@@ -112,6 +112,19 @@ class CombatViewModel(
 
         encounterActors.addAll(validActors)
         actorConditions.clear()
+
+        // Debug: Log what conditions are being loaded
+        Timber.d("=== Loading Conditions ===")
+        data.conditions.forEach { (actorId, conditions) ->
+            // Find which actor this is
+            val actor = data.actors.find { it.encounterActor.id == actorId }
+            Timber.d("Actor ID $actorId (${actor?.encounterActor?.displayName}): ${conditions.size} conditions")
+            conditions.forEach { condition ->
+                Timber.d("  - ${condition.condition.name} (permanent: ${condition.actorCondition.isPermanent}, duration: ${condition.actorCondition.remainingDuration})")
+            }
+        }
+        Timber.d("=== End Loading Conditions ===")
+
         actorConditions.putAll(data.conditions)
 
         // If no active actor set, find first with initiative
@@ -519,23 +532,90 @@ class CombatViewModel(
     ) {
         viewModelScope.launch {
             try {
+                Timber.d("toggleCondition called for actor $actorId, condition ${conditionType.displayName}")
+                debugActorIds(actorId)
+                // ALWAYS reload conditions to ensure we have the latest state from database
+                // This prevents issues with stale cache or empty entries
+                Timber.d("Reloading conditions for actor $actorId to ensure latest state")
+                reloadActorConditions(actorId)
+
+                // Now check if this condition already exists
                 val currentConditions = actorConditions[actorId] ?: emptyList()
-                val hasCondition = currentConditions.any { conditionWithDetails ->
+                Timber.d("Current conditions for actor $actorId: ${currentConditions.map { it.condition.name }}")
+
+                val existingCondition = currentConditions.find { conditionWithDetails ->
                     conditionWithDetails.condition.id == conditionType.id
                 }
 
-                if (hasCondition) {
-                    // Remove condition
-                    val conditionId = currentConditions.first { conditionWithDetails ->
-                        conditionWithDetails.condition.id == conditionType.id
-                    }.actorCondition.id
+                if (existingCondition != null) {
+                    // Condition exists - check if we're just removing or updating
+                    Timber.d("Condition ${conditionType.displayName} already exists with ID ${existingCondition.actorCondition.id}")
 
-                    // Remove from local state
-                    actorConditions[actorId] = currentConditions.filter { conditionWithDetails ->
-                        conditionWithDetails.condition.id != conditionType.id
+                    if (!isPermanent && duration == null) {
+                        // Just removing the condition
+                        Timber.d("Removing condition ${conditionType.displayName} from actor $actorId")
+
+                        val conditionId = existingCondition.actorCondition.id
+                        encounterRepository.removeCondition(conditionId).fold(
+                            onSuccess = {
+                                // Update local state
+                                actorConditions[actorId] = currentConditions.filter {
+                                    it.actorCondition.id != conditionId
+                                }
+                                updateCombatState()
+                            },
+                            onFailure = { error ->
+                                Timber.e(error, "Failed to remove condition")
+                                _errorMessage.value = "Failed to remove condition: ${error.message}"
+                            }
+                        )
+                    } else {
+                        // Updating the condition - remove old and add new
+                        Timber.d("Updating condition ${conditionType.displayName} for actor $actorId")
+
+                        val conditionId = existingCondition.actorCondition.id
+
+                        // Remove the existing condition first
+                        encounterRepository.removeCondition(conditionId).fold(
+                            onSuccess = {
+                                // Update local state immediately
+                                actorConditions[actorId] = currentConditions.filter {
+                                    it.actorCondition.id != conditionId
+                                }
+
+                                // Now add the new one
+                                val currentRound = currentEncounter?.currentRound ?: 1
+                                encounterRepository.applyCondition(
+                                    actorId,
+                                    conditionType,
+                                    isPermanent,
+                                    duration,
+                                    currentRound
+                                ).fold(
+                                    onSuccess = {
+                                        Timber.d("Successfully updated condition ${conditionType.displayName}")
+                                        reloadActorConditions(actorId)
+                                        updateCombatState()
+                                    },
+                                    onFailure = { error ->
+                                        Timber.e(error, "Failed to apply updated condition")
+                                        _errorMessage.value = "Failed to update condition: ${error.message}"
+                                        // Try to reload to get back to consistent state
+                                        reloadActorConditions(actorId)
+                                        updateCombatState()
+                                    }
+                                )
+                            },
+                            onFailure = { error ->
+                                Timber.e(error, "Failed to remove existing condition for update")
+                                _errorMessage.value = "Failed to update condition: ${error.message}"
+                            }
+                        )
                     }
                 } else {
-                    // Add condition
+                    // Condition doesn't exist - safe to add
+                    Timber.d("Adding new condition ${conditionType.displayName} to actor $actorId")
+
                     val currentRound = currentEncounter?.currentRound ?: 1
                     encounterRepository.applyCondition(
                         actorId,
@@ -545,19 +625,41 @@ class CombatViewModel(
                         currentRound
                     ).fold(
                         onSuccess = {
-                            // Reload conditions for this actor
+                            Timber.d("Successfully applied new condition ${conditionType.displayName}")
                             reloadActorConditions(actorId)
+                            updateCombatState()
                         },
                         onFailure = { error ->
-                            _errorMessage.value = "Failed to apply condition: ${error.message}"
+                            if (error.message?.contains("UNIQUE constraint failed") == true) {
+                                // Condition exists in database but not in our cache - reload and try again
+                                Timber.w("Condition exists in database but not in cache, reloading...")
+                                reloadActorConditions(actorId)
+
+                                // After reload, check if it now exists
+                                val reloadedConditions = actorConditions[actorId] ?: emptyList()
+                                val nowExists = reloadedConditions.find { it.condition.id == conditionType.id }
+
+                                if (nowExists != null) {
+                                    // It exists now, so this is actually an update operation
+                                    Timber.d("Condition found after reload, treating as update")
+                                    _errorMessage.value = "This condition is already applied. Remove it first to change settings."
+                                } else {
+                                    // Still doesn't exist in our cache but database says it does
+                                    // This is a data inconsistency - best to show error
+                                    Timber.e("Data inconsistency: condition exists in DB but not in cache after reload")
+                                    _errorMessage.value = "Failed to apply condition: ${conditionType.displayName} already exists"
+                                }
+                            } else {
+                                Timber.e(error, "Failed to apply new condition")
+                                _errorMessage.value = "Failed to apply condition: ${error.message}"
+                            }
                         }
                     )
                 }
 
-                updateCombatState()
-
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to toggle condition"
+                Timber.e(e, "Exception in toggleCondition")
+                _errorMessage.value = "Failed to toggle condition: ${e.message}"
             }
         }
     }
@@ -660,8 +762,24 @@ class CombatViewModel(
      * Reload conditions for specific actor
      */
     private suspend fun reloadActorConditions(actorId: Long) {
-        // In a real implementation, this would reload from database
-        Timber.d("Reloading conditions for actor $actorId")
+        try {
+            // Get the encounter actor ID (not the base actor ID)
+            val encounterActor = encounterActors.find { it.encounterActor.id == actorId }
+            if (encounterActor == null) {
+                Timber.e("Could not find encounter actor with ID $actorId")
+                return
+            }
+
+            // Load conditions from database
+            val conditions = encounterRepository.getActorConditions(actorId)
+
+            // Update local state
+            actorConditions[actorId] = conditions
+
+            Timber.d("Reloaded ${conditions.size} conditions for actor $actorId")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to reload conditions for actor $actorId")
+        }
     }
 
     /**
@@ -732,6 +850,20 @@ class CombatViewModel(
                 return CombatViewModel(encounterRepository, actorRepository, conditionDao, encounterId) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
+
+    fun debugActorIds(actorId: Long) {
+        val encounterActor = encounterActors.find { it.encounterActor.id == actorId }
+        if (encounterActor != null) {
+            Timber.d("=== Actor ID Debug ===")
+            Timber.d("Encounter Actor ID: ${encounterActor.encounterActor.id}")
+            Timber.d("Base Actor ID: ${encounterActor.encounterActor.baseActorId}")
+            Timber.d("Display Name: ${encounterActor.encounterActor.displayName}")
+            Timber.d("Instance Number: ${encounterActor.encounterActor.instanceNumber}")
+            Timber.d("=== End Debug ===")
+        } else {
+            Timber.e("Could not find encounter actor with ID $actorId")
         }
     }
 }

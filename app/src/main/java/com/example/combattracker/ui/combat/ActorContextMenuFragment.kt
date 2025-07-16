@@ -59,6 +59,9 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
     private var actorId: Long = -1L
     private var currentActor: EncounterActorState? = null
 
+    // Track the current initiative value to avoid redundant updates
+    private var currentInitiativeValue: Double? = null
+
     companion object {
         private const val ARG_ACTOR_ID = "actor_id"
 
@@ -104,34 +107,6 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
         observeViewModel()
         setupViews()
-
-        // Add close button handler
-        binding.buttonClose.setOnClickListener {
-            saveCurrentChanges()
-            // Request the activity to hide the bottom sheet
-            setFragmentResult(RESULT_CLOSE_REQUESTED, bundleOf())
-        }
-    }
-
-    // Add method to save current changes
-    private fun saveCurrentChanges() {
-        // Save any pending initiative changes
-        val initiativeText = binding.editTextInitiative.text.toString()
-        if (initiativeText.isNotEmpty()) {
-            val initiative = initiativeText.toDoubleOrNull()
-            if (initiative != null) {
-                combatViewModel.setActorInitiative(actorId, initiative)
-                Timber.d("Saved initiative $initiative for actor $actorId")
-            }
-        }
-
-        // Conditions are already saved immediately when toggled, so no need to save them here
-    }
-
-    // Override dismiss to always save changes
-    override fun dismiss() {
-        saveCurrentChanges()
-        super.dismiss()
     }
 
     override fun onDestroyView() {
@@ -149,9 +124,12 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        // Add close button handler
+        // IMPORTANT: Set up close button to send result instead of dismiss
         binding.buttonClose.setOnClickListener {
-            dismiss()
+            Timber.d("Close button clicked - sending RESULT_CLOSE_REQUESTED")
+            // Send result to activity to handle the close properly
+            setFragmentResult(RESULT_CLOSE_REQUESTED, bundleOf())
+            // Don't call dismiss() here - let the activity handle it
         }
 
         setupInitiativeSection()
@@ -164,15 +142,6 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
      * Setup initiative editing section
      */
     private fun setupInitiativeSection() {
-        // Initiative input
-        binding.editTextInitiative.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                validateInitiativeInput()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
         // Set initiative button
         binding.buttonSetInitiative.setOnClickListener {
             setInitiative()
@@ -217,15 +186,28 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         val iconRes = getConditionIconResource(conditionType)
         itemBinding.imageConditionIcon.setImageResource(iconRes)
 
+        // Store reference to this condition's views for easier access
+        itemBinding.root.tag = conditionType
+
         // Toggle checkbox
         itemBinding.checkboxCondition.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 // Show duration options
                 itemBinding.layoutDuration.visible()
+                // Focus on duration field
+                itemBinding.editTextDuration.requestFocus()
             } else {
                 // Hide duration options and remove condition
                 itemBinding.layoutDuration.gone()
-                removeCondition(conditionType)
+                // Clear the input fields when unchecking
+                itemBinding.editTextDuration.setText("")
+                itemBinding.checkboxPermanent.isChecked = false
+
+                // Only remove condition if it was previously applied
+                val activeConditionIds = currentActor?.conditions?.map { it.id }?.toSet() ?: emptySet()
+                if (conditionType.id in activeConditionIds) {
+                    removeCondition(conditionType)
+                }
             }
         }
 
@@ -234,15 +216,22 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             itemBinding.editTextDuration.isEnabled = !isPermanent
             if (isPermanent) {
                 itemBinding.editTextDuration.setText("")
+                // Clear any error on the duration field
+                itemBinding.editTextDuration.error = null
             }
         }
 
         // Apply button
         itemBinding.buttonApply.setOnClickListener {
+            // Get current state of the controls
+            val isPermanent = itemBinding.checkboxPermanent.isChecked
+            val durationText = itemBinding.editTextDuration.text.toString().trim()
+
             applyCondition(
                 conditionType,
-                itemBinding.checkboxPermanent.isChecked,
-                itemBinding.editTextDuration.text.toString()
+                isPermanent,
+                durationText,
+                itemBinding
             )
         }
     }
@@ -285,21 +274,22 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Update header
         binding.textActorName.text = actor.displayName
 
-        // Update initiative - show current value in the input field
-        if (actor.initiative != null) {
-            binding.editTextInitiative.setText(
-                formatInitiative(actor.initiative, showDecimals = true)
-            )
-        } else {
-            binding.editTextInitiative.setText("")
-            binding.editTextInitiative.hint = "---"
-        }
+        // Store current initiative value
+        currentInitiativeValue = actor.initiative
 
-        // Keep the textCurrentInitiative updated for compatibility (even though it's hidden)
+        // Update initiative display - DON'T set the input field value here
+        // to avoid interfering with user input
         binding.textCurrentInitiative.text = if (actor.initiative != null) {
             "Current: ${formatInitiative(actor.initiative, showDecimals = true)}"
         } else {
             getString(R.string.current_x, getString(R.string.initiative_not_set))
+        }
+
+        // Update the hint to show current value
+        binding.editTextInitiative.hint = if (actor.initiative != null) {
+            formatInitiative(actor.initiative, showDecimals = true)
+        } else {
+            "---"
         }
 
         // Show/hide move buttons based on tie status
@@ -318,19 +308,75 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Update condition checkboxes based on active conditions
         val activeConditionIds = actor.conditions.map { it.id }.toSet()
 
+        // Debug logging
+        Timber.d("Updating conditions UI for ${actor.displayName}")
+        Timber.d("Active condition IDs: $activeConditionIds")
+        Timber.d("Active conditions: ${actor.conditions.map { "${it.name} (ID: ${it.id})" }}")
+
         for (i in 0 until binding.conditionsContainer.childCount) {
             val view = binding.conditionsContainer.getChildAt(i)
             val checkbox = view.findViewById<CheckBox>(R.id.checkboxCondition)
+            val layoutDuration = view.findViewById<View>(R.id.layoutDuration)
+            val permanentCheckbox = view.findViewById<CheckBox>(R.id.checkboxPermanent)
+            val durationEditText = view.findViewById<EditText>(R.id.editTextDuration)
             val conditionType = ConditionType.values()[i]
 
-            checkbox.isChecked = conditionType.id in activeConditionIds
+            // IMPORTANT: Remove the listener before updating the checkbox
+            checkbox.setOnCheckedChangeListener(null)
+
+            // Update checkbox state
+            val isActive = conditionType.id in activeConditionIds
+            checkbox.isChecked = isActive
+
+            Timber.d("Condition ${conditionType.displayName} (ID: ${conditionType.id}): isActive = $isActive")
+
+            // Show/hide duration layout based on checkbox state
+            if (isActive) {
+                layoutDuration.visible()
+            } else {
+                layoutDuration.gone()
+                // Clear fields when not active
+                permanentCheckbox.isChecked = false
+                durationEditText.setText("")
+            }
+
+            // Re-attach the listener after updating
+            checkbox.setOnCheckedChangeListener { _, isChecked ->
+                // Only process actual user interactions, not programmatic changes
+                if (isChecked && !isActive) {
+                    // User is checking an unchecked box - show duration options
+                    layoutDuration.visible()
+                    durationEditText.requestFocus()
+                } else if (!isChecked && isActive) {
+                    // User is unchecking a checked box - remove condition
+                    layoutDuration.gone()
+                    durationEditText.setText("")
+                    permanentCheckbox.isChecked = false
+                    removeCondition(conditionType)
+                } else if (isChecked && isActive) {
+                    // User is trying to check an already checked box - do nothing
+                    Timber.d("Condition ${conditionType.displayName} is already active")
+                } else if (!isChecked && !isActive) {
+                    // User is unchecking an already unchecked box - just hide duration
+                    layoutDuration.gone()
+                    durationEditText.setText("")
+                    permanentCheckbox.isChecked = false
+                }
+            }
         }
     }
 
     // ========== Actions ==========
 
     private fun setInitiative() {
-        val initiativeText = binding.editTextInitiative.text.toString()
+        val initiativeText = binding.editTextInitiative.text.toString().trim()
+
+        // If empty, do nothing
+        if (initiativeText.isEmpty()) {
+            requireContext().toast("Please enter an initiative value")
+            return
+        }
+
         val initiative = initiativeText.toDoubleOrNull()
 
         if (initiative == null) {
@@ -338,6 +384,10 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             return
         }
 
+        // Clear any error
+        binding.textInputLayoutInitiative.error = null
+
+        // Update the initiative
         combatViewModel.setActorInitiative(actorId, initiative)
 
         // Notify parent
@@ -346,28 +396,69 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             "initiative" to initiative
         ))
 
+        // Show success message
         requireContext().toast("Initiative set to $initiative")
+
+        // Clear the input field after successful update
         binding.editTextInitiative.setText("")
+
+        // Hide keyboard
+        binding.editTextInitiative.clearFocus()
     }
 
-    private fun applyCondition(conditionType: ConditionType, isPermanent: Boolean, durationText: String) {
-        val duration = if (isPermanent) null else durationText.toIntOrNull()
+    private fun applyCondition(
+        conditionType: ConditionType,
+        isPermanent: Boolean,
+        durationText: String,
+        itemBinding: ItemConditionBinding
+    ) {
+        Timber.d("Applying condition: ${conditionType.displayName}, permanent: $isPermanent, durationText: '$durationText'")
 
-        if (!isPermanent && duration == null) {
-            Timber.w("Attempted to apply condition without duration: ${conditionType.displayName}")
+        // Validate input
+        if (!isPermanent && durationText.isEmpty()) {
+            Timber.w("Attempted to apply non-permanent condition without duration: ${conditionType.displayName}")
+            itemBinding.editTextDuration.error = "Duration required"
             Snackbar.make(binding.root, "Please enter a duration or select Permanent", Snackbar.LENGTH_SHORT).show()
             return
         }
 
-        // Apply the condition immediately
+        val duration = if (isPermanent) {
+            null
+        } else {
+            val parsedDuration = durationText.toIntOrNull()
+            if (parsedDuration == null || parsedDuration <= 0) {
+                itemBinding.editTextDuration.error = "Invalid duration"
+                Snackbar.make(binding.root, "Duration must be a positive number", Snackbar.LENGTH_SHORT).show()
+                return
+            }
+            parsedDuration
+        }
+
+        // Clear any errors
+        itemBinding.editTextDuration.error = null
+
+        // Apply the condition
         combatViewModel.toggleCondition(actorId, conditionType, isPermanent, duration)
 
-        // Clear the duration field after applying
-        val conditionIndex = ConditionType.values().indexOf(conditionType)
-        val conditionView = binding.conditionsContainer.getChildAt(conditionIndex)
-        conditionView?.findViewById<EditText>(R.id.editTextDuration)?.setText("")
+        // Clear the duration field after successful application
+        itemBinding.editTextDuration.setText("")
 
-        Timber.d("Condition applied: ${conditionType.displayName}, permanent: $isPermanent, duration: $duration")
+        // Show success message
+        val message = if (isPermanent) {
+            "${conditionType.displayName} applied (Permanent)"
+        } else {
+            "${conditionType.displayName} applied for $duration turns"
+        }
+        requireContext().toast(message)
+
+        // Notify parent
+        setFragmentResult(RESULT_CONDITION_TOGGLED, bundleOf(
+            "actor_id" to actorId,
+            "condition_id" to conditionType.id,
+            "applied" to true
+        ))
+
+        Timber.d("Condition applied successfully: ${conditionType.displayName}")
     }
 
     private fun removeCondition(conditionType: ConditionType) {
@@ -379,6 +470,8 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             "condition_id" to conditionType.id,
             "applied" to false
         ))
+
+        requireContext().toast("${conditionType.displayName} removed")
     }
 
     private fun confirmRemoveActor() {
@@ -395,24 +488,6 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
     }
 
     // ========== Helpers ==========
-
-    private fun validateInitiativeInput(): Boolean {
-        val text = binding.editTextInitiative.text.toString()
-        return when {
-            text.isEmpty() -> {
-                binding.textInputLayoutInitiative.error = null
-                false
-            }
-            text.toDoubleOrNull() == null -> {
-                binding.textInputLayoutInitiative.error = "Must be a number"
-                false
-            }
-            else -> {
-                binding.textInputLayoutInitiative.error = null
-                true
-            }
-        }
-    }
 
     private fun checkIfTied(actor: EncounterActorState): Boolean {
         // Check if this actor is tied with others
@@ -437,7 +512,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             ConditionType.INVISIBLE -> R.drawable.ic_condition_invisible
             ConditionType.PARALYZED -> R.drawable.ic_condition_paralyzed
             ConditionType.PETRIFIED -> R.drawable.ic_condition_petrified
-            ConditionType.POISONED -> R.drawable.ic_condition_poisoned  // Note the typo in resource name
+            ConditionType.POISONED -> R.drawable.ic_condition_poisoned
             ConditionType.PRONE -> R.drawable.ic_condition_prone
             ConditionType.RESTRAINED -> R.drawable.ic_condition_restrained
             ConditionType.STUNNED -> R.drawable.ic_condition_stunned
@@ -450,9 +525,6 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
      * This allows reusing the same fragment instance when switching between actors
      */
     fun updateActor(newActorId: Long) {
-        // Save any pending changes for the current actor
-        saveCurrentChanges()
-
         // Update to the new actor
         actorId = newActorId
 
@@ -473,6 +545,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             conditionView?.findViewById<CheckBox>(R.id.checkboxCondition)?.isChecked = false
             conditionView?.findViewById<EditText>(R.id.editTextDuration)?.setText("")
             conditionView?.findViewById<CheckBox>(R.id.checkboxPermanent)?.isChecked = false
+            conditionView?.findViewById<View>(R.id.layoutDuration)?.gone()
         }
 
         // Update conditions UI for the new actor

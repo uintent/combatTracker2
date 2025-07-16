@@ -52,7 +52,7 @@ class CombatActorAdapter(
     private var highlightedActorId: Long? = null
     private var itemWidth: Int = 0
     private var itemHeight: Int = 0
-    private var density: Float = 1f  // Add this
+    private var density: Float = 1f
 
     // Update the updateItemDimensions method to accept density
     fun updateItemDimensions(recyclerViewWidth: Int, recyclerViewHeight: Int, itemCount: Int, density: Float) {
@@ -76,8 +76,6 @@ class CombatActorAdapter(
 
         notifyDataSetChanged()
     }
-
-    // Remove the problematic dpToPx() extension function at class level
 
     // ========== ViewHolder ==========
 
@@ -158,34 +156,50 @@ class CombatActorAdapter(
             binding.root.contentDescription = buildAccessibilityDescription(actor)
         }
 
+        fun updateVisualStates(actor: EncounterActorState, highlightedActorId: Long?) {
+            currentActor = actor
+            applyVisualStates(actor, highlightedActorId)
+        }
+
         /**
          * Apply visual states based on actor status
          */
         private fun applyVisualStates(actor: EncounterActorState, highlightedActorId: Long?) {
+            // Debug log at the start
+            Timber.d("applyVisualStates for ${actor.displayName}: highlightedId=$highlightedActorId, actorId=${actor.id}")
+
             // Reset all overlays to gone
             binding.completedOverlay.gone()
             binding.missingInitiativeOverlay.gone()
             binding.contextMenuOverlay.gone()
 
             when {
-                // Missing initiative - show red overlay
+                // Missing initiative - show red overlay (highest priority)
                 actor.missingInitiative -> {
                     binding.missingInitiativeOverlay.visible()
-                }
-
-                // Has taken turn - show grey overlay
-                actor.hasTakenTurn -> {
-                    binding.completedOverlay.visible()
-                }
-
-                // This actor is highlighted (context menu open)
-                actor.id == highlightedActorId -> {
-                    // No overlay for the selected actor
+                    Timber.d("${actor.displayName}: RED overlay (missing initiative)")
                 }
 
                 // Another actor is highlighted - show green overlay
                 highlightedActorId != null && actor.id != highlightedActorId -> {
                     binding.contextMenuOverlay.visible()
+                    Timber.d("${actor.displayName}: GREEN overlay (other actor highlighted)")
+                }
+
+                // Has taken turn - show grey overlay
+                actor.hasTakenTurn -> {
+                    binding.completedOverlay.visible()
+                    Timber.d("${actor.displayName}: GREY overlay (turn taken)")
+                }
+
+                // This actor is highlighted (context menu open)
+                actor.id == highlightedActorId -> {
+                    Timber.d("${actor.displayName}: NO overlay (this actor highlighted)")
+                }
+
+                // Default case
+                else -> {
+                    Timber.d("${actor.displayName}: NO overlay (default)")
                 }
             }
         }
@@ -309,14 +323,66 @@ class CombatActorAdapter(
         holder.bind(getItem(position), highlightedActorId)
     }
 
+    override fun onBindViewHolder(holder: CombatActorViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            // Full bind
+            onBindViewHolder(holder, position)
+        } else {
+            // Partial bind - check if we need to update visual states
+            val actor = getItem(position)
+            if (payloads.any { it is List<*> && (it as List<*>).contains("highlighted") }) {
+                holder.updateVisualStates(actor, highlightedActorId)
+            } else {
+                // For other payloads, do a full bind
+                onBindViewHolder(holder, position)
+            }
+        }
+    }
+
     // ========== State Management ==========
 
     /**
      * Set which actor is highlighted (for context menu)
      */
     fun setHighlightedActor(actorId: Long?) {
+        Timber.d("setHighlightedActor called with: $actorId (was: $highlightedActorId)")
+
+        val previousId = highlightedActorId
         highlightedActorId = actorId
-        notifyDataSetChanged() // Could optimize with payload
+
+        // Only update if the highlighted actor changed
+        if (previousId != actorId) {
+            // Force a complete refresh when clearing highlight (actorId is null)
+            if (actorId == null) {
+                Timber.d("Clearing highlight - notifying all items")
+                notifyDataSetChanged()
+            } else {
+                // Update only affected items when setting a highlight
+                currentList.forEachIndexed { index, actor ->
+                    // Update the previously highlighted actor
+                    if (previousId != null && actor.id == previousId) {
+                        notifyItemChanged(index, listOf("highlighted"))
+                    }
+                    // Update the newly highlighted actor
+                    if (actorId != null && actor.id == actorId) {
+                        notifyItemChanged(index, listOf("highlighted"))
+                    }
+                    // Update all other actors if there's a highlight change
+                    if (actor.id != previousId && actor.id != actorId) {
+                        notifyItemChanged(index, listOf("highlighted"))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Force clear all highlights - useful as a fail-safe
+     */
+    fun clearAllHighlights() {
+        Timber.d("clearAllHighlights called - forcing full refresh")
+        highlightedActorId = null
+        notifyDataSetChanged()
     }
 
     // ========== DiffUtil Callback ==========

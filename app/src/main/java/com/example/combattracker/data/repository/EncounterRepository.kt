@@ -447,6 +447,21 @@ class EncounterRepository(
         }
     }
 
+    /**
+     * Get conditions for a specific actor
+     *
+     * @param actorId The encounter actor ID
+     * @return List of conditions with details
+     */
+    suspend fun getActorConditions(actorId: Long): List<ActorConditionWithDetails> = withContext(Dispatchers.IO) {
+        try {
+            encounterDao.getActorConditions(actorId)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to get conditions for actor $actorId")
+            emptyList()
+        }
+    }
+
     // ========== Update Operations ==========
 
     /**
