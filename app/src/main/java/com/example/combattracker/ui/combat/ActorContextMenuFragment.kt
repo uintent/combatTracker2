@@ -149,6 +149,11 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
+        // Add close button handler
+        binding.buttonClose.setOnClickListener {
+            dismiss()
+        }
+
         setupInitiativeSection()
         setupConditionsSection()
         setupActorActions()
@@ -280,7 +285,17 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Update header
         binding.textActorName.text = actor.displayName
 
-        // Update initiative
+        // Update initiative - show current value in the input field
+        if (actor.initiative != null) {
+            binding.editTextInitiative.setText(
+                formatInitiative(actor.initiative, showDecimals = true)
+            )
+        } else {
+            binding.editTextInitiative.setText("")
+            binding.editTextInitiative.hint = "---"
+        }
+
+        // Keep the textCurrentInitiative updated for compatibility (even though it's hidden)
         binding.textCurrentInitiative.text = if (actor.initiative != null) {
             "Current: ${formatInitiative(actor.initiative, showDecimals = true)}"
         } else {
