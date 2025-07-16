@@ -65,13 +65,26 @@ class MainViewModel(
     val activeEncounter: LiveData<Pair<Long, String>?> = encounterRepository
         .getAllEncounters()
         .map { encounters ->
-            encounters.firstOrNull { encounterWithCount ->
+            Timber.d("MainViewModel: Checking ${encounters.size} encounters for active status")
+            encounters.forEach { encounterWithCount ->
                 val encounter = encounterWithCount.encounter
-                // Check if encounter is explicitly active OR has been started
-                encounter.isActive || (encounter.currentRound > 0)
+                Timber.d("MainViewModel: ${encounter.name} - isActive=${encounter.isActive}, currentRound=${encounter.currentRound}")
+            }
+
+            val active = encounters.firstOrNull { encounterWithCount ->
+                val encounter = encounterWithCount.encounter
+                // Only check if encounter is explicitly active
+                encounter.isActive
             }?.encounter?.let { encounter ->
+                Timber.d("MainViewModel: Found active encounter: ${encounter.name}")
                 Pair(encounter.id, encounter.name)
             }
+
+            if (active == null) {
+                Timber.d("MainViewModel: No active encounters found")
+            }
+
+            active
         }
         .asLiveData()
 

@@ -702,7 +702,10 @@ class CombatTrackerActivity : AppCompatActivity() {
                 finish()
             }
             .setNegativeButton(Constants.Dialogs.END_ENCOUNTER_DISCARD) { _, _ ->
-                finish()
+                lifecycleScope.launch {
+                    viewModel.deactivateCurrentEncounter()
+                    finish()
+                }
             }
             .setNeutralButton(Constants.Dialogs.BUTTON_CANCEL, null)
             .show()
