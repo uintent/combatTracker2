@@ -153,7 +153,8 @@
                     android:layout_marginStart="16dp"
                     android:text="Clear Cache"
                     android:textSize="12sp"
-                    android:minHeight="36dp"
+                    android:minHeight="48dp"
+                    android:minWidth="88dp"
                     android:enabled="false" />
 
             </LinearLayout>
@@ -277,7 +278,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 android:visibility="gone"
-                app:cardBackgroundColor="?attr/colorErrorContainer"
+                app:cardBackgroundColor="@color/error_background"
                 app:cardElevation="2dp">
 
                 <LinearLayout
@@ -291,7 +292,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/reset_all_actors"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        android:textColor="?attr/colorOnErrorContainer"
+                        android:textColor="@color/error_text"
                         android:textStyle="bold" />
 
                     <TextView
@@ -300,7 +301,7 @@
                         android:layout_marginTop="4dp"
                         android:text="@string/reset_actors_message"
                         android:textAppearance="?attr/textAppearanceCaption"
-                        android:textColor="?attr/colorOnErrorContainer" />
+                        android:textColor="@color/error_text" />
 
                 </LinearLayout>
 
@@ -315,7 +316,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 android:visibility="gone"
-                app:cardBackgroundColor="?attr/colorErrorContainer"
+                app:cardBackgroundColor="@color/error_background"
                 app:cardElevation="2dp">
 
                 <LinearLayout
@@ -329,7 +330,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/reset_all_encounters"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        android:textColor="?attr/colorOnErrorContainer"
+                        android:textColor="@color/error_text"
                         android:textStyle="bold" />
 
                     <TextView
@@ -338,7 +339,7 @@
                         android:layout_marginTop="4dp"
                         android:text="@string/reset_encounters_message"
                         android:textAppearance="?attr/textAppearanceCaption"
-                        android:textColor="?attr/colorOnErrorContainer" />
+                        android:textColor="@color/error_text" />
 
                 </LinearLayout>
 
@@ -353,7 +354,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 android:visibility="gone"
-                app:cardBackgroundColor="?attr/colorError"
+                app:cardBackgroundColor="@color/error"
                 app:cardElevation="2dp">
 
                 <LinearLayout
@@ -367,7 +368,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/reset_everything"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        android:textColor="?attr/colorOnError"
+                        android:textColor="@color/white"
                         android:textStyle="bold" />
 
                     <TextView
@@ -376,7 +377,7 @@
                         android:layout_marginTop="4dp"
                         android:text="@string/reset_everything_message"
                         android:textAppearance="?attr/textAppearanceCaption"
-                        android:textColor="?attr/colorOnError" />
+                        android:textColor="@color/white" />
 
                 </LinearLayout>
 
