@@ -208,6 +208,9 @@ class CombatActorAdapter(
          * Display condition icons
          */
         private fun displayConditions(conditions: List<Condition>) {
+            val actorName = currentActor?.displayName ?: "Unknown"
+            Timber.d("displayConditions called for $actorName: ${conditions.size} conditions - ${conditions.map { it.name }}")
+
             binding.conditionsContainer.removeAllViews()
 
             if (conditions.isEmpty()) {
@@ -320,7 +323,9 @@ class CombatActorAdapter(
     }
 
     override fun onBindViewHolder(holder: CombatActorViewHolder, position: Int) {
-        holder.bind(getItem(position), highlightedActorId)
+        val actor = getItem(position)
+        Timber.d("Binding actor at position $position: ${actor.displayName} (ID: ${actor.id}) with ${actor.conditions.size} conditions")
+        holder.bind(actor, highlightedActorId)
     }
 
     override fun onBindViewHolder(holder: CombatActorViewHolder, position: Int, payloads: MutableList<Any>) {

@@ -342,25 +342,34 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
             // Re-attach the listener after updating
             checkbox.setOnCheckedChangeListener { _, isChecked ->
-                // Only process actual user interactions, not programmatic changes
-                if (isChecked && !isActive) {
-                    // User is checking an unchecked box - show duration options
-                    layoutDuration.visible()
-                    durationEditText.requestFocus()
-                } else if (!isChecked && isActive) {
-                    // User is unchecking a checked box - remove condition
-                    layoutDuration.gone()
-                    durationEditText.setText("")
-                    permanentCheckbox.isChecked = false
-                    removeCondition(conditionType)
-                } else if (isChecked && isActive) {
-                    // User is trying to check an already checked box - do nothing
-                    Timber.d("Condition ${conditionType.displayName} is already active")
-                } else if (!isChecked && !isActive) {
-                    // User is unchecking an already unchecked box - just hide duration
-                    layoutDuration.gone()
-                    durationEditText.setText("")
-                    permanentCheckbox.isChecked = false
+                // Get the current active state fresh each time - DON'T use the captured isActive variable
+                val currentActiveConditionIds = currentActor?.conditions?.map { it.id }?.toSet() ?: emptySet()
+                val isCurrentlyActive = conditionType.id in currentActiveConditionIds
+
+                when {
+                    isChecked && !isCurrentlyActive -> {
+                        // User is checking an unchecked box - show duration options
+                        layoutDuration.visible()
+                        durationEditText.requestFocus()
+                    }
+                    !isChecked && isCurrentlyActive -> {
+                        // User is unchecking a checked box - remove condition
+                        layoutDuration.gone()
+                        durationEditText.setText("")
+                        permanentCheckbox.isChecked = false
+                        removeCondition(conditionType)
+                    }
+                    isChecked && isCurrentlyActive -> {
+                        // User is trying to check an already checked box - just show duration
+                        layoutDuration.visible()
+                        Timber.d("Condition ${conditionType.displayName} is already active")
+                    }
+                    !isChecked && !isCurrentlyActive -> {
+                        // User is unchecking an already unchecked box - just hide duration
+                        layoutDuration.gone()
+                        durationEditText.setText("")
+                        permanentCheckbox.isChecked = false
+                    }
                 }
             }
         }
@@ -542,7 +551,12 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Reset all condition checkboxes and fields
         for (i in 0 until binding.conditionsContainer.childCount) {
             val conditionView = binding.conditionsContainer.getChildAt(i)
-            conditionView?.findViewById<CheckBox>(R.id.checkboxCondition)?.isChecked = false
+            val checkbox = conditionView?.findViewById<CheckBox>(R.id.checkboxCondition)
+
+            // IMPORTANT: Remove listener before changing checked state
+            checkbox?.setOnCheckedChangeListener(null)
+            checkbox?.isChecked = false
+
             conditionView?.findViewById<EditText>(R.id.editTextDuration)?.setText("")
             conditionView?.findViewById<CheckBox>(R.id.checkboxPermanent)?.isChecked = false
             conditionView?.findViewById<View>(R.id.layoutDuration)?.gone()

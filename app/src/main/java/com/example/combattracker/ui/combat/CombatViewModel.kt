@@ -524,15 +524,19 @@ class CombatViewModel(
     /**
      * Toggle a condition on an actor
      */
-    fun toggleCondition(
-        actorId: Long,
-        conditionType: ConditionType,
-        isPermanent: Boolean,
-        duration: Int?
+   fun toggleCondition(
+    actorId: Long,
+    conditionType: ConditionType,
+    isPermanent: Boolean,
+    duration: Int?
     ) {
         viewModelScope.launch {
             try {
                 Timber.d("toggleCondition called for actor $actorId, condition ${conditionType.displayName}")
+                Timber.d("isPermanent: $isPermanent, duration: $duration")
+                Thread.currentThread().stackTrace.forEach { element ->
+                    Timber.d("  at $element")
+                }
                 debugActorIds(actorId)
                 // ALWAYS reload conditions to ensure we have the latest state from database
                 // This prevents issues with stale cache or empty entries
