@@ -209,37 +209,6 @@
                 android:layout_marginBottom="16dp"
                 android:background="?android:attr/listDivider" />
 
-            <!-- Encounter Management -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/encounter_management"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/buttonSaveEncounter"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/save_encounter_menu" />
-
-            <Button
-                android:id="@+id/buttonLoadEncounter"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/load_encounter" />
-
-            <Button
-                android:id="@+id/buttonEndEncounter"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/end_encounter" />
 
         </LinearLayout>
 

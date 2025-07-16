@@ -135,7 +135,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         setupInitiativeSection()
         setupConditionsSection()
         setupActorActions()
-        setupEncounterActions()
+        //setupEncounterActions()
     }
 
     /**
@@ -248,7 +248,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
     /**
      * Setup encounter-wide actions
      */
-    private fun setupEncounterActions() {
+    /*private fun setupEncounterActions() {
         binding.buttonSaveEncounter.setOnClickListener {
             // Notify parent activity to show save dialog
             setFragmentResult(RESULT_SAVE_ENCOUNTER, bundleOf())
@@ -266,7 +266,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             setFragmentResult(RESULT_END_ENCOUNTER, bundleOf())
             dismiss()
         }
-    }
+    }*/
 
     // ========== UI Updates ==========
 
