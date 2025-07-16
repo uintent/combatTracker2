@@ -17,6 +17,10 @@ import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.widget.ImageView
 
 /**
  * ImageUtils - Image processing utilities for the Combat Tracker
@@ -432,4 +436,59 @@ object ImageUtils {
 
         return android.content.res.ColorStateList(states, colors)
     }
+
+    /**
+     * Determine if an image is predominantly dark
+     * @param threshold Brightness threshold (0-255). Default 128. Lower values mean darker.
+     * @return true if the image is dark
+     */
+    fun ImageView.isDarkImage(threshold: Int = 128): Boolean {
+        val drawable = this.drawable ?: return false
+
+        try {
+            // Convert drawable to bitmap
+            val bitmap = when (drawable) {
+                is BitmapDrawable -> drawable.bitmap
+                else -> {
+                    // Create bitmap from drawable
+                    val width = drawable.intrinsicWidth.coerceAtMost(100) // Sample size for performance
+                    val height = drawable.intrinsicHeight.coerceAtMost(100)
+                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    val canvas = android.graphics.Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
+                    bitmap
+                }
+            }
+
+            // Sample pixels from the right side where conditions appear
+            var totalBrightness = 0
+            var pixelCount = 0
+
+            // Sample the right 25% of the image where conditions are displayed
+            val startX = (bitmap.width * 0.75).toInt()
+            val endX = bitmap.width
+            val stepSize = maxOf(1, bitmap.height / 10) // Sample every 10th pixel for performance
+
+            for (x in startX until endX step 2) {
+                for (y in 0 until bitmap.height step stepSize) {
+                    val pixel = bitmap.getPixel(x, y)
+                    // Calculate brightness using perceived luminance formula
+                    val brightness = (Color.red(pixel) * 0.299 +
+                            Color.green(pixel) * 0.587 +
+                            Color.blue(pixel) * 0.114).toInt()
+                    totalBrightness += brightness
+                    pixelCount++
+                }
+            }
+
+            val averageBrightness = if (pixelCount > 0) totalBrightness / pixelCount else 255
+            return averageBrightness < threshold
+
+        } catch (e: Exception) {
+            Timber.e(e, "Error analyzing image brightness")
+            return false
+        }
+    }
+
 }

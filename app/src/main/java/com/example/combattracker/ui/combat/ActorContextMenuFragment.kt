@@ -308,6 +308,10 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
         // Update condition checkboxes based on active conditions
         val activeConditionIds = actor.conditions.map { it.id }.toSet()
 
+        // Get the full condition details from the view model
+        val conditionDetails = combatViewModel.getActorConditionDetails(actor.id)
+        val conditionDetailsMap = conditionDetails.associateBy { it.condition.id }
+
         // Debug logging
         Timber.d("Updating conditions UI for ${actor.displayName}")
         Timber.d("Active condition IDs: $activeConditionIds")
@@ -321,8 +325,9 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
             val durationEditText = view.findViewById<EditText>(R.id.editTextDuration)
             val conditionType = ConditionType.values()[i]
 
-            // IMPORTANT: Remove the listener before updating the checkbox
+            // IMPORTANT: Remove the listeners before updating
             checkbox.setOnCheckedChangeListener(null)
+            permanentCheckbox.setOnCheckedChangeListener(null)
 
             // Update checkbox state
             val isActive = conditionType.id in activeConditionIds
@@ -330,17 +335,48 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
 
             Timber.d("Condition ${conditionType.displayName} (ID: ${conditionType.id}): isActive = $isActive")
 
-            // Show/hide duration layout based on checkbox state
+            // Show/hide duration layout and set values based on condition state
             if (isActive) {
                 layoutDuration.visible()
+
+                // Get the condition details for this specific condition
+                val details = conditionDetailsMap[conditionType.id]
+                if (details != null) {
+                    // Set the permanent checkbox
+                    permanentCheckbox.isChecked = details.actorCondition.isPermanent
+
+                    // Set the duration field
+                    if (!details.actorCondition.isPermanent && details.actorCondition.remainingDuration != null) {
+                        durationEditText.setText(details.actorCondition.remainingDuration.toString())
+                        durationEditText.isEnabled = false // Disable editing for existing conditions
+                    } else {
+                        durationEditText.setText("")
+                        durationEditText.isEnabled = false
+                    }
+
+                    Timber.d("  - Loaded condition details: permanent=${details.actorCondition.isPermanent}, remaining=${details.actorCondition.remainingDuration}")
+                }
             } else {
                 layoutDuration.gone()
                 // Clear fields when not active
                 permanentCheckbox.isChecked = false
                 durationEditText.setText("")
+                durationEditText.isEnabled = true
             }
 
-            // Re-attach the listener after updating
+            // Re-attach the permanent checkbox listener
+            permanentCheckbox.setOnCheckedChangeListener { _, isPermanent ->
+                // Only enable/disable if this is a new condition (not already active)
+                if (!isActive) {
+                    durationEditText.isEnabled = !isPermanent
+                    if (isPermanent) {
+                        durationEditText.setText("")
+                        durationEditText.error = null
+                    }
+                }
+            }
+
+            // Re-attach the checkbox listener after updating
             checkbox.setOnCheckedChangeListener { _, isChecked ->
                 // Get the current active state fresh each time - DON'T use the captured isActive variable
                 val currentActiveConditionIds = currentActor?.conditions?.map { it.id }?.toSet() ?: emptySet()
@@ -350,12 +386,14 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
                     isChecked && !isCurrentlyActive -> {
                         // User is checking an unchecked box - show duration options
                         layoutDuration.visible()
+                        durationEditText.isEnabled = !permanentCheckbox.isChecked
                         durationEditText.requestFocus()
                     }
                     !isChecked && isCurrentlyActive -> {
                         // User is unchecking a checked box - remove condition
                         layoutDuration.gone()
                         durationEditText.setText("")
+                        durationEditText.isEnabled = true
                         permanentCheckbox.isChecked = false
                         removeCondition(conditionType)
                     }
@@ -368,6 +406,7 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
                         // User is unchecking an already unchecked box - just hide duration
                         layoutDuration.gone()
                         durationEditText.setText("")
+                        durationEditText.isEnabled = true
                         permanentCheckbox.isChecked = false
                     }
                 }

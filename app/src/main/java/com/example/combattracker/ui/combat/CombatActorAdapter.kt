@@ -20,6 +20,9 @@ import com.example.combattracker.utils.visible
 import kotlin.math.min
 import timber.log.Timber
 import android.view.MotionEvent
+import com.example.combattracker.utils.*
+import android.graphics.Color
+import com.example.combattracker.utils.ImageUtils.isDarkImage
 
 /**
  * CombatActorAdapter - RecyclerView adapter for horizontal combat tracker
@@ -220,6 +223,9 @@ class CombatActorAdapter(
 
             binding.conditionsContainer.visible()
 
+            // Determine if we need white icons based on portrait darkness
+            val useWhiteIcons = binding.imagePortrait.isDarkImage()
+
             // Add condition icons (limit to show to avoid overflow)
             conditions.take(3).forEach { condition ->
                 val iconView = ImageView(binding.root.context).apply {
@@ -228,6 +234,11 @@ class CombatActorAdapter(
                     }
                     setImageResource(getConditionIcon(condition))
                     contentDescription = condition.name
+
+                    // Apply white tint if background is dark
+                    if (useWhiteIcons) {
+                        setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN)
+                    }
                 }
                 binding.conditionsContainer.addView(iconView)
             }
@@ -237,8 +248,13 @@ class CombatActorAdapter(
                 val moreView = LayoutInflater.from(binding.root.context)
                     .inflate(R.layout.view_condition_more, binding.conditionsContainer, false)
 
-                moreView.findViewById<TextView>(R.id.textMore)
-                    ?.text = "+${conditions.size - 3}"
+                moreView.findViewById<TextView>(R.id.textMore)?.apply {
+                    text = "+${conditions.size - 3}"
+                    // Also make the text white if needed
+                    if (useWhiteIcons) {
+                        setTextColor(Color.WHITE)
+                    }
+                }
 
                 binding.conditionsContainer.addView(moreView)
             }

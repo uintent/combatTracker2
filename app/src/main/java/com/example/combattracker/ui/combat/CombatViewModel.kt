@@ -870,6 +870,14 @@ class CombatViewModel(
             Timber.e("Could not find encounter actor with ID $actorId")
         }
     }
+
+    /**
+     * Get condition details for a specific actor
+     * Used by the UI to display duration/permanent status
+     */
+    fun getActorConditionDetails(actorId: Long): List<ActorConditionWithDetails> {
+        return actorConditions[actorId] ?: emptyList()
+    }
 }
 
 // ========== Extension Functions ==========
