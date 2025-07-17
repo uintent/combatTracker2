@@ -15,6 +15,7 @@ import android.widget.GridLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.combattracker.R
 import com.example.combattracker.data.model.ConditionType
 import com.example.combattracker.databinding.DialogConditionsMenuBinding
@@ -23,6 +24,8 @@ import com.example.combattracker.utils.gone
 import com.example.combattracker.utils.toast
 import com.example.combattracker.utils.visible
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ConditionsDialogFragment : DialogFragment() {
@@ -394,7 +397,30 @@ class ConditionsDialogFragment : DialogFragment() {
     }
 
     private fun applyAllChanges() {
-        // Validate all pending changes first
+        Timber.d("=== applyAllChanges started ===")
+
+        // First, capture current state of all checked conditions
+        for (i in 0 until binding.conditionsGrid.childCount) {
+            val view = binding.conditionsGrid.getChildAt(i)
+            val checkbox = view.findViewById<CheckBox>(R.id.checkboxCondition)
+            val permanentCheckbox = view.findViewById<CheckBox>(R.id.checkboxPermanent)
+            val durationEditText = view.findViewById<EditText>(R.id.editTextDuration)
+            val conditionType = view.tag as? ConditionType ?: continue
+
+            if (checkbox.isChecked) {
+                // Update pending change with current values
+                updatePendingChangeFromView(conditionType, checkbox, permanentCheckbox, durationEditText)
+                Timber.d("Captured state for ${conditionType.displayName}: permanent=${permanentCheckbox.isChecked}, duration=${durationEditText.text}")
+            }
+        }
+
+        // Log all pending changes
+        Timber.d("Pending changes:")
+        pendingConditionChanges.forEach { (conditionType, change) ->
+            Timber.d("  ${conditionType.displayName}: action=${change.action}, permanent=${change.isPermanent}, duration=${change.duration}")
+        }
+
+        // Validate all pending changes
         val validationErrors = mutableListOf<String>()
 
         pendingConditionChanges.forEach { (conditionType, change) ->
@@ -404,30 +430,59 @@ class ConditionsDialogFragment : DialogFragment() {
         }
 
         if (validationErrors.isNotEmpty()) {
+            Timber.d("Validation errors: $validationErrors")
             Snackbar.make(binding.root, validationErrors.joinToString("\n"), Snackbar.LENGTH_LONG).show()
             return
         }
 
+        // Get current active conditions to detect updates vs new applications
+        val currentActiveConditions = currentActor?.conditions?.map { it.id }?.toSet() ?: emptySet()
+        Timber.d("Current active conditions: ${currentActiveConditions.joinToString()}")
+
         // Apply all changes
-        var changeCount = 0
-        pendingConditionChanges.forEach { (conditionType, change) ->
-            when (change.action) {
-                ChangeAction.APPLY -> {
+        lifecycleScope.launch {
+            var changeCount = 0
+
+            // First, process all removals (including updates that need removal first)
+            Timber.d("=== Processing removals ===")
+            pendingConditionChanges.forEach { (conditionType, change) ->
+                when (change.action) {
+                    ChangeAction.REMOVE -> {
+                        Timber.d("Removing condition: ${conditionType.displayName}")
+                        combatViewModel.toggleCondition(actorId, conditionType, false, null)
+                        changeCount++
+                    }
+                    ChangeAction.APPLY -> {
+                        if (conditionType.id in currentActiveConditions) {
+                            // This is an update - remove first
+                            Timber.d("Removing existing condition for update: ${conditionType.displayName} (ID: ${conditionType.id})")
+                            combatViewModel.toggleCondition(actorId, conditionType, false, null)
+                        }
+                    }
+                }
+            }
+
+            // Small delay to ensure removals complete
+            Timber.d("Waiting for removals to complete...")
+            delay(200) // Increased delay
+
+            // Then, process all applications
+            Timber.d("=== Processing applications ===")
+            pendingConditionChanges.forEach { (conditionType, change) ->
+                if (change.action == ChangeAction.APPLY) {
+                    Timber.d("Applying condition: ${conditionType.displayName} (ID: ${conditionType.id}), permanent=${change.isPermanent}, duration=${change.duration}")
                     combatViewModel.toggleCondition(actorId, conditionType, change.isPermanent, change.duration)
                     changeCount++
                 }
-                ChangeAction.REMOVE -> {
-                    combatViewModel.toggleCondition(actorId, conditionType, false, null)
-                    changeCount++
-                }
             }
-        }
 
-        // Show success message and dismiss
-        if (changeCount > 0) {
-            requireContext().toast("Applied $changeCount condition changes")
+            // Show success message and dismiss
+            if (changeCount > 0) {
+                requireContext().toast("Applied $changeCount condition changes")
+            }
+            Timber.d("=== applyAllChanges completed ===")
+            dismiss()
         }
-        dismiss()
     }
 
     private fun getConditionIconResource(conditionType: ConditionType): Int {

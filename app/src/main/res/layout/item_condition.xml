@@ -7,9 +7,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="48dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:minHeight="40dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
 
     <!-- Condition checkbox with proper touch target -->
     <CheckBox
