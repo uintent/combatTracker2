@@ -114,7 +114,7 @@ class CombatTrackerActivity : AppCompatActivity() {
             loadEncounter()
         }
 
-        // Listen for fragment results
+        /*
         supportFragmentManager.setFragmentResultListener(
             ActorContextMenuFragment.RESULT_SAVE_ENCOUNTER,
             this
@@ -135,6 +135,8 @@ class CombatTrackerActivity : AppCompatActivity() {
         ) { _, _ ->
             onBackPressed()
         }
+        */
+
 
         // Listen for close request
         supportFragmentManager.setFragmentResultListener(
