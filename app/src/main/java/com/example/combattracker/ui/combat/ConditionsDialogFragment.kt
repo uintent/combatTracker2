@@ -36,6 +36,12 @@ class ConditionsDialogFragment : DialogFragment() {
     private var actorName: String = ""
     private var currentActor: EncounterActorState? = null
 
+    // Track pending changes
+    private val pendingConditionChanges = mutableMapOf<ConditionType, ConditionChange>()
+
+    // Track initial state to detect changes
+    private val initialConditionStates = mutableMapOf<ConditionType, ConditionState>()
+
     companion object {
         private const val ARG_ACTOR_ID = "actor_id"
         private const val ARG_ACTOR_NAME = "actor_name"
@@ -52,10 +58,19 @@ class ConditionsDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.Theme_CombatTracker_FullScreenDialog)
+        Timber.d("ConditionsDialogFragment onCreate called")
+
+        try {
+            setStyle(STYLE_NORMAL, R.style.Theme_CombatTracker_FullScreenDialog)
+            Timber.d("Style set successfully")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to set style")
+        }
 
         actorId = arguments?.getLong(ARG_ACTOR_ID, -1L) ?: -1L
         actorName = arguments?.getString(ARG_ACTOR_NAME) ?: ""
+
+        Timber.d("Actor ID: $actorId, Actor Name: $actorName")
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -72,20 +87,53 @@ class ConditionsDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogConditionsMenuBinding.inflate(inflater, container, false)
-        return binding.root
+        Timber.d("ConditionsDialogFragment onCreateView called")
+        try {
+            _binding = DialogConditionsMenuBinding.inflate(inflater, container, false)
+            Timber.d("Binding inflated successfully")
+            return binding.root
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to inflate binding: ${e.message}")
+            throw e
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Timber.d("ConditionsDialogFragment onViewCreated called")
 
-        binding.textActorName.text = actorName
-        binding.buttonClose.setOnClickListener {
-            dismiss()
+        try {
+            binding.textActorName.text = actorName
+            Timber.d("Set actor name successfully")
+
+            // Close button - dismiss without applying changes
+            binding.buttonClose.setOnClickListener {
+                Timber.d("Close button clicked")
+                dismiss()
+            }
+
+            // Cancel button - dismiss without applying changes
+            binding.buttonCancel.setOnClickListener {
+                Timber.d("Cancel button clicked")
+                dismiss()
+            }
+
+            // Apply button - apply all pending changes
+            binding.buttonApply.setOnClickListener {
+                Timber.d("Apply button clicked")
+                applyAllChanges()
+            }
+
+            Timber.d("Button listeners set successfully")
+
+            observeViewModel()
+            setupConditions()
+
+            Timber.d("ConditionsDialogFragment setup completed")
+        } catch (e: Exception) {
+            Timber.e(e, "Error in onViewCreated: ${e.message}")
+            e.printStackTrace()
         }
-
-        observeViewModel()
-        setupConditions()
     }
 
     override fun onDestroyView() {
@@ -101,26 +149,35 @@ class ConditionsDialogFragment : DialogFragment() {
     }
 
     private fun setupConditions() {
-        // Add all 15 conditions in a 2-column grid
-        ConditionType.values().forEach { conditionType ->
-            val conditionBinding = ItemConditionBinding.inflate(
-                layoutInflater,
-                binding.conditionsGrid,
-                false
-            )
+        Timber.d("setupConditions called")
+        try {
+            // Add all 15 conditions in a 2-column grid
+            ConditionType.values().forEach { conditionType ->
+                Timber.d("Adding condition: ${conditionType.displayName}")
 
-            setupConditionItem(conditionBinding, conditionType)
+                val conditionBinding = ItemConditionBinding.inflate(
+                    layoutInflater,
+                    binding.conditionsGrid,
+                    false
+                )
 
-            // Set grid layout params for 2 columns
-            val params = GridLayout.LayoutParams().apply {
-                width = 0
-                height = ViewGroup.LayoutParams.WRAP_CONTENT
-                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                setMargins(8, 8, 8, 8)
+                setupConditionItem(conditionBinding, conditionType)
+
+                // Set grid layout params for 2 columns
+                val params = GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    setMargins(8, 8, 8, 8)
+                }
+                conditionBinding.root.layoutParams = params
+
+                binding.conditionsGrid.addView(conditionBinding.root)
             }
-            conditionBinding.root.layoutParams = params
-
-            binding.conditionsGrid.addView(conditionBinding.root)
+            Timber.d("All conditions added successfully")
+        } catch (e: Exception) {
+            Timber.e(e, "Error in setupConditions: ${e.message}")
+            throw e
         }
     }
 
@@ -142,18 +199,23 @@ class ConditionsDialogFragment : DialogFragment() {
                 itemBinding.layoutDuration.visible()
                 // Focus on duration field
                 itemBinding.editTextDuration.requestFocus()
+
+                // Track as pending change
+                updatePendingChange(conditionType, itemBinding)
             } else {
-                // Hide duration options and remove condition
+                // Hide duration options
                 itemBinding.layoutDuration.gone()
                 // Clear the input fields when unchecking
                 itemBinding.editTextDuration.setText("")
                 itemBinding.checkboxPermanent.isChecked = false
 
-                // Only remove condition if it was previously applied
-                val activeConditionIds = currentActor?.conditions?.map { it.id }?.toSet() ?: emptySet()
-                if (conditionType.id in activeConditionIds) {
-                    removeCondition(conditionType)
-                }
+                // Track removal as pending change
+                pendingConditionChanges[conditionType] = ConditionChange(
+                    conditionType = conditionType,
+                    action = ChangeAction.REMOVE,
+                    isPermanent = false,
+                    duration = null
+                )
             }
         }
 
@@ -165,21 +227,32 @@ class ConditionsDialogFragment : DialogFragment() {
                 // Clear any error on the duration field
                 itemBinding.editTextDuration.error = null
             }
+
+            // Update pending change if condition is checked
+            if (itemBinding.checkboxCondition.isChecked) {
+                updatePendingChange(conditionType, itemBinding)
+            }
         }
 
-        // Apply button
-        itemBinding.buttonApply.setOnClickListener {
-            // Get current state of the controls
-            val isPermanent = itemBinding.checkboxPermanent.isChecked
-            val durationText = itemBinding.editTextDuration.text.toString().trim()
-
-            applyCondition(
-                conditionType,
-                isPermanent,
-                durationText,
-                itemBinding
-            )
+        // Update pending change when duration text changes
+        itemBinding.editTextDuration.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && itemBinding.checkboxCondition.isChecked) {
+                updatePendingChange(conditionType, itemBinding)
+            }
         }
+    }
+
+    private fun updatePendingChange(conditionType: ConditionType, itemBinding: ItemConditionBinding) {
+        val isPermanent = itemBinding.checkboxPermanent.isChecked
+        val durationText = itemBinding.editTextDuration.text.toString().trim()
+        val duration = if (isPermanent) null else durationText.toIntOrNull()
+
+        pendingConditionChanges[conditionType] = ConditionChange(
+            conditionType = conditionType,
+            action = ChangeAction.APPLY,
+            isPermanent = isPermanent,
+            duration = duration
+        )
     }
 
     private fun updateConditionsUI(actor: EncounterActorState) {
@@ -193,7 +266,6 @@ class ConditionsDialogFragment : DialogFragment() {
         // Debug logging
         Timber.d("Updating conditions UI for ${actor.displayName}")
         Timber.d("Active condition IDs: $activeConditionIds")
-        Timber.d("Active conditions: ${actor.conditions.map { "${it.name} (ID: ${it.id})" }}")
 
         for (i in 0 until binding.conditionsGrid.childCount) {
             val view = binding.conditionsGrid.getChildAt(i)
@@ -211,8 +283,6 @@ class ConditionsDialogFragment : DialogFragment() {
             val isActive = conditionType.id in activeConditionIds
             checkbox.isChecked = isActive
 
-            Timber.d("Condition ${conditionType.displayName} (ID: ${conditionType.id}): isActive = $isActive")
-
             // Show/hide duration layout and set values based on condition state
             if (isActive) {
                 layoutDuration.visible()
@@ -226,13 +296,16 @@ class ConditionsDialogFragment : DialogFragment() {
                     // Set the duration field
                     if (!details.actorCondition.isPermanent && details.actorCondition.remainingDuration != null) {
                         durationEditText.setText(details.actorCondition.remainingDuration.toString())
-                        durationEditText.isEnabled = false // Disable editing for existing conditions
                     } else {
                         durationEditText.setText("")
-                        durationEditText.isEnabled = false
                     }
 
-                    Timber.d("  - Loaded condition details: permanent=${details.actorCondition.isPermanent}, remaining=${details.actorCondition.remainingDuration}")
+                    // Store initial state
+                    initialConditionStates[conditionType] = ConditionState(
+                        isActive = true,
+                        isPermanent = details.actorCondition.isPermanent,
+                        duration = details.actorCondition.remainingDuration
+                    )
                 }
             } else {
                 layoutDuration.gone()
@@ -240,120 +313,130 @@ class ConditionsDialogFragment : DialogFragment() {
                 permanentCheckbox.isChecked = false
                 durationEditText.setText("")
                 durationEditText.isEnabled = true
+
+                // Store initial state
+                initialConditionStates[conditionType] = ConditionState(
+                    isActive = false,
+                    isPermanent = false,
+                    duration = null
+                )
             }
 
-            // Re-attach the permanent checkbox listener
-            permanentCheckbox.setOnCheckedChangeListener { _, isPermanent ->
-                // Only enable/disable if this is a new condition (not already active)
-                if (!isActive) {
-                    durationEditText.isEnabled = !isPermanent
-                    if (isPermanent) {
-                        durationEditText.setText("")
-                        durationEditText.error = null
-                    }
-                }
+            // Re-attach listeners
+            setupConditionListeners(checkbox, layoutDuration, permanentCheckbox, durationEditText, conditionType, view)
+        }
+
+        // Clear pending changes after UI update
+        pendingConditionChanges.clear()
+    }
+
+    private fun setupConditionListeners(
+        checkbox: CheckBox,
+        layoutDuration: View,
+        permanentCheckbox: CheckBox,
+        durationEditText: EditText,
+        conditionType: ConditionType,
+        view: View
+    ) {
+        permanentCheckbox.setOnCheckedChangeListener { _, isPermanent ->
+            durationEditText.isEnabled = !isPermanent
+            if (isPermanent) {
+                durationEditText.setText("")
+                durationEditText.error = null
             }
+            if (checkbox.isChecked) {
+                updatePendingChangeFromView(conditionType, checkbox, permanentCheckbox, durationEditText)
+            }
+        }
 
-            // Re-attach the checkbox listener after updating
-            checkbox.setOnCheckedChangeListener { _, isChecked ->
-                // Get the current active state fresh each time - DON'T use the captured isActive variable
-                val currentActiveConditionIds = currentActor?.conditions?.map { it.id }?.toSet() ?: emptySet()
-                val isCurrentlyActive = conditionType.id in currentActiveConditionIds
+        checkbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                layoutDuration.visible()
+                durationEditText.isEnabled = !permanentCheckbox.isChecked
+                durationEditText.requestFocus()
+                updatePendingChangeFromView(conditionType, checkbox, permanentCheckbox, durationEditText)
+            } else {
+                layoutDuration.gone()
+                durationEditText.setText("")
+                permanentCheckbox.isChecked = false
+                pendingConditionChanges[conditionType] = ConditionChange(
+                    conditionType = conditionType,
+                    action = ChangeAction.REMOVE,
+                    isPermanent = false,
+                    duration = null
+                )
+            }
+        }
 
-                when {
-                    isChecked && !isCurrentlyActive -> {
-                        // User is checking an unchecked box - show duration options
-                        layoutDuration.visible()
-                        durationEditText.isEnabled = !permanentCheckbox.isChecked
-                        durationEditText.requestFocus()
-                    }
-                    !isChecked && isCurrentlyActive -> {
-                        // User is unchecking a checked box - remove condition
-                        layoutDuration.gone()
-                        durationEditText.setText("")
-                        durationEditText.isEnabled = true
-                        permanentCheckbox.isChecked = false
-                        removeCondition(conditionType)
-                    }
-                    isChecked && isCurrentlyActive -> {
-                        // User is trying to check an already checked box - just show duration
-                        layoutDuration.visible()
-                        Timber.d("Condition ${conditionType.displayName} is already active")
-                    }
-                    !isChecked && !isCurrentlyActive -> {
-                        // User is unchecking an already unchecked box - just hide duration
-                        layoutDuration.gone()
-                        durationEditText.setText("")
-                        durationEditText.isEnabled = true
-                        permanentCheckbox.isChecked = false
-                    }
-                }
+        durationEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && checkbox.isChecked) {
+                updatePendingChangeFromView(conditionType, checkbox, permanentCheckbox, durationEditText)
             }
         }
     }
 
-    private fun applyCondition(
+    private fun updatePendingChangeFromView(
         conditionType: ConditionType,
-        isPermanent: Boolean,
-        durationText: String,
-        itemBinding: ItemConditionBinding
+        checkbox: CheckBox,
+        permanentCheckbox: CheckBox,
+        durationEditText: EditText
     ) {
-        Timber.d("Applying condition: ${conditionType.displayName}, permanent: $isPermanent, durationText: '$durationText'")
+        val isPermanent = permanentCheckbox.isChecked
+        val durationText = durationEditText.text.toString().trim()
+        val duration = if (isPermanent) null else durationText.toIntOrNull()
 
-        // Validate input
-        if (!isPermanent && durationText.isEmpty()) {
-            Timber.w("Attempted to apply non-permanent condition without duration: ${conditionType.displayName}")
-            itemBinding.editTextDuration.error = "Duration required"
-            Snackbar.make(binding.root, "Please enter a duration or select Permanent", Snackbar.LENGTH_SHORT).show()
+        pendingConditionChanges[conditionType] = ConditionChange(
+            conditionType = conditionType,
+            action = ChangeAction.APPLY,
+            isPermanent = isPermanent,
+            duration = duration
+        )
+    }
+
+    private fun applyAllChanges() {
+        // Validate all pending changes first
+        val validationErrors = mutableListOf<String>()
+
+        pendingConditionChanges.forEach { (conditionType, change) ->
+            if (change.action == ChangeAction.APPLY && !change.isPermanent && (change.duration == null || change.duration <= 0)) {
+                validationErrors.add("${conditionType.displayName}: Duration required")
+            }
+        }
+
+        if (validationErrors.isNotEmpty()) {
+            Snackbar.make(binding.root, validationErrors.joinToString("\n"), Snackbar.LENGTH_LONG).show()
             return
         }
 
-        val duration = if (isPermanent) {
-            null
-        } else {
-            val parsedDuration = durationText.toIntOrNull()
-            if (parsedDuration == null || parsedDuration <= 0) {
-                itemBinding.editTextDuration.error = "Invalid duration"
-                Snackbar.make(binding.root, "Duration must be a positive number", Snackbar.LENGTH_SHORT).show()
-                return
+        // Apply all changes
+        var changeCount = 0
+        pendingConditionChanges.forEach { (conditionType, change) ->
+            when (change.action) {
+                ChangeAction.APPLY -> {
+                    combatViewModel.toggleCondition(actorId, conditionType, change.isPermanent, change.duration)
+                    changeCount++
+                }
+                ChangeAction.REMOVE -> {
+                    combatViewModel.toggleCondition(actorId, conditionType, false, null)
+                    changeCount++
+                }
             }
-            parsedDuration
         }
 
-        // Clear any errors
-        itemBinding.editTextDuration.error = null
-
-        // Apply the condition
-        combatViewModel.toggleCondition(actorId, conditionType, isPermanent, duration)
-
-        // Clear the duration field after successful application
-        itemBinding.editTextDuration.setText("")
-
-        // Show success message
-        val message = if (isPermanent) {
-            "${conditionType.displayName} applied (Permanent)"
-        } else {
-            "${conditionType.displayName} applied for $duration turns"
+        // Show success message and dismiss
+        if (changeCount > 0) {
+            requireContext().toast("Applied $changeCount condition changes")
         }
-        requireContext().toast(message)
-
-        Timber.d("Condition applied successfully: ${conditionType.displayName}")
-    }
-
-    private fun removeCondition(conditionType: ConditionType) {
-        combatViewModel.toggleCondition(actorId, conditionType, false, null)
-        requireContext().toast("${conditionType.displayName} removed")
+        dismiss()
     }
 
     private fun getConditionIconResource(conditionType: ConditionType): Int {
-        // Map condition types to drawable resources
-        // Note: Some resource names have typos in them
         return when (conditionType) {
             ConditionType.BLINDED -> R.drawable.ic_condition_blinded
             ConditionType.CHARMED -> R.drawable.ic_condition_charmed
             ConditionType.DEAFENED -> R.drawable.ic_condition_deafened
             ConditionType.EXHAUSTION -> R.drawable.ic_condition_exhaustion
-            ConditionType.FRIGHTENED -> R.drawable.ic_condition_freightened  // Note the typo in resource name
+            ConditionType.FRIGHTENED -> R.drawable.ic_condition_freightened
             ConditionType.GRAPPLED -> R.drawable.ic_condition_grappled
             ConditionType.INCAPACITATED -> R.drawable.ic_condition_incapacitated
             ConditionType.INVISIBLE -> R.drawable.ic_condition_invisible
@@ -365,5 +448,24 @@ class ConditionsDialogFragment : DialogFragment() {
             ConditionType.STUNNED -> R.drawable.ic_condition_stunned
             ConditionType.UNCONSCIOUS -> R.drawable.ic_condition_unconscious
         }
+    }
+
+    // Data classes for tracking changes
+    private data class ConditionChange(
+        val conditionType: ConditionType,
+        val action: ChangeAction,
+        val isPermanent: Boolean,
+        val duration: Int?
+    )
+
+    private data class ConditionState(
+        val isActive: Boolean,
+        val isPermanent: Boolean,
+        val duration: Int?
+    )
+
+    private enum class ChangeAction {
+        APPLY,
+        REMOVE
     }
 }

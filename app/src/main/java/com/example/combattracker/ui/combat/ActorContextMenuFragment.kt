@@ -144,9 +144,19 @@ class ActorContextMenuFragment : BottomSheetDialogFragment() {
      */
     private fun setupConditionsButton() {
         binding.buttonOpenConditions.setOnClickListener {
+            Timber.d("Opening conditions dialog")
             currentActor?.let { actor ->
-                val dialog = ConditionsDialogFragment.newInstance(actor.id, actor.displayName)
-                dialog.show(parentFragmentManager, "conditions_dialog")
+                Timber.d("Current actor: ${actor.displayName} (ID: ${actor.id})")
+                try {
+                    val dialog = ConditionsDialogFragment.newInstance(actor.id, actor.displayName)
+                    dialog.show(parentFragmentManager, "conditions_dialog")
+                    Timber.d("Dialog show() called successfully")
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to show conditions dialog: ${e.message}")
+                    e.printStackTrace()
+                }
+            } ?: run {
+                Timber.e("No current actor when trying to open conditions dialog")
             }
         }
     }

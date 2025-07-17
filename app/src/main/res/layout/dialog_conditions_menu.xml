@@ -17,19 +17,51 @@
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         android:gravity="center_vertical"
         android:background="?attr/colorSurface"
         android:elevation="4dp">
 
         <TextView
             android:id="@+id/textTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Conditions"
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:textStyle="bold" />
+
+        <!-- Cancel button -->
+        <Button
+            android:id="@+id/buttonCancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Cancel"
+            android:minWidth="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:layout_marginStart="16dp" />
+
+        <!-- Apply button -->
+        <Button
+            android:id="@+id/buttonApply"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Apply"
+            android:minWidth="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginStart="8dp" />
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/textActorName"
