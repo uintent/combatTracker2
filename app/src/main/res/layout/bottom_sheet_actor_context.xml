@@ -78,7 +78,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Initiative Section - Compact single line -->
+            <!-- Initiative Section - Now includes Conditions button -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,6 +128,24 @@
                     android:paddingEnd="12dp"
                     android:textSize="12sp" />
 
+                <!-- Spacer to push Conditions button to the right -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- Conditions Button -->
+                <Button
+                    android:id="@+id/buttonOpenConditions"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Conditions"
+                    android:minWidth="0dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textSize="12sp" />
+
             </LinearLayout>
 
             <!-- Hidden textview for current initiative (kept for compatibility) -->
@@ -167,24 +185,6 @@
                     tools:visibility="visible" />
 
             </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="?android:attr/listDivider" />
-
-            <!-- Conditions Button -->
-            <Button
-                android:id="@+id/buttonOpenConditions"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Manage Conditions"
-                app:icon="@drawable/ic_condition_default"
-                app:iconGravity="textStart" />
 
         </LinearLayout>
 
