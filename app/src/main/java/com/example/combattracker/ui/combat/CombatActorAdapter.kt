@@ -59,7 +59,10 @@ class CombatActorAdapter(
 
     // Update the updateItemDimensions method to accept density
     fun updateItemDimensions(recyclerViewWidth: Int, recyclerViewHeight: Int, itemCount: Int, density: Float) {
-        if (itemCount == 0) return
+        if (itemCount == 0 || recyclerViewWidth <= 0 || recyclerViewHeight <= 0) {
+            Timber.d("Invalid dimensions for updateItemDimensions - width: $recyclerViewWidth, height: $recyclerViewHeight, count: $itemCount")
+            return
+        }
 
         this.density = density  // Store density
 
@@ -68,7 +71,7 @@ class CombatActorAdapter(
         val itemMargin = (16 * density).toInt() // 8dp margin on each side of item
         val availableWidth = recyclerViewWidth - horizontalPadding
 
-        // Rest of the method remains the same...
+        // Calculate item width
         itemWidth = (availableWidth - (itemMargin * itemCount)) / itemCount
 
         val maxInactiveHeight = (recyclerViewHeight * 0.8).toInt()
@@ -76,6 +79,8 @@ class CombatActorAdapter(
 
         itemHeight = min(calculatedHeight, maxInactiveHeight)
         itemWidth = (itemHeight / 1.5).toInt()
+
+        Timber.d("Calculated dimensions - itemWidth: $itemWidth, itemHeight: $itemHeight")
 
         notifyDataSetChanged()
     }
@@ -163,6 +168,7 @@ class CombatActorAdapter(
             currentActor = actor
             applyVisualStates(actor, highlightedActorId)
         }
+
 
         /**
          * Apply visual states based on actor status
@@ -337,6 +343,9 @@ class CombatActorAdapter(
         )
         return CombatActorViewHolder(binding, onActorClick)
     }
+
+    fun getItemWidth(): Int = itemWidth
+    fun getItemHeight(): Int = itemHeight
 
     override fun onBindViewHolder(holder: CombatActorViewHolder, position: Int) {
         val actor = getItem(position)

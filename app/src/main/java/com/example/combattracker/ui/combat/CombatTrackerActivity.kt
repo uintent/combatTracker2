@@ -138,6 +138,7 @@ class CombatTrackerActivity : AppCompatActivity() {
         */
 
 
+
         // Listen for close request
         supportFragmentManager.setFragmentResultListener(
             ActorContextMenuFragment.RESULT_CLOSE_REQUESTED,
@@ -271,11 +272,21 @@ class CombatTrackerActivity : AppCompatActivity() {
             )
             setHasFixedSize(false)
 
-            // Add observer for size changes
-            viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    updateActorSizing()
+            // Add a layout change listener to handle sizing when view is ready
+            addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(
+                    v: View?,
+                    left: Int, top: Int, right: Int, bottom: Int,
+                    oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+                ) {
+                    val width = right - left
+                    val height = bottom - top
+
+                    // Only update if we have valid dimensions and items
+                    if (width > 0 && height > 0 && combatActorAdapter.itemCount > 0) {
+                        Timber.d("RecyclerView layout changed - width: $width, height: $height")
+                        updateActorSizing()
+                    }
                 }
             })
         }
@@ -289,16 +300,75 @@ class CombatTrackerActivity : AppCompatActivity() {
     private fun updateActorSizing() {
         val recyclerView = binding.recyclerViewActors
         val itemCount = combatActorAdapter.itemCount
-
-        if (itemCount > 0) {
+        Timber.d("updateActorSizing called - itemCount: $itemCount, recyclerView width: ${recyclerView.width}")
+        if (itemCount > 0 && recyclerView.width > 0) {
             combatActorAdapter.updateItemDimensions(
                 recyclerView.width,
                 recyclerView.height,
                 itemCount,
                 resources.displayMetrics.density
             )
+
+            // Center the content after updating dimensions
+            // Post this to ensure dimensions are updated first
+            recyclerView.post {
+                centerActorsInRecyclerView()
+            }
         }
     }
+
+    /**
+     * Center actors in the RecyclerView by adjusting horizontal padding
+     */
+    private fun centerActorsInRecyclerView() {
+        val recyclerView = binding.recyclerViewActors
+        val itemCount = combatActorAdapter.itemCount
+
+        Timber.d("centerActorsInRecyclerView called - itemCount: $itemCount")
+
+        if (itemCount == 0) return
+
+        // Get the item width from adapter
+        val baseItemWidth = combatActorAdapter.getItemWidth()
+
+        Timber.d("baseItemWidth: $baseItemWidth")
+
+        // If item width hasn't been calculated yet or is invalid, skip centering
+        if (baseItemWidth <= 0) {
+            Timber.d("Invalid item width: $baseItemWidth, skipping centering")
+            return
+        }
+
+        // Calculate total content width
+        val density = resources.displayMetrics.density
+        val itemMargin = (16 * density).toInt() // 8dp margin on each side
+        val activeItemWidth = (baseItemWidth * 1.2).toInt() // Active item is 20% larger
+
+        // Find which item is active
+        val activeIndex = combatActorAdapter.currentList.indexOfFirst { it.isActive }
+
+        // Calculate total width of all items
+        var totalContentWidth = 0
+        for (i in 0 until itemCount) {
+            totalContentWidth += if (i == activeIndex) activeItemWidth else baseItemWidth
+            if (i < itemCount - 1) {
+                totalContentWidth += itemMargin
+            }
+        }
+
+        Timber.d("Total content width: $totalContentWidth, RecyclerView width: ${recyclerView.width}")
+
+        // Calculate padding to center content
+        val availableWidth = recyclerView.width
+        val sidePadding = maxOf(24.dpToPx(), (availableWidth - totalContentWidth) / 2)
+
+        Timber.d("Setting side padding: $sidePadding")
+
+        // Apply padding
+        recyclerView.setPadding(sidePadding, recyclerView.paddingTop, sidePadding, recyclerView.paddingBottom)
+    }
+
+
 
     /**
      * Setup turn control buttons
@@ -386,8 +456,10 @@ class CombatTrackerActivity : AppCompatActivity() {
         viewModel.combatState.observe(this) { state ->
             updateCombatUI(state)
             combatActorAdapter.submitList(state.actors) {
-                // Update sizing after list is submitted
-                updateActorSizing()
+                // Post to ensure RecyclerView has measured its children
+                binding.recyclerViewActors.post {
+                    updateActorSizing()
+                }
             }
         }
 
@@ -773,5 +845,10 @@ class CombatTrackerActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton(Constants.Dialogs.BUTTON_OK, null)
             .show()
+    }
+
+    // Add this extension function at the bottom of the file if it doesn't exist
+    private fun Int.dpToPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 }
