@@ -562,6 +562,78 @@ class EncounterRepository(
             Timber.e(e, "Failed to remove actor from encounter")
             Result.failure(e)
         }
+
+
+    }
+
+    /**
+     * Update an existing condition
+     *
+     * @param conditionId The condition ID to update
+     * @param isPermanent Whether the condition is permanent
+     * @param duration New duration (if not permanent)
+     * @param appliedAtRound Round when the condition was applied
+     * @return Result with success or error
+     */
+    suspend fun updateCondition(
+        conditionId: Long,
+        isPermanent: Boolean,
+        duration: Int?,
+        appliedAtRound: Int
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            Timber.d("updateCondition called with conditionId: $conditionId")
+
+            // Get the existing condition
+            val existingCondition = encounterDao.getActorConditionById(conditionId)
+
+            if (existingCondition == null) {
+                Timber.e("No condition found with ID: $conditionId")
+
+                // Debug: Let's see what conditions exist
+                val allConditions = encounterDao.debugGetActorConditions(16) // Using hardcoded actor ID for debugging
+                Timber.e("All conditions for actor 16:")
+                allConditions.forEach { condition ->
+                    Timber.e("  ID: ${condition.id}, conditionId: ${condition.conditionId}, isPermanent: ${condition.isPermanent}")
+                }
+
+                return@withContext Result.failure(
+                    IllegalArgumentException("Condition not found with ID: $conditionId")
+                )
+            }
+
+            Timber.d("Found existing condition: ID=${existingCondition.id}, actorId=${existingCondition.encounterActorId}, conditionId=${existingCondition.conditionId}")
+
+            // Update the condition
+            val updatedCondition = if (isPermanent) {
+                existingCondition.copy(
+                    isPermanent = true,
+                    remainingDuration = null,
+                    appliedAtRound = appliedAtRound
+                )
+            } else {
+                if (duration == null || duration <= 0) {
+                    return@withContext Result.failure(
+                        IllegalArgumentException("Duration required for non-permanent conditions")
+                    )
+                }
+                existingCondition.copy(
+                    isPermanent = false,
+                    remainingDuration = duration,
+                    appliedAtRound = appliedAtRound
+                )
+            }
+
+            Timber.d("Updating to: isPermanent=$isPermanent, duration=$duration")
+            encounterDao.updateActorCondition(updatedCondition)
+
+            Timber.d("Updated condition: $conditionId (permanent: $isPermanent, duration: $duration)")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to update condition")
+            Result.failure(e)
+        }
     }
 
     // ========== Delete Operations ==========
@@ -718,6 +790,70 @@ class EncounterRepository(
 
         } catch (e: Exception) {
             Timber.e(e, "Debug load failed: ${e.message}")
+        }
+    }
+
+    /**
+     * Update an existing condition by looking it up via encounter actor and condition type
+     *
+     * @param encounterActorId The encounter actor ID (from encounter_actors.id)
+     * @param conditionTypeId The condition type ID (1-15)
+     * @param isPermanent Whether the condition is permanent
+     * @param duration New duration (if not permanent)
+     * @param appliedAtRound Round when the condition was applied
+     * @return Result with success or error
+     */
+    suspend fun updateConditionByActorAndType(
+        encounterActorId: Long,
+        conditionTypeId: Long,
+        isPermanent: Boolean,
+        duration: Int?,
+        appliedAtRound: Int
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            Timber.d("updateConditionByActorAndType called for encounter actor $encounterActorId, condition type $conditionTypeId")
+
+            // Get the existing condition by encounter actor and type
+            val existingCondition = encounterDao.getActorConditionByActorAndType(encounterActorId, conditionTypeId)
+
+            if (existingCondition == null) {
+                Timber.e("No condition found for encounter actor $encounterActorId with condition type $conditionTypeId")
+                return@withContext Result.failure(
+                    IllegalArgumentException("Condition not found for this actor")
+                )
+            }
+
+            Timber.d("Found existing condition: ID=${existingCondition.id}, encounterActorId=${existingCondition.encounterActorId}, conditionId=${existingCondition.conditionId}")
+
+            // Update the condition
+            val updatedCondition = if (isPermanent) {
+                existingCondition.copy(
+                    isPermanent = true,
+                    remainingDuration = null,
+                    appliedAtRound = appliedAtRound
+                )
+            } else {
+                if (duration == null || duration <= 0) {
+                    return@withContext Result.failure(
+                        IllegalArgumentException("Duration required for non-permanent conditions")
+                    )
+                }
+                existingCondition.copy(
+                    isPermanent = false,
+                    remainingDuration = duration,
+                    appliedAtRound = appliedAtRound
+                )
+            }
+
+            Timber.d("Updating to: isPermanent=$isPermanent, duration=$duration")
+            encounterDao.updateActorCondition(updatedCondition)
+
+            Timber.d("Updated condition successfully")
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to update condition")
+            Result.failure(e)
         }
     }
 

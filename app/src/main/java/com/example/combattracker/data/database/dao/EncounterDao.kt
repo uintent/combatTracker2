@@ -377,6 +377,31 @@ interface EncounterDao {
     suspend fun getExistingDisplayNames(encounterId: Long, baseActorId: Long): List<String>
 
     /**
+     * Get a condition by ID
+     *
+     * @param conditionId The condition ID
+     * @return The condition or null if not found
+     */
+    @Query("SELECT * FROM actor_conditions WHERE id = :conditionId")
+    suspend fun getActorConditionById(conditionId: Long): ActorCondition?
+
+    /**
+     * Debug query to get all actor conditions
+     */
+    @Query("SELECT * FROM actor_conditions WHERE encounterActorId = :actorId")
+    suspend fun debugGetActorConditions(actorId: Long): List<ActorCondition>
+
+    /**
+     * Get a condition by actor ID and condition type ID
+     *
+     * @param actorId The encounter actor ID
+     * @param conditionId The condition type ID (1-15)
+     * @return The actor condition or null if not found
+     */
+    @Query("SELECT * FROM actor_conditions WHERE encounterActorId = :actorId AND conditionId = :conditionId")
+    suspend fun getActorConditionByActorAndType(actorId: Long, conditionId: Long): ActorCondition?
+
+    /**
      * Alternative query without @Relation annotation
      * For debugging duplicate issues
      */
@@ -492,6 +517,7 @@ data class EncounterActorFixed(
 
         return EncounterActorWithActor(encounterActor, actor)
     }
+
 }
 
 /**

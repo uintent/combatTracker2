@@ -596,44 +596,41 @@ class CombatViewModel(
                             }
                         )
                     } else {
-                        // Updating the condition - remove old and add new
+                        // Updating the condition - use update instead of remove/add
                         Timber.d("Updating condition ${conditionType.displayName} for actor $actorId")
 
-                        val conditionId = existingCondition.actorCondition.id
+                        // Debug: Log the entire existingCondition structure
+                        Timber.d("Existing condition details:")
+                        Timber.d("  actorCondition.id (PK): ${existingCondition.actorCondition.id}")
+                        Timber.d("  actorCondition.conditionId: ${existingCondition.actorCondition.conditionId}")
+                        Timber.d("  actorCondition.encounterActorId: ${existingCondition.actorCondition.encounterActorId}")
+                        Timber.d("  actorCondition.isPermanent: ${existingCondition.actorCondition.isPermanent}")
+                        Timber.d("  actorCondition.remainingDuration: ${existingCondition.actorCondition.remainingDuration}")
+                        Timber.d("  condition.id: ${existingCondition.condition.id}")
+                        Timber.d("  condition.name: ${existingCondition.condition.name}")
 
-                        // Remove the existing condition first
-                        encounterRepository.removeCondition(conditionId).fold(
+                        // IMPORTANT: Use the actorCondition.id, not the condition.id
+                        val actorConditionId = existingCondition.actorCondition.id
+                        val currentRound = currentEncounter?.currentRound ?: 1
+
+                        Timber.d("Condition ${conditionType.displayName} already exists with record ID ${existingCondition.actorCondition.id} (condition type ID: ${existingCondition.condition.id})")
+
+                        // Update the existing condition directly
+                        // Update the existing condition directly using the correct lookup
+                        encounterRepository.updateConditionByActorAndType(
+                            encounterActorId = actorId,
+                            conditionTypeId = conditionType.id,
+                            isPermanent = isPermanent,
+                            duration = duration,
+                            appliedAtRound = currentRound
+                        ).fold(
                             onSuccess = {
-                                // Update local state immediately
-                                actorConditions[actorId] = currentConditions.filter {
-                                    it.actorCondition.id != conditionId
-                                }
-
-                                // Now add the new one
-                                val currentRound = currentEncounter?.currentRound ?: 1
-                                encounterRepository.applyCondition(
-                                    actorId,
-                                    conditionType,
-                                    isPermanent,
-                                    duration,
-                                    currentRound
-                                ).fold(
-                                    onSuccess = {
-                                        Timber.d("Successfully updated condition ${conditionType.displayName}")
-                                        reloadActorConditions(actorId)
-                                        updateCombatState()
-                                    },
-                                    onFailure = { error ->
-                                        Timber.e(error, "Failed to apply updated condition")
-                                        _errorMessage.value = "Failed to update condition: ${error.message}"
-                                        // Try to reload to get back to consistent state
-                                        reloadActorConditions(actorId)
-                                        updateCombatState()
-                                    }
-                                )
+                                Timber.d("Successfully updated condition ${conditionType.displayName}")
+                                reloadActorConditions(actorId)
+                                updateCombatState()
                             },
                             onFailure = { error ->
-                                Timber.e(error, "Failed to remove existing condition for update")
+                                Timber.e(error, "Failed to update condition")
                                 _errorMessage.value = "Failed to update condition: ${error.message}"
                             }
                         )
